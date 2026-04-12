@@ -100,8 +100,7 @@ Under `kubernetes/apps/` you'll find apps grouped by **namespace** (a logical pa
 | `forgejo` | Forgejo git hosting, container registry, Actions CI/CD, runners |
 | `immich` | Immich photo/video library (self-hosted Google Photos) |
 | `cloud` | Nextcloud — self-hosted file storage and sync |
-| `books` | Kavita — manga, comics, ebooks, PDFs |
-| `entertainment` | Jellyfin, Jellyseerr, Autobrr, Jackett, Transmission, Radarr, Sonarr, Recyclarr, FlareSolverr |
+| `entertainment` | Jellyfin, Jellyseerr, Kavita, Autobrr, Jackett, Transmission, Radarr, Sonarr, Recyclarr, FlareSolverr |
 | `observability` | Prometheus, Grafana, Loki, Fluent Bit, smartctl-exporter, Gatus, Kromgo |
 | `system-upgrade` | Tuppr — automated Talos Linux and Kubernetes upgrades |
 | `flux-system` | Flux itself |
@@ -205,11 +204,11 @@ CNPG with `instances: 2` already keeps a streaming standby on a second node — 
 | `nfs` | 1 (NAS) | Your NAS (per-PVC subdirs) | General large files, backups |
 | `nfs-media` | 1 (NAS) | Your NAS (shared root) | Radarr, Sonarr, Jellyfin |
 | `nfs-photos` | 1 (NAS) | Your NAS (shared root) | Immich photo/video library |
-| `nfs-books` | 1 (NAS) | Your NAS (shared root) | Kavita book/manga/comic library |
+| `nfs-books` | 1 (NAS) | Your NAS (shared root) | Kavita book/manga/comic library (in `entertainment` namespace) |
 | `nfs-nextcloud` | 1 (NAS) | Your NAS (shared root) | Nextcloud user data |
 | `nfs-garage` | 1 (NAS) | Your NAS (shared root) | Garage S3 object data |
 
-All app-specific NFS StorageClasses (`nfs-media`, `nfs-photos`, `nfs-books`, `nfs-nextcloud`) share two important properties:
+All app-specific NFS StorageClasses (`nfs-media`, `nfs-photos`, `nfs-books`, `nfs-nextcloud`, `nfs-garage`) share two important properties:
 - **No `subDir`** — the PVC mounts the share root directly, so any data already on the NAS is visible immediately. The CSI driver does not create subdirectories or modify existing content.
 - **`reclaimPolicy: Retain`** — deleting a PVC in Kubernetes never deletes the underlying NAS data. You are always in control of what gets removed from the NAS.
 

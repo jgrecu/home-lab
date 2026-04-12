@@ -5,7 +5,7 @@ metadata:
   name: kavita
 spec:
   interval: 1h
-  path: ./kubernetes/apps/books/kavita/app
+  path: ./kubernetes/apps/entertainment/kavita/app
   postBuild:
     substituteFrom:
       - name: cluster-secrets
@@ -15,5 +15,5 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: books
+  targetNamespace: entertainment
   wait: false
