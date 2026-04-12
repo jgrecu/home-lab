@@ -26,6 +26,22 @@ A Kubernetes cluster deployed with [Talos Linux](https://github.com/siderolabs/t
 
 Does this sound cool to you? If so, continue to read on! 👇
 
+## 📖 Document Reading Order
+
+Follow these guides in order for a fresh cluster install:
+
+| Order | Document | What it covers |
+|---|---|---|
+| 1 | `TALOS_INSTALL.md` | Flash Talos Linux onto each node, first boot |
+| 2 | `README.md` (this file, Stages 1–6) | Configure and bootstrap the cluster, install Flux |
+| 3 | `README.md` Post-install section | Run verifications, enable Renovate on GitHub |
+| 4 | `PIHOLE_DNS_SETUP.md` | Configure your router/Pi-hole so app hostnames resolve on your home network |
+| 5 | `POST_BOOTSTRAP.md` | Garage S3, Forgejo runner, entertainment stack — things that need a running cluster before they can be configured |
+
+`ENTERTAINMENT_MIGRATION.md` is separate — only needed if migrating config data from an existing Docker setup. Not part of a fresh install.
+
+---
+
 ## 🚀 Let's Go!
 
 There are **6 stages** outlined below for completing this project, make sure you follow the stages in order.
@@ -180,7 +196,15 @@ These guidelines provide a strong baseline, but there are always exceptions and 
 
 ## 📣 Post installation
 
+> **How to read this section:**
+> - **Do this now** — required steps to finish the setup. Run these before declaring the cluster live.
+> - **Do this once stable** — run after everything is confirmed working.
+> - **Reference** — not something you run during setup. Come back here if something goes wrong or you need to make a specific change later.
+>
+> For the two-step bootstraps (Garage S3, Forgejo runner, Recyclarr) see `POST_BOOTSTRAP.md` — those pick up right where Stage 6 leaves off.
+
 ### ✅ Verifications
+> **Do this now** — confirm the cluster came up correctly before moving on.
 
 1. Check the status of Cilium:
 
@@ -222,6 +246,7 @@ These guidelines provide a strong baseline, but there are always exceptions and 
     ```
 
 ### 🌐 Public DNS
+> **Reference** — `external-dns` handles this automatically. No manual steps required. Read this to understand how public DNS records are created.
 
 > [!TIP]
 > Use the `envoy-external` gateway on `HTTPRoutes` to make applications public to the internet. These are also accessible on your private network once you set up split DNS.
@@ -229,6 +254,7 @@ These guidelines provide a strong baseline, but there are always exceptions and 
 The `external-dns` application created in the `network` namespace will handle creating public DNS records. By default, `echo` and the `flux-webhook` are the only subdomains reachable from the public internet. In order to make additional applications public you must **set the correct gateway** like in the HelmRelease for `echo`.
 
 ### 🏠 Home DNS
+> **Do this now** — without this step your apps won't resolve on your home network. See `PIHOLE_DNS_SETUP.md` for the full walkthrough.
 
 > [!TIP]
 > Use the `envoy-internal` gateway on `HTTPRoutes` to make applications private to your network. If you're having trouble with internal DNS resolution check out [this](https://github.com/onedr0p/cluster-template/discussions/719) GitHub discussion.
@@ -238,6 +264,7 @@ The `external-dns` application created in the `network` namespace will handle cr
 _... Nothing working? That is expected, this is DNS after all!_
 
 ### 🪝 GitHub Webhook
+> **Optional** — Flux polls Git every hour by default and works fine without this. Set it up if you want Flux to reconcile immediately on every `git push`.
 
 By default Flux will periodically check your git repository for changes. In-order to have Flux reconcile on `git push` you must configure GitHub to send `push` events to Flux.
 
@@ -258,6 +285,7 @@ By default Flux will periodically check your git repository for changes. In-orde
 3. Navigate to the settings of your repository on GitHub, under "Settings/Webhooks" press the "Add webhook" button. Fill in the webhook URL and your token from `github-push-token.txt`, Content type: `application/json`, Events: Choose Just the push event, and save.
 
 ## 💥 Reset
+> **Reference** — only if you need to wipe and start over.
 
 > [!CAUTION]
 > **Resetting** the cluster **multiple times in a short period of time** could lead to being **rate limited by DockerHub or Let's Encrypt**.
@@ -269,6 +297,7 @@ task talos:reset
 ```
 
 ## 🛠️ Talos and Kubernetes Maintenance
+> **Reference** — Tuppr handles Talos and Kubernetes upgrades automatically (Sunday 02:00 UTC). Only use these manual commands if Tuppr is not yet deployed or you need to make a config change to a specific node.
 
 ### ⚙️ Updating Talos node configuration
 
@@ -331,6 +360,7 @@ You don't need to re-bootstrap the cluster to add new nodes. Follow these steps:
 The node should join the cluster automatically and workloads will be scheduled once they report as ready.
 
 ## 🤖 Renovate
+> **Do this now** — enable the Renovate GitHub app on your repository so it can open version-bump PRs automatically. The configuration is already committed (`.renovaterc.json5`); you just need to activate it.
 
 [Renovate](https://www.mend.io/renovate) is a tool that automates dependency management. It is designed to scan your repository around the clock and open PRs for out-of-date dependencies it finds. Common dependencies it can discover are Helm charts, container images, GitHub Actions and more! In most cases merging a PR will cause Flux to apply the update to your cluster.
 
@@ -339,6 +369,7 @@ To enable Renovate, click the 'Configure' button over at their [Github app page]
 The base Renovate configuration in your repository can be viewed at [.renovaterc.json5](.renovaterc.json5). By default it is scheduled to be active with PRs every weekend, but you can [change the schedule to anything you want](https://docs.renovatebot.com/presets-schedule), or remove it if you want Renovate to open PRs immediately.
 
 ## 🐛 Debugging
+> **Reference** — general troubleshooting steps. Come back here when a pod is stuck or something isn't working.
 
 Below is a general guide on trying to debug an issue with an resource or application. For example, if a workload/resource is not showing up or a pod has started but in a `CrashLoopBackOff` or `Pending` state. These steps do not include a way to fix the problem as the problem could be one of many different things.
 
@@ -379,6 +410,7 @@ Below is a general guide on trying to debug an issue with an resource or applica
 Resolving problems that you have could take some tweaking of your YAML manifests in order to get things working, other times it could be a external factor like permissions on a NFS server. If you are unable to figure out your problem see the support sections below.
 
 ## 🧹 Tidy up
+> **Do this once stable** — run after everything is confirmed working. Removes the `templates/` directory and rendering scaffolding from the repo.
 
 Once your cluster is fully configured and you no longer need to run `task configure`, it's a good idea to clean up the repository by removing the [templates](./templates) directory and any files related to the templating process. This will help eliminate unnecessary clutter from the upstream template repository and resolve any "duplicate registry" warnings from Renovate.
 

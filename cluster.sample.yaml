@@ -82,3 +82,99 @@ cloudflare_gateway_addr: ""
 # -- The BGP node ASN
 # (OPTIONAL) / (e.g. "64514")
 # cilium_bgp_node_asn: ""
+
+# -- The Load balancer IP for Pi-hole DNS. This is the IP your router should
+#    point to for DNS. Choose an unused IP in the node_cidr.
+#    (REQUIRED if using Pi-hole) / (NOTE: Choose an unused IP in node_cidr)
+pihole_dns_addr: ""
+
+# -- Admin password for the Pi-hole web UI
+#    (REQUIRED if using Pi-hole)
+pihole_admin_password: ""
+
+# -- IP address of your NAS / NFS server
+#    (REQUIRED if using NFS storage)
+nfs_server_addr: ""
+
+# -- NFS export path on your NAS (for app config/general use)
+#    (REQUIRED if using NFS storage)
+nfs_server_path: ""
+
+# -- NFS export path for your media library (films, series, music, downloads)
+#    All media apps (Radarr, Sonarr, Jellyfin, Transmission) mount this same
+#    share so hard-linking works between downloads and your media library.
+#    Expected structure: /videos/movies  /videos/tv
+#    (REQUIRED if using media apps)
+nfs_media_path: "/videos"
+
+# -- NFS export path for your photo library (Immich)
+#    (REQUIRED if using Immich)
+nfs_photos_path: "/immich"
+
+# -- NFS export path for your book/manga/comic library (Kavita)
+#    (REQUIRED if using Kavita)
+nfs_books_path: "/books"
+
+# -- NFS export path for Garage S3 object data
+#    Garage stores all S3 object chunks here. The share root is mounted directly.
+#    (REQUIRED if using Garage)
+nfs_garage_path: "/garage"
+
+# -- Garage RPC secret (secures inter-node RPC, required even for single-node)
+#    Generate with: openssl rand -hex 32
+#    (REQUIRED if using Garage)
+garage_rpc_secret: ""
+
+# -- Garage admin API token (used for bootstrap CLI commands)
+#    Generate with: openssl rand -base64 32
+#    (REQUIRED if using Garage)
+garage_admin_token: ""
+
+# -- Garage S3 access credentials
+#    Leave empty until Step 3 of the Garage bootstrap (see storage/garage/ks.yaml).
+#    Generated inside the Garage pod with: garage key create home-lab
+#    (REQUIRED after bootstrap)
+garage_s3_access_key_id: ""
+garage_s3_secret_access_key: ""
+
+# -- NFS export path for your Nextcloud user data
+#    Mount root only — Nextcloud manages its own structure underneath.
+#    Any data already in this share will be visible immediately.
+#    (REQUIRED if using Nextcloud)
+nfs_nextcloud_path: "/nextcloud"
+
+# -- Grafana admin password (username is always "admin")
+#    (REQUIRED if using Grafana)
+grafana_admin_password: ""
+
+# -- Nextcloud admin password (username is always "admin")
+#    (REQUIRED if using Nextcloud)
+nextcloud_admin_password: ""
+
+# -- Forgejo admin account
+#    (REQUIRED if using Forgejo)
+forgejo_admin_email: ""
+forgejo_admin_password: ""
+
+# -- Forgejo Actions runner registration token.
+#    (REQUIRED if using Forgejo runner)
+#    IMPORTANT: This token is generated inside the Forgejo UI after Forgejo
+#    is running. Deploy steps:
+#      1. Leave this empty and run task template:render + commit
+#      2. Wait for Forgejo to deploy and become healthy
+#      3. Log in → Site Administration → Runners → New runner token
+#      4. Paste the token here, re-run task template:render, commit
+#      5. Flux reconciles and the runner registers automatically
+forgejo_runner_secret: ""
+
+# -- Recyclarr API keys for Radarr and Sonarr.
+#    (REQUIRED if using Recyclarr)
+#    IMPORTANT: These are generated inside each app UI after they are running.
+#    Two-step bootstrap:
+#      1. Leave empty and deploy — Recyclarr CronJob will error until keys are set
+#      2. Open Radarr UI → Settings → General → copy API key
+#      3. Open Sonarr UI → Settings → General → copy API key
+#      4. Paste below, re-run task template:render, commit
+#      5. Recyclarr will sync successfully on next CronJob trigger
+recyclarr_radarr_api_key: ""
+recyclarr_sonarr_api_key: ""

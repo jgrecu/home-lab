@@ -1,0 +1,81 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jellyfin
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: jellyfin
+  interval: 1h
+  values:
+    controllers:
+      jellyfin:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/jellyfin/jellyfin
+              # renovate: datasource=docker depName=ghcr.io/jellyfin/jellyfin
+              tag: 10.10.3
+            env:
+              TZ: "Europe/Madrid"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &port 8096
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 100m
+              limits:
+                # Increase if you enable hardware transcoding
+                memory: 4Gi
+
+    persistence:
+      # Jellyfin config, metadata cache, and transcoding temp on Longhorn.
+      # First boot will scan /media and build the library index here.
+      config:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 10Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config
+
+      # Media library on NFS — same share that Radarr/Sonarr import into.
+      # Your NAS should look like: /videos/movies  /videos/tv
+      # Jellyfin will see both folders and can have separate libraries for each.
+      media:
+        type: persistentVolumeClaim
+        storageClass: nfs-media
+        size: 1Ti
+        accessMode: ReadWriteMany
+        globalMounts:
+          - path: /media
+
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+
+    route:
+      app:
+        hostnames: ["jellyfin.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port

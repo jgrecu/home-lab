@@ -1,0 +1,139 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nextcloud
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: nextcloud
+  interval: 1h
+  values:
+    controllers:
+      nextcloud:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: nextcloud
+              tag: 30.0.2-apache
+            env:
+              # Initial admin account — only used on first boot.
+              # After init, credentials are stored in the Longhorn PVC.
+              NEXTCLOUD_ADMIN_USER: admin
+              NEXTCLOUD_ADMIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: nextcloud-secret
+                    key: admin-password
+              # Trusted domain — must match your actual hostname exactly
+              NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.${SECRET_DOMAIN}"
+              # Where user files live — this path is the NFS mount point
+              NEXTCLOUD_DATA_DIR: /var/www/html/data
+              # PostgreSQL connection via CNPG-managed cluster
+              POSTGRES_HOST: nextcloud-postgres-rw
+              POSTGRES_DB: nextcloud
+              POSTGRES_USER: nextcloud
+              POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: nextcloud-postgres-app
+                    key: password
+              # Redis for file locking and session caching.
+              # Without Redis, Nextcloud uses DB-level locking which is slow.
+              REDIS_HOST: nextcloud-redis-master
+              REDIS_HOST_PORT: "6379"
+              # PHP memory limit — 512Mi covers most workloads including
+              # thumbnail generation and file uploads
+              PHP_MEMORY_LIMIT: 512M
+              PHP_UPLOAD_LIMIT: 10G
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /status.php
+                    port: &port 80
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 5
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 50m
+              limits:
+                memory: 1Gi
+
+      # Nextcloud requires background jobs for notifications, sharing cleanup,
+      # previews, and other housekeeping. This cronjob runs every 5 minutes.
+      # It uses the same image and persistence as the main app so it has
+      # access to config and data.
+      cron:
+        type: cronjob
+        cronjob:
+          schedule: "*/5 * * * *"
+          concurrencyPolicy: Forbid
+          failedJobsHistory: 1
+          successfulJobsHistory: 1
+        containers:
+          cron:
+            image:
+              repository: nextcloud
+              tag: 30.0.2-apache
+            command: ["php", "-f", "/var/www/html/cron.php"]
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 256Mi
+
+    persistence:
+      # Nextcloud installation + config stored on Longhorn.
+      # This includes: nextcloud source code, config/config.php, apps/, themes/
+      # Survives pod restarts. Longhorn handles replication across nodes.
+      html:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 10Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /var/www/html
+
+      # User data on NFS — documents, photos, videos uploaded by users.
+      # This is a direct mount of your NAS share root. Any data already in
+      # /nextcloud on the NAS will be visible to Nextcloud immediately.
+      # reclaimPolicy: Retain on the nfs-nextcloud StorageClass means
+      # deleting this PVC will never delete the underlying NAS files.
+      data:
+        type: persistentVolumeClaim
+        storageClass: nfs-nextcloud
+        size: 1Ti
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /var/www/html/data
+
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+
+    route:
+      app:
+        hostnames: ["nextcloud.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
