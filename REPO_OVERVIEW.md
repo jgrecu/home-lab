@@ -101,6 +101,7 @@ Under `kubernetes/apps/` you'll find apps grouped by **namespace** (a logical pa
 | `immich` | Immich photo/video library (self-hosted Google Photos) |
 | `cloud` | Nextcloud — self-hosted file storage and sync |
 | `entertainment` | Jellyfin, Jellyseerr, Kavita, Autobrr, Jackett, Transmission, Radarr, Sonarr, Recyclarr, FlareSolverr |
+| `home-automation` | Home Assistant |
 | `observability` | Prometheus, Grafana, Loki, Fluent Bit, smartctl-exporter, Gatus, Kromgo |
 | `system-upgrade` | Tuppr — automated Talos Linux and Kubernetes upgrades |
 | `flux-system` | Flux itself |
@@ -130,6 +131,7 @@ Under `kubernetes/apps/` you'll find apps grouped by **namespace** (a logical pa
 | Gatus | `https://gatus.yourdomain.com` |
 | Kromgo | `https://kromgo.yourdomain.com` |
 | Autobrr | `https://autobrr.yourdomain.com` |
+| Home Assistant | `https://home-assistant.yourdomain.com` |
 
 ---
 

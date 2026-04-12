@@ -38,7 +38,12 @@ Follow these guides in order for a fresh cluster install:
 | 4 | `PIHOLE_DNS_SETUP.md` | Configure your router/Pi-hole so app hostnames resolve on your home network |
 | 5 | `POST_BOOTSTRAP.md` | Garage S3, Forgejo runner, entertainment stack — things that need a running cluster before they can be configured |
 
-`ENTERTAINMENT_MIGRATION.md` is separate — only needed if migrating config data from an existing Docker setup. Not part of a fresh install.
+Migration guides are separate — only needed if moving existing data from Docker into the cluster:
+
+| Document | When to use |
+|---|---|
+| `ENTERTAINMENT_MIGRATION.md` | Migrating Radarr/Sonarr/Transmission/Jellyfin/Autobrr config from an existing Docker setup |
+| `HOME_ASSISTANT_MIGRATION.md` | Migrating Home Assistant config from a Raspberry Pi (or any Docker host) to Kubernetes |
 
 ---
 
