@@ -1,0 +1,121 @@
+---
+clusterName: kubernetes
+
+talosVersion: "${talosVersion}"
+kubernetesVersion: "${kubernetesVersion}"
+
+endpoint: https://192.168.1.55:6443
+additionalApiServerCertSans: &sans
+  - "127.0.0.1"
+  - "192.168.1.55"
+additionalMachineCertSans: *sans
+
+clusterPodNets: ["10.42.0.0/16"]
+clusterSvcNets: ["10.43.0.0/16"]
+
+# Disable built-in CNI to use Cilium
+cniConfig:
+  name: none
+
+nodes:
+  - hostname: "rpi-ctrl"
+    ipAddress: "192.168.1.50"
+    installDisk: "/dev/sda"
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/ee21ef4a5ef808a9b7484cc0dda0f25075021691c8c09a276591eedb638ea1f9
+    controlPlane: true
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "e4:5f:01:0b:ce:d7"
+        dhcp: false
+        addresses:
+          - "192.168.1.50/24"
+        routes:
+          - gateway: "192.168.1.1"
+            network: 0.0.0.0/0
+        mtu: 1500
+        vip:
+          ip: "192.168.1.55"
+  - hostname: "rpi-wrk1"
+    ipAddress: "192.168.1.51"
+    installDisk: "/dev/sda"
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/ee21ef4a5ef808a9b7484cc0dda0f25075021691c8c09a276591eedb638ea1f9
+    controlPlane: false
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "e4:5f:01:0f:13:02"
+        dhcp: false
+        addresses:
+          - "192.168.1.51/24"
+        routes:
+          - gateway: "192.168.1.1"
+            network: 0.0.0.0/0
+        mtu: 1500
+  - hostname: "rpi-wrk2"
+    ipAddress: "192.168.1.52"
+    installDisk: "/dev/sda"
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/ee21ef4a5ef808a9b7484cc0dda0f25075021691c8c09a276591eedb638ea1f9
+    controlPlane: false
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "dc:a6:32:d1:39:a2"
+        dhcp: false
+        addresses:
+          - "192.168.1.52/24"
+        routes:
+          - gateway: "192.168.1.1"
+            network: 0.0.0.0/0
+        mtu: 1500
+  - hostname: "rpi-wrk3"
+    ipAddress: "192.168.1.53"
+    installDisk: "/dev/sda"
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/ee21ef4a5ef808a9b7484cc0dda0f25075021691c8c09a276591eedb638ea1f9
+    controlPlane: false
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "dc:a6:32:03:05:dc"
+        dhcp: false
+        addresses:
+          - "192.168.1.53/24"
+        routes:
+          - gateway: "192.168.1.1"
+            network: 0.0.0.0/0
+        mtu: 1500
+  - hostname: "rpi-wrk4"
+    ipAddress: "192.168.1.54"
+    installDisk: "/dev/sda"
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/ee21ef4a5ef808a9b7484cc0dda0f25075021691c8c09a276591eedb638ea1f9
+    controlPlane: false
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "dc:a6:32:58:b3:7d"
+        dhcp: false
+        addresses:
+          - "192.168.1.54/24"
+        routes:
+          - gateway: "192.168.1.1"
+            network: 0.0.0.0/0
+        mtu: 1500
+
+# Global patches
+patches:
+  - "@./patches/global/machine-files.yaml"
+  - "@./patches/global/machine-kubelet.yaml"
+  - "@./patches/global/machine-network.yaml"
+  - "@./patches/global/machine-sysctls.yaml"
+  - "@./patches/global/machine-time.yaml"
+
+# Controller patches
+controlPlane:
+  patches:
+    - "@./patches/controller/cluster.yaml"
+
