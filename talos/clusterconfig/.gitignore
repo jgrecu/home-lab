@@ -1,0 +1,6 @@
+kubernetes-rpi-ctrl.yaml
+kubernetes-rpi-wrk1.yaml
+kubernetes-rpi-wrk2.yaml
+kubernetes-rpi-wrk3.yaml
+kubernetes-rpi-wrk4.yaml
+talosconfig
