@@ -65,3 +65,12 @@ spec:
       replicas: 0
     backend:
       replicas: 0
+
+    # Disable chunksCache and resultsCache to reduce memory footprint
+    # on small clusters. Queries will be slightly slower but functional.
+    chunksCache:
+      enabled: false
+      replicas: 0
+    resultsCache:
+      enabled: false
+      replicas: 0
