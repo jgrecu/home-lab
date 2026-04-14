@@ -23,9 +23,8 @@ spec:
                   secretKeyRef:
                     name: pihole-secret
                     key: admin-password
-              # Upstream DNS servers Pi-hole forwards to for non-blocked queries
-              # k8s_gateway first for split DNS (cluster domains), then Cloudflare
-              PIHOLE_DNS_: "192.168.1.56;1.1.1.1;1.0.0.1"
+              # Upstream DNS servers for fallback (when conditional forwarding doesn't match)
+              PIHOLE_DNS_: "1.1.1.1;1.0.0.1"
               DNSSEC: "true"
               # The hostname Pi-hole will recognise for its own web UI
               VIRTUAL_HOST: "pihole.${SECRET_DOMAIN}"
@@ -89,6 +88,14 @@ spec:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /etc/dnsmasq.d
+      # Conditional forwarding config: forward *.jgrecu.dev to k8s_gateway
+      conditional-forward:
+        type: configMap
+        name: pihole-dnsmasq-config
+        globalMounts:
+          - path: /etc/dnsmasq.d/02-conditional-forward.conf
+            subPath: 02-conditional-forward.conf
+            readOnly: true
     service:
       # Web admin UI — routed through Envoy internal gateway
       web:
