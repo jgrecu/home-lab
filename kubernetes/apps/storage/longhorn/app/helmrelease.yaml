@@ -43,9 +43,6 @@ spec:
       ui:
         type: ClusterIP
     # Resource limits — conservative for the HP EliteDesk hardware
-    longhornManager:
-      priorityClass:
-        value: ""
     resources:
       requests:
         cpu: 25m
