@@ -22,6 +22,10 @@ import (
 	cloudflare_domain: net.FQDN
 	cloudflare_token: string
 	cloudflare_gateway_addr: net.IPv4 & !=cluster_api_addr & !=cluster_gateway_addr & !=cluster_dns_gateway_addr
+	// Pi-hole Configuration
+	pihole_dns_addr?:        net.IPv4 & !=""
+	pihole_admin_password?:  string & !=""
+	// Cilium Configuration
 	cilium_bgp_router_addr?: net.IPv4 & !=""
 	cilium_bgp_router_asn?: string & !=""
 	cilium_bgp_node_asn?: string & !=""
