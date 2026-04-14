@@ -16,7 +16,7 @@ spec:
           app:
             image:
               repository: ghcr.io/twin/gatus
-              tag: v5.12.1
+              tag: v5.35.0
             env:
               # Tell Gatus where its config file lives
               GATUS_CONFIG_PATH: /config/config.yaml
