@@ -26,6 +26,18 @@ import (
 	cilium_bgp_router_asn?: string & !=""
 	cilium_bgp_node_asn?: string & !=""
 	cilium_loadbalancer_mode?: *"dsr" | "snat"
+	// NFS Storage Configuration
+	nfs_server_addr?:           net.IPv4 & !=""
+	nfs_server_path?:           string & !=""
+	nfs_media_path?:            string & !=""
+	nfs_photos_path?:           string & !=""
+	nfs_books_path?:            string & !=""
+	nfs_garage_path?:           string & !=""
+	// Garage S3 Configuration
+	garage_rpc_secret?:             string & !=""
+	garage_admin_token?:            string & !=""
+	garage_s3_access_key_id?:       string
+	garage_s3_secret_access_key?:   string
 }
 
 #Config

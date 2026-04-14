@@ -1,0 +1,17 @@
+machine:
+  # Required for Longhorn — loads the iSCSI kernel module used by Longhorn's
+  # storage engine to attach block devices across nodes.
+  kernel:
+    modules:
+      - name: iscsi_tcp
+  kubelet:
+    # Bind-mounts /var/lib/longhorn into the kubelet so Longhorn can persist
+    # replica data across Talos OS upgrades (Talos root is read-only/ephemeral).
+    extraMounts:
+      - destination: /var/lib/longhorn
+        type: bind
+        source: /var/lib/longhorn
+        options:
+          - bind
+          - rshared
+          - rw
