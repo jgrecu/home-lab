@@ -1,0 +1,14 @@
+---
+version: '3'
+
+tasks:
+
+  bootstrap-garage:
+    desc: Bootstrap Garage S3 storage (creates buckets, keys, updates cluster.yaml)
+    cmd: bash {{.SCRIPTS_DIR}}/bootstrap-garage.sh
+    preconditions:
+      - test -f {{.KUBECONFIG}}
+      - test -f {{.SCRIPTS_DIR}}/bootstrap-garage.sh
+      - which kubectl jq curl
+      - sh: kubectl get pod -n storage garage-0 &>/dev/null
+        msg: Garage pod not found (have you deployed storage apps?)
