@@ -20,6 +20,7 @@ env:
 
 includes:
   bootstrap: .taskfiles/bootstrap
+  storage: .taskfiles/storage
   talos: .taskfiles/talos
   template: .taskfiles/template
 
