@@ -62,10 +62,47 @@ spec:
         flux-cluster:
           url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/main/monitoring/configs/dashboards/cluster.json
           datasource: Prometheus
+        # Flux control plane metrics
+        flux-control-plane:
+          gnetId: 16714
+          revision: 1
+          datasource: Prometheus
         # Longhorn storage
         longhorn:
           gnetId: 16888
           revision: 9
+          datasource: Prometheus
+        # Cilium networking
+        cilium-operator:
+          gnetId: 16611
+          revision: 1
+          datasource: Prometheus
+        cilium-agent:
+          gnetId: 16612
+          revision: 1
+          datasource: Prometheus
+        # Cert-Manager
+        cert-manager:
+          gnetId: 11001
+          revision: 1
+          datasource: Prometheus
+        # Kubernetes API server
+        kubernetes-api-server:
+          gnetId: 15761
+          revision: 16
+          datasource: Prometheus
+        # Kubernetes system resources
+        kubernetes-views-global:
+          gnetId: 15757
+          revision: 37
+          datasource: Prometheus
+        kubernetes-views-namespaces:
+          gnetId: 15758
+          revision: 34
+          datasource: Prometheus
+        kubernetes-views-pods:
+          gnetId: 15760
+          revision: 28
           datasource: Prometheus
 
     persistence:
