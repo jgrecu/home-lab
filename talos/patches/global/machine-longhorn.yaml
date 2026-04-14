@@ -1,6 +1,8 @@
 machine:
-  # Required for Longhorn — loads the iSCSI kernel module used by Longhorn's
-  # storage engine to attach block devices across nodes.
+  # Required for Longhorn — installs iSCSI initiator tools and loads the kernel module
+  install:
+    extensions:
+      - image: ghcr.io/siderolabs/iscsi-tools:v0.1.6
   kernel:
     modules:
       - name: iscsi_tcp

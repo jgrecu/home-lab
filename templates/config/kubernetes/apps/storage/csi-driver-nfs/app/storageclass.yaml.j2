@@ -12,7 +12,7 @@ parameters:
   server: "#{ nfs_server_addr }#"
   share: "#{ nfs_server_path }#"
   # Makes subdirectories per PVC so volumes don't share the same root
-  subDir: ${pvc.metadata.namespace}/${pvc.metadata.name}
+  subDir: $${pvc.metadata.namespace}/$${pvc.metadata.name}
   mountPermissions: "0755"
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
