@@ -9,11 +9,11 @@ spec:
     name: homepage
   interval: 1h
   values:
-    defaultPodOptions:
-      serviceAccountName: homepage
     controllers:
       homepage:
         strategy: RollingUpdate
+        pod:
+          serviceAccountName: homepage
         containers:
           app:
             image:
