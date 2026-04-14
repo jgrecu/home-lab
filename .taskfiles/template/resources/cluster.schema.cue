@@ -33,6 +33,7 @@ import (
 	nfs_photos_path?:           string & !=""
 	nfs_books_path?:            string & !=""
 	nfs_garage_path?:           string & !=""
+	nfs_nextcloud_path?:        string & !=""
 	// Garage S3 Configuration
 	garage_rpc_secret?:             string & !=""
 	garage_admin_token?:            string & !=""

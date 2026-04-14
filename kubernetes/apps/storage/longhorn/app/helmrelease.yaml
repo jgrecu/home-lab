@@ -42,7 +42,7 @@ spec:
     service:
       ui:
         type: ClusterIP
-    # Resource limits — conservative for the HP EliteDesk hardware
+    # Resource limits — conservative for the hardware
     resources:
       requests:
         cpu: 25m
