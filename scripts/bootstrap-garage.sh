@@ -183,33 +183,13 @@ function init_layout() {
 
     log debug "Got garage node ID" "node_id=${node_id}"
 
-    # Assign layout to node - payload is an array of role assignments
-    local layout_update
-    layout_update=$(jq -n \
-        --arg node_id "${node_id}" \
-        '[{
-            "id": $node_id,
-            "zone": "dc1",
-            "capacity": 107374182400,
-            "tags": []
-        }]')
-
-    garage_api "POST" "/v2/UpdateClusterLayout" "${layout_update}" >/dev/null
+    # Use garage CLI to assign layout
+    kubectl exec -n storage garage-0 -- /garage layout assign -z dc1 -c 100G "${node_id}" >/dev/null 2>&1
     log info "Layout assigned to node" "node_id=${node_id}" "zone=dc1" "capacity=100GB"
 
     # Apply layout
-    local current_version
-    current_version=$(get_layout | jq -r '.layoutVersion')
-
-    local apply_payload
-    apply_payload=$(jq -n \
-        --argjson version "${current_version}" \
-        '{
-            "version": ($version + 1)
-        }')
-
-    garage_api "POST" "/v2/ApplyClusterLayout" "${apply_payload}" >/dev/null
-    log info "Layout applied successfully" "version=$((current_version + 1))"
+    kubectl exec -n storage garage-0 -- /garage layout apply --version 1 >/dev/null 2>&1
+    log info "Layout applied successfully" "version=1"
 }
 
 # List buckets
@@ -281,21 +261,19 @@ function get_key_info() {
     keys=$(garage_api "GET" "/v2/ListKeys")
 
     local key_id
-    key_id=$(echo "${keys}" | jq -r ".[] | select(.name == \"${key_name}\") | .accessKeyId // empty" | head -1)
+    key_id=$(echo "${keys}" | jq -r ".[] | select(.name == \"${key_name}\") | .id // empty" | head -1)
 
     if [[ -z "${key_id}" ]]; then
         return 1
     fi
 
     # Get full key info (but secretAccessKey is not returned for existing keys)
-    garage_api "GET" "/v2/GetKeyInfo?accessKeyId=${key_id}"
+    garage_api "GET" "/v2/GetKeyInfo?id=${key_id}"
 }
 
 # Create key
 function create_key() {
     local key_name="${1}"
-
-    log info "Creating S3 key" "key=${key_name}"
 
     local payload
     payload=$(jq -n \
@@ -306,8 +284,6 @@ function create_key() {
 
     local key_info
     key_info=$(garage_api "POST" "/v2/CreateKey" "${payload}")
-
-    log info "S3 key created" "key=${key_name}"
 
     echo "${key_info}"
 }
