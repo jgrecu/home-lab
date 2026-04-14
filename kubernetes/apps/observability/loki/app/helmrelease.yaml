@@ -4,9 +4,13 @@ kind: HelmRelease
 metadata:
   name: loki
 spec:
-  chartRef:
-    kind: OCIRepository
-    name: loki
+  chart:
+    spec:
+      chart: loki
+      version: 6.12.0
+      sourceRef:
+        kind: HelmRepository
+        name: loki
   interval: 1h
   values:
     # Single binary mode — one pod handles ingest, query, and compaction.
