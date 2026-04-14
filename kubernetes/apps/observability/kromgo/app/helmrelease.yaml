@@ -114,6 +114,13 @@ spec:
       app:
         # Internal only — badges are generated from the internal URL and
         # embedded in READMEs or dashboards. No public exposure needed.
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "Kromgo"
+          gethomepage.dev/group: "Observability"
+          gethomepage.dev/description: "Prometheus metrics badges"
+          gethomepage.dev/icon: "kubernetes-dashboard.png"
+          gethomepage.dev/href: "https://kromgo.${SECRET_DOMAIN}"
         hostnames: ["kromgo.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
