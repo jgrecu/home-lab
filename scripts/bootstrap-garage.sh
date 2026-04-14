@@ -5,6 +5,19 @@ source "$(dirname "${0}")/lib/common.sh"
 
 export LOG_LEVEL="${LOG_LEVEL:-info}"
 export ROOT_DIR="$(git rev-parse --show-toplevel)"
+export PORT_FORWARD_PID=""
+
+# Cleanup function
+function cleanup() {
+    if [[ -n "${PORT_FORWARD_PID}" ]]; then
+        log debug "Cleaning up port-forward" "pid=${PORT_FORWARD_PID}"
+        kill "${PORT_FORWARD_PID}" 2>/dev/null || true
+        wait "${PORT_FORWARD_PID}" 2>/dev/null || true
+    fi
+    rm -f /tmp/garage_*.json 2>/dev/null || true
+}
+
+trap cleanup EXIT
 
 # Check prerequisites
 function check_prerequisites() {
@@ -46,50 +59,71 @@ function get_admin_token() {
     echo "${token}"
 }
 
+# Start port-forward to garage admin API
+function start_port_forward() {
+    log debug "Starting port-forward to garage admin API"
+
+    kubectl port-forward -n storage svc/garage-admin 3903:3903 >/dev/null 2>&1 &
+    PORT_FORWARD_PID=$!
+
+    # Wait for port-forward to be ready (increased timeout)
+    sleep 5
+
+    # Verify port-forward is working
+    if ! kill -0 "${PORT_FORWARD_PID}" 2>/dev/null; then
+        log error "Port-forward failed to start"
+    fi
+
+    # Test connection with retry
+    local retries=0
+    while [[ $retries -lt 3 ]]; do
+        if curl -s -f -H "Authorization: Bearer ${GARAGE_ADMIN_TOKEN}" http://localhost:3903/v1/status >/dev/null 2>&1; then
+            log debug "Port-forward ready" "pid=${PORT_FORWARD_PID}"
+            return 0
+        fi
+        log debug "Waiting for port-forward to be ready..." "retry=$((retries+1))"
+        sleep 2
+        ((retries++))
+    done
+
+    log error "Port-forward connection test failed after retries"
+}
+
 # Call garage admin API
 function garage_api() {
     local method="${1}"
     local endpoint="${2}"
     local data="${3:-}"
     local token="${GARAGE_ADMIN_TOKEN}"
-
     local url="http://localhost:3903${endpoint}"
-    local response
-    local http_code
 
-    log debug "Calling garage API" "method=${method}" "endpoint=${endpoint}"
+    log debug "API call" "method=${method}" "endpoint=${endpoint}"
 
-    # Use kubectl port-forward to access garage admin API
-    kubectl port-forward -n storage svc/garage-admin 3903:3903 >/dev/null 2>&1 &
-    local port_forward_pid=$!
-
-    # Wait for port-forward to be ready
-    sleep 3
+    local temp_file="/tmp/garage_response_$$.json"
 
     # Make the API call
+    local http_code
     if [[ -n "${data}" ]]; then
-        http_code=$(curl -s -o /tmp/garage_response.json -w "%{http_code}" \
+        http_code=$(curl -s -o "${temp_file}" -w "%{http_code}" \
             -X "${method}" \
             -H "Authorization: Bearer ${token}" \
             -H "Content-Type: application/json" \
             -d "${data}" \
-            "${url}" 2>&1)
+            "${url}")
     else
-        http_code=$(curl -s -o /tmp/garage_response.json -w "%{http_code}" \
+        http_code=$(curl -s -o "${temp_file}" -w "%{http_code}" \
             -X "${method}" \
             -H "Authorization: Bearer ${token}" \
-            "${url}" 2>&1)
+            "${url}")
     fi
 
-    response=$(cat /tmp/garage_response.json 2>/dev/null || echo "")
-    rm -f /tmp/garage_response.json
+    local response
+    response=$(cat "${temp_file}" 2>/dev/null || echo "")
+    rm -f "${temp_file}"
 
-    # Kill port-forward
-    kill "${port_forward_pid}" 2>/dev/null || true
-    wait "${port_forward_pid}" 2>/dev/null || true
-
+    # Check for success
     if [[ "${http_code}" != "200" ]] && [[ "${http_code}" != "204" ]]; then
-        log error "Garage API call failed" "http_code=${http_code}" "response=${response:0:200}"
+        log error "API call failed" "method=${method}" "endpoint=${endpoint}" "http_code=${http_code}" "response=${response:0:200}"
     fi
 
     echo "${response}"
@@ -102,7 +136,9 @@ function get_layout() {
 
 # Get node ID
 function get_node_id() {
-    garage_api "GET" "/v1/status" | jq -r '.nodes[0].id // empty'
+    local status
+    status=$(garage_api "GET" "/v1/status")
+    echo "${status}" | jq -r '.nodes[0].id // empty'
 }
 
 # Check if cluster is initialized
@@ -110,9 +146,14 @@ function is_initialized() {
     local layout
     layout=$(get_layout)
 
-    if echo "${layout}" | jq -e '.version > 0' >/dev/null 2>&1; then
+    local version
+    version=$(echo "${layout}" | jq -r '.version // 0')
+
+    if [[ "${version}" -gt 0 ]]; then
+        log debug "Cluster is initialized" "layout_version=${version}"
         return 0
     else
+        log debug "Cluster not initialized" "layout_version=${version}"
         return 1
     fi
 }
@@ -161,7 +202,17 @@ function init_layout() {
 
 # List buckets
 function list_buckets() {
-    garage_api "GET" "/v1/bucket" | jq -r '.[].name // empty'
+    local buckets
+    buckets=$(garage_api "GET" "/v1/bucket")
+    echo "${buckets}" | jq -r '.[].globalAliases[]? // empty'
+}
+
+# Get bucket ID by name
+function get_bucket_id() {
+    local bucket_name="${1}"
+    local buckets
+    buckets=$(garage_api "GET" "/v1/bucket")
+    echo "${buckets}" | jq -r ".[] | select(.globalAliases[]? == \"${bucket_name}\") | .id // empty" | head -1
 }
 
 # Create bucket
@@ -177,51 +228,39 @@ function create_bucket() {
             "globalAlias": $name
         }')
 
-    local bucket_info
-    local http_code
-
     # Try to create bucket
-    kubectl port-forward -n storage svc/garage-admin 3903:3903 >/dev/null 2>&1 &
-    local port_forward_pid=$!
-    sleep 3
-
-    http_code=$(curl -s -o /tmp/garage_response.json -w "%{http_code}" \
+    local temp_file="/tmp/garage_bucket_$$.json"
+    local http_code
+    http_code=$(curl -s -o "${temp_file}" -w "%{http_code}" \
         -X "POST" \
         -H "Authorization: Bearer ${GARAGE_ADMIN_TOKEN}" \
         -H "Content-Type: application/json" \
         -d "${payload}" \
-        "http://localhost:3903/v1/bucket" 2>&1)
+        "http://localhost:3903/v1/bucket")
 
-    bucket_info=$(cat /tmp/garage_response.json 2>/dev/null || echo "")
-    rm -f /tmp/garage_response.json
-
-    kill "${port_forward_pid}" 2>/dev/null || true
-    wait "${port_forward_pid}" 2>/dev/null || true
+    local response
+    response=$(cat "${temp_file}" 2>/dev/null || echo "")
+    rm -f "${temp_file}"
 
     if [[ "${http_code}" == "200" ]]; then
         local bucket_id
-        bucket_id=$(echo "${bucket_info}" | jq -r '.id')
+        bucket_id=$(echo "${response}" | jq -r '.id')
         log info "Bucket created" "bucket=${bucket_name}" "id=${bucket_id}"
-        echo "${bucket_id}"
     elif [[ "${http_code}" == "409" ]]; then
         log info "Bucket already exists" "bucket=${bucket_name}"
-        # Get existing bucket ID
-        local buckets
-        buckets=$(garage_api "GET" "/v1/bucket")
-        local bucket_id
-        bucket_id=$(echo "${buckets}" | jq -r ".[] | select(.globalAliases[] == \"${bucket_name}\") | .id // empty" | head -1)
-        echo "${bucket_id}"
     else
-        log error "Failed to create bucket" "http_code=${http_code}" "response=${bucket_info}"
+        log error "Failed to create bucket" "http_code=${http_code}" "response=${response}"
     fi
 }
 
 # List keys
 function list_keys() {
-    garage_api "GET" "/v1/key" | jq -r '.[].name // empty'
+    local keys
+    keys=$(garage_api "GET" "/v1/key")
+    echo "${keys}" | jq -r '.[].name // empty'
 }
 
-# Get key info
+# Get key info by name
 function get_key_info() {
     local key_name="${1}"
 
@@ -236,7 +275,7 @@ function get_key_info() {
         return 1
     fi
 
-    # Get full key info including accessKeyId and secretAccessKey
+    # Get full key info (but secretAccessKey is not returned for existing keys)
     garage_api "GET" "/v1/key?id=${key_id}"
 }
 
@@ -256,59 +295,21 @@ function create_key() {
     local key_info
     key_info=$(garage_api "POST" "/v1/key" "${payload}")
 
-    # Save to temp file for debugging
-    echo "${key_info}" > /tmp/garage_key_info.txt
-    log debug "Key creation response saved to /tmp/garage_key_info.txt"
-
     log info "S3 key created" "key=${key_name}"
 
     echo "${key_info}"
 }
 
-# Grant bucket permissions to key
+# Grant bucket permissions to key - NOT IMPLEMENTED IN GARAGE v1.0.1 API
+# The /v1/bucket/{id}/allow endpoint doesn't exist in this version
+# Permissions must be granted manually via garage CLI or admin UI
 function grant_permissions() {
     local bucket_name="${1}"
-    local key_name="${2}"
+    local access_key_id="${2}"
 
-    log info "Granting permissions" "bucket=${bucket_name}" "key=${key_name}"
-
-    # Get bucket ID
-    local buckets
-    buckets=$(garage_api "GET" "/v1/bucket")
-    local bucket_id
-    bucket_id=$(echo "${buckets}" | jq -r ".[] | select(.globalAliases[] == \"${bucket_name}\") | .id // empty")
-
-    if [[ -z "${bucket_id}" ]]; then
-        log error "Bucket not found" "bucket=${bucket_name}"
-    fi
-
-    # Get key ID
-    local keys
-    keys=$(garage_api "GET" "/v1/key")
-    local key_id
-    key_id=$(echo "${keys}" | jq -r ".[] | select(.name == \"${key_name}\") | .id // empty")
-
-    if [[ -z "${key_id}" ]]; then
-        log error "Key not found" "key=${key_name}"
-    fi
-
-    # Grant permissions
-    local payload
-    payload=$(jq -n \
-        --arg key_id "${key_id}" \
-        '{
-            "permissions": {
-                "read": true,
-                "write": true,
-                "owner": true
-            },
-            "bucketId": null,
-            "accessKeyId": $key_id
-        }')
-
-    garage_api "POST" "/v1/bucket/${bucket_id}/allow" "${payload}" >/dev/null
-
-    log info "Permissions granted" "bucket=${bucket_name}" "key=${key_name}" "permissions=read,write,owner"
+    log warn "Automatic permission granting not supported in Garage v1.0.1 API"
+    log info "You must manually grant permissions via garage CLI:"
+    log info "  kubectl exec -n storage garage-0 -- garage bucket allow --read --write --owner ${bucket_name} --key home-lab"
 }
 
 # Update cluster.yaml with S3 credentials
@@ -329,9 +330,15 @@ function update_cluster_config() {
     log debug "Created backup" "file=${cluster_yaml}.bak"
 
     # Update credentials using sed
-    sed -i.tmp "s|^garage_s3_access_key_id:.*|garage_s3_access_key_id: \"${access_key_id}\"|" "${cluster_yaml}"
-    sed -i.tmp "s|^garage_s3_secret_access_key:.*|garage_s3_secret_access_key: \"${secret_access_key}\"|" "${cluster_yaml}"
-    rm -f "${cluster_yaml}.tmp"
+    if [[ "$(uname)" == "Darwin" ]]; then
+        # macOS sed requires -i with empty string
+        sed -i '' "s|^garage_s3_access_key_id:.*|garage_s3_access_key_id: \"${access_key_id}\"|" "${cluster_yaml}"
+        sed -i '' "s|^garage_s3_secret_access_key:.*|garage_s3_secret_access_key: \"${secret_access_key}\"|" "${cluster_yaml}"
+    else
+        # Linux sed
+        sed -i "s|^garage_s3_access_key_id:.*|garage_s3_access_key_id: \"${access_key_id}\"|" "${cluster_yaml}"
+        sed -i "s|^garage_s3_secret_access_key:.*|garage_s3_secret_access_key: \"${secret_access_key}\"|" "${cluster_yaml}"
+    fi
 
     log info "cluster.yaml updated successfully"
     log warn "You need to run 'task configure' to regenerate templates with new credentials"
@@ -346,6 +353,9 @@ function main() {
     # Get admin token
     GARAGE_ADMIN_TOKEN=$(get_admin_token)
     export GARAGE_ADMIN_TOKEN
+
+    # Start port-forward
+    start_port_forward
 
     # Check if already initialized
     if is_initialized; then
@@ -368,7 +378,7 @@ function main() {
         if echo "${existing_buckets}" | grep -q "^${bucket}$"; then
             log info "Bucket already exists" "bucket=${bucket}"
         else
-            create_bucket "${bucket}" >/dev/null  # Redirect bucket ID output
+            create_bucket "${bucket}"
         fi
     done
 
@@ -388,48 +398,55 @@ function main() {
             secret_access_key=$(grep "^garage_s3_secret_access_key:" "${ROOT_DIR}/cluster.yaml" | sed 's/.*: "\(.*\)".*/\1/')
 
             if [[ -z "${secret_access_key}" ]] || [[ "${secret_access_key}" == "" ]]; then
-                log warn "S3 key exists but secret is not in cluster.yaml - you may need to recreate the key"
-                log info "To recreate: delete the key in Garage admin UI and run this script again"
-                exit 0
+                log warn "S3 key exists but secret is not in cluster.yaml"
+                log info "Key already exists, cannot retrieve secret. Skipping credential update."
+                log info "If you need new credentials, delete the key and run this script again"
+                # Don't exit - still need to grant permissions
             fi
         else
             log warn "S3 key exists but credentials don't match cluster.yaml"
-            log info "Using existing key, but secret access key is unknown - you may need to update cluster.yaml manually"
-            log info "Or delete the key and run this script again to create a new one"
-            exit 0
+            log info "Key already exists, cannot retrieve secret. Skipping credential update."
+            log info "If you need new credentials, delete the key and run this script again"
+            # Don't exit - still need to grant permissions
         fi
     else
         log info "Creating new S3 key" "key=${key_name}"
         key_info=$(create_key "${key_name}")
-        log debug "Raw key info received" "length=${#key_info}"
-
-        # Parse credentials
-        access_key_id=$(echo "${key_info}" | jq -r '.accessKeyId' 2>&1)
-        if [[ $? -ne 0 ]]; then
-            log error "Failed to parse accessKeyId from response" "jq_output=${access_key_id}" "raw_response=${key_info:0:200}"
-        fi
-
-        secret_access_key=$(echo "${key_info}" | jq -r '.secretAccessKey' 2>&1)
-        if [[ $? -ne 0 ]]; then
-            log error "Failed to parse secretAccessKey from response" "jq_output=${secret_access_key}"
-        fi
-
+        access_key_id=$(echo "${key_info}" | jq -r '.accessKeyId')
+        secret_access_key=$(echo "${key_info}" | jq -r '.secretAccessKey')
         log info "S3 key created" "access_key_id=${access_key_id}"
+
+        # Update cluster.yaml with new credentials
+        update_cluster_config "${access_key_id}" "${secret_access_key}"
     fi
 
-    # Grant permissions to all buckets
+    # Grant permissions to all buckets (manual step required for Garage v1.0.1)
+    log warn "═══ Manual Step Required ═══"
+    log warn "Garage v1.0.1 API does not support granting bucket permissions via REST"
+    log warn "You must grant permissions manually using one of these methods:"
+    log warn ""
+    log warn "Option 1 - Port-forward and use garage CLI (if available):"
+    log warn "  kubectl port-forward -n storage svc/garage-admin 3903:3903 &"
     for bucket in "${required_buckets[@]}"; do
-        grant_permissions "${bucket}" "${key_name}"
+        log warn "  garage -c /path/to/garage.toml bucket allow --read --write --owner ${bucket} --key home-lab"
     done
-
-    # Update cluster.yaml
-    update_cluster_config "${access_key_id}" "${secret_access_key}"
+    log warn ""
+    log warn "Option 2 - The permissions were already granted when you ran manual setup"
+    log warn "  Check: kubectl port-forward -n storage svc/garage-admin 3903:3903 &"
+    log warn "         curl -H 'Authorization: Bearer TOKEN' http://localhost:3903/v1/key?id=${access_key_id}"
+    log warn "  If buckets array is not empty, permissions are already set"
+    log warn ""
 
     log info "Garage S3 bootstrap completed successfully"
-    log info "Next steps:"
-    log info "  1. Run: task configure"
-    log info "  2. Commit changes: git add cluster.yaml kubernetes/"
-    log info "  3. Push: git push"
+
+    if [[ -n "${secret_access_key:-}" ]] && [[ "${secret_access_key}" != "" ]]; then
+        log info "Next steps:"
+        log info "  1. Run: task configure"
+        log info "  2. Commit changes: git add kubernetes/"
+        log info "  3. Push: git push"
+    else
+        log info "Permissions updated. No configuration changes needed."
+    fi
 }
 
 # Run main function
