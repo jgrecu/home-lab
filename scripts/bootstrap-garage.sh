@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+# Bootstrap Garage S3 storage for Kubernetes cluster backups
+#
+# This script automates:
+# - Initializing Garage cluster layout
+# - Creating S3 buckets (longhorn-backups, cnpg-backups)
+# - Generating S3 access keys
+# - Granting bucket permissions to keys
+# - Updating cluster.yaml with credentials
+#
+# IMPORTANT: Requires Garage v2.x for automatic permission granting
+# The /v2/AllowBucketKey API endpoint is not available in v1.x
+
 source "$(dirname "${0}")/lib/common.sh"
 
 export LOG_LEVEL="${LOG_LEVEL:-info}"
@@ -300,16 +312,40 @@ function create_key() {
     echo "${key_info}"
 }
 
-# Grant bucket permissions to key - NOT IMPLEMENTED IN GARAGE v1.0.1 API
-# The /v1/bucket/{id}/allow endpoint doesn't exist in this version
-# Permissions must be granted manually via garage CLI or admin UI
+# Grant bucket permissions to key (Garage v2.x API)
 function grant_permissions() {
     local bucket_name="${1}"
     local access_key_id="${2}"
 
-    log warn "Automatic permission granting not supported in Garage v1.0.1 API"
-    log info "You must manually grant permissions via garage CLI:"
-    log info "  kubectl exec -n storage garage-0 -- garage bucket allow --read --write --owner ${bucket_name} --key home-lab"
+    log info "Granting permissions to key" "bucket=${bucket_name} key=${access_key_id}"
+
+    # Get bucket ID from bucket name
+    local bucket_id
+    bucket_id=$(get_bucket_id "${bucket_name}")
+
+    if [[ -z "${bucket_id}" ]]; then
+        log error "Cannot grant permissions: bucket not found" "bucket=${bucket_name}"
+        return 1
+    fi
+
+    # Garage v2.x uses /v2/AllowBucketKey endpoint
+    local payload
+    payload=$(jq -n \
+        --arg bucketId "${bucket_id}" \
+        --arg accessKeyId "${access_key_id}" \
+        '{
+            "bucketId": $bucketId,
+            "accessKeyId": $accessKeyId,
+            "permissions": {
+                "read": true,
+                "write": true,
+                "owner": true
+            }
+        }')
+
+    garage_api "POST" "/v2/AllowBucketKey" "${payload}" >/dev/null
+
+    log info "Permissions granted successfully" "bucket=${bucket_name}"
 }
 
 # Update cluster.yaml with S3 credentials
@@ -420,22 +456,11 @@ function main() {
         update_cluster_config "${access_key_id}" "${secret_access_key}"
     fi
 
-    # Grant permissions to all buckets (manual step required for Garage v1.0.1)
-    log warn "═══ Manual Step Required ═══"
-    log warn "Garage v1.0.1 API does not support granting bucket permissions via REST"
-    log warn "You must grant permissions manually using one of these methods:"
-    log warn ""
-    log warn "Option 1 - Port-forward and use garage CLI (if available):"
-    log warn "  kubectl port-forward -n storage svc/garage-admin 3903:3903 &"
+    # Grant permissions to all buckets (Garage v2.x supports this via API)
+    log info "Granting bucket permissions to key" "key=${key_name}"
     for bucket in "${required_buckets[@]}"; do
-        log warn "  garage -c /path/to/garage.toml bucket allow --read --write --owner ${bucket} --key home-lab"
+        grant_permissions "${bucket}" "${access_key_id}"
     done
-    log warn ""
-    log warn "Option 2 - The permissions were already granted when you ran manual setup"
-    log warn "  Check: kubectl port-forward -n storage svc/garage-admin 3903:3903 &"
-    log warn "         curl -H 'Authorization: Bearer TOKEN' http://localhost:3903/v1/key?id=${access_key_id}"
-    log warn "  If buckets array is not empty, permissions are already set"
-    log warn ""
 
     log info "Garage S3 bootstrap completed successfully"
 
