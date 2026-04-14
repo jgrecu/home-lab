@@ -6,9 +6,9 @@ metadata:
 spec:
   dependsOn:
     - name: longhorn
-      namespace: flux-system
+      namespace: storage
     - name: garage
-      namespace: flux-system
+      namespace: storage
   interval: 1h
   path: ./kubernetes/apps/database/cloudnative-pg/app
   postBuild:
