@@ -31,10 +31,10 @@ spec:
                   httpGet:
                     path: /health
                     port: 3903
-                  initialDelaySeconds: 15
+                  initialDelaySeconds: 60
                   periodSeconds: 30
                   timeoutSeconds: 5
-                  failureThreshold: 5
+                  failureThreshold: 10
               readiness:
                 enabled: true
                 custom: true
@@ -42,8 +42,9 @@ spec:
                   httpGet:
                     path: /health
                     port: 3903
-                  initialDelaySeconds: 10
+                  initialDelaySeconds: 30
                   periodSeconds: 10
+                  failureThreshold: 10
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
