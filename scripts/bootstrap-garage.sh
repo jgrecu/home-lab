@@ -89,7 +89,7 @@ function start_port_forward() {
     # Test connection with retry
     local retries=0
     while [[ $retries -lt 3 ]]; do
-        if curl -s -f -H "Authorization: Bearer ${GARAGE_ADMIN_TOKEN}" http://localhost:3903/v1/status >/dev/null 2>&1; then
+        if curl -s -f -H "Authorization: Bearer ${GARAGE_ADMIN_TOKEN}" http://localhost:3903/v2/GetClusterStatus >/dev/null 2>&1; then
             log debug "Port-forward ready" "pid=${PORT_FORWARD_PID}"
             return 0
         fi
@@ -143,13 +143,13 @@ function garage_api() {
 
 # Get cluster layout
 function get_layout() {
-    garage_api "GET" "/v1/layout"
+    garage_api "GET" "/v2/GetClusterLayout"
 }
 
 # Get node ID
 function get_node_id() {
     local status
-    status=$(garage_api "GET" "/v1/status")
+    status=$(garage_api "GET" "/v2/GetClusterStatus")
     echo "${status}" | jq -r '.nodes[0].id // empty'
 }
 
@@ -194,12 +194,12 @@ function init_layout() {
             "tags": []
         }]')
 
-    garage_api "POST" "/v1/layout" "${layout_update}" >/dev/null
+    garage_api "POST" "/v2/UpdateClusterLayout" "${layout_update}" >/dev/null
     log info "Layout assigned to node" "node_id=${node_id}" "zone=dc1" "capacity=100GB"
 
     # Apply layout
     local current_version
-    current_version=$(get_layout | jq -r '.version')
+    current_version=$(get_layout | jq -r '.layoutVersion')
 
     local apply_payload
     apply_payload=$(jq -n \
@@ -208,14 +208,14 @@ function init_layout() {
             "version": ($version + 1)
         }')
 
-    garage_api "POST" "/v1/layout/apply" "${apply_payload}" >/dev/null
+    garage_api "POST" "/v2/ApplyClusterLayout" "${apply_payload}" >/dev/null
     log info "Layout applied successfully" "version=$((current_version + 1))"
 }
 
 # List buckets
 function list_buckets() {
     local buckets
-    buckets=$(garage_api "GET" "/v1/bucket")
+    buckets=$(garage_api "GET" "/v2/ListBuckets")
     echo "${buckets}" | jq -r '.[].globalAliases[]? // empty'
 }
 
@@ -223,7 +223,7 @@ function list_buckets() {
 function get_bucket_id() {
     local bucket_name="${1}"
     local buckets
-    buckets=$(garage_api "GET" "/v1/bucket")
+    buckets=$(garage_api "GET" "/v2/ListBuckets")
     echo "${buckets}" | jq -r ".[] | select(.globalAliases[]? == \"${bucket_name}\") | .id // empty" | head -1
 }
 
@@ -248,7 +248,7 @@ function create_bucket() {
         -H "Authorization: Bearer ${GARAGE_ADMIN_TOKEN}" \
         -H "Content-Type: application/json" \
         -d "${payload}" \
-        "http://localhost:3903/v1/bucket")
+        "http://localhost:3903/v2/CreateBucket")
 
     local response
     response=$(cat "${temp_file}" 2>/dev/null || echo "")
@@ -268,7 +268,7 @@ function create_bucket() {
 # List keys
 function list_keys() {
     local keys
-    keys=$(garage_api "GET" "/v1/key")
+    keys=$(garage_api "GET" "/v2/ListKeys")
     echo "${keys}" | jq -r '.[].name // empty'
 }
 
@@ -278,17 +278,17 @@ function get_key_info() {
 
     # List all keys and find by name
     local keys
-    keys=$(garage_api "GET" "/v1/key")
+    keys=$(garage_api "GET" "/v2/ListKeys")
 
     local key_id
-    key_id=$(echo "${keys}" | jq -r ".[] | select(.name == \"${key_name}\") | .id // empty" | head -1)
+    key_id=$(echo "${keys}" | jq -r ".[] | select(.name == \"${key_name}\") | .accessKeyId // empty" | head -1)
 
     if [[ -z "${key_id}" ]]; then
         return 1
     fi
 
     # Get full key info (but secretAccessKey is not returned for existing keys)
-    garage_api "GET" "/v1/key?id=${key_id}"
+    garage_api "GET" "/v2/GetKeyInfo?accessKeyId=${key_id}"
 }
 
 # Create key
@@ -305,7 +305,7 @@ function create_key() {
         }')
 
     local key_info
-    key_info=$(garage_api "POST" "/v1/key" "${payload}")
+    key_info=$(garage_api "POST" "/v2/CreateKey" "${payload}")
 
     log info "S3 key created" "key=${key_name}"
 

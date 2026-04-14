@@ -1,8 +1,6 @@
 machine:
-  # Required for Longhorn — installs iSCSI initiator tools and loads the kernel module
-  install:
-    extensions:
-      - image: ghcr.io/siderolabs/iscsi-tools:v0.1.6
+  # Required for Longhorn — loads iSCSI kernel module
+  # (iscsi-tools extension is pre-installed via factory.talos.dev schematic)
   kernel:
     modules:
       - name: iscsi_tcp
