@@ -30,7 +30,7 @@ spec:
                 spec:
                   httpGet:
                     path: /health
-                    port: &s3Port 3900
+                    port: 3903
                   initialDelaySeconds: 15
                   periodSeconds: 30
                   timeoutSeconds: 5
@@ -41,7 +41,7 @@ spec:
                 spec:
                   httpGet:
                     path: /health
-                    port: *s3Port
+                    port: 3903
                   initialDelaySeconds: 10
                   periodSeconds: 10
             securityContext:
@@ -95,7 +95,7 @@ spec:
       s3:
         ports:
           s3:
-            port: *s3Port
+            port: &s3Port 3900
       # Admin API — used only during bootstrap and key management
       admin:
         ports:
