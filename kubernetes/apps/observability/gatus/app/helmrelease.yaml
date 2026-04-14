@@ -129,6 +129,13 @@ spec:
 
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "Gatus"
+          gethomepage.dev/group: "Observability"
+          gethomepage.dev/description: "Status page and uptime monitoring"
+          gethomepage.dev/icon: "gatus.png"
+          gethomepage.dev/href: "https://gatus.${SECRET_DOMAIN}"
         hostnames: ["gatus.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
