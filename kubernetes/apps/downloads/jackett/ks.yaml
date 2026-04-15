@@ -5,7 +5,7 @@ metadata:
   name: jackett
 spec:
   interval: 1h
-  path: ./kubernetes/apps/entertainment/jackett/app
+  path: ./kubernetes/apps/downloads/jackett/app
   postBuild:
     substituteFrom:
       - name: cluster-secrets

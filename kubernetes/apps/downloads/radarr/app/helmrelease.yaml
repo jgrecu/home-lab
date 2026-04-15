@@ -54,7 +54,7 @@ spec:
           - path: /config
 
       # Shared download staging area — same PVC as Transmission. Radarr monitors
-      # /downloads for completed files and imports them to /media/Films.
+      # /downloads for completed files and imports them to /media/movies.
       # Since downloads (Longhorn) and media (NFS) are different filesystems,
       # Radarr will copy-then-delete rather than hardlink on import. This is
       # expected behavior — set "Copy" (not "Move") in Radarr's import settings.
