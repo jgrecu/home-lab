@@ -44,10 +44,6 @@ spec:
           storageClass: longhorn
           size: 10Gi
 
-    # Redis managed by Dragonfly in database-system namespace — disable bundled Redis
-    redis:
-      enabled: false
-
     route:
       enabled: true
       hostnames: ["immich.${SECRET_DOMAIN}"]
