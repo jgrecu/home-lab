@@ -19,6 +19,8 @@ spec:
               tag: latest
             env:
               TZ: "Europe/Madrid"
+              PUID: "1000"
+              PGID: "1000"
             probes:
               liveness: &probes
                 enabled: true
@@ -33,8 +35,9 @@ spec:
                   failureThreshold: 5
               readiness: *probes
             securityContext:
-              allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
+              allowPrivilegeEscalation: true
+              runAsUser: 1000
+              runAsGroup: 1000
             resources:
               requests:
                 cpu: 10m
