@@ -48,10 +48,6 @@ spec:
     redis:
       enabled: false
 
-    # PostgreSQL managed by CloudNativePG — disable the bundled subchart
-    postgresql:
-      enabled: false
-
     route:
       enabled: true
       hostnames: ["immich.${SECRET_DOMAIN}"]
