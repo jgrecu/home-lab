@@ -33,11 +33,10 @@ spec:
               # Options: LOCAL (default, local subnet only), ALL (all interfaces), SINGLE (primary interface)
               # See: https://docs.pi-hole.net/ftldns/configfile/#dns
               FTLCONF_dns_listeningMode: "ALL"
-              # Conditional forwarding: forward *.jgrecu.dev queries to k8s_gateway
-              # FTL v6.x doesn't read /etc/dnsmasq.d/ by default, so inject via dnsmasq_lines
-              # Use auth-server (not server) because k8s_gateway refuses recursive queries
-              # See: https://docs.pi-hole.net/ftldns/configfile/#miscellaneous
-              FTLCONF_misc_dnsmasq_lines: "auth-server=/${SECRET_DOMAIN}/192.168.1.56"
+              # Conditional forwarding using FTL's native revServers configuration
+              # Format: FTLCONF_dns_revServers_N="server#port,domain"
+              # See: https://docs.pi-hole.net/ftldns/configfile/#reverse-servers
+              FTLCONF_dns_revServers_0: "192.168.1.56,${SECRET_DOMAIN}"
             probes:
               liveness:
                 enabled: true
