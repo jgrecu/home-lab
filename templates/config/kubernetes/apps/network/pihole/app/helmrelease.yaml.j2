@@ -28,6 +28,11 @@ spec:
               DNSSEC: "true"
               # The hostname Pi-hole will recognise for its own web UI
               VIRTUAL_HOST: "pihole.${SECRET_DOMAIN}"
+              # FTL listening mode: ALL allows DNS queries from any network interface.
+              # Required when Pi-hole is exposed via LoadBalancer to your home network.
+              # Options: LOCAL (default, local subnet only), ALL (all interfaces), SINGLE (primary interface)
+              # See: https://docs.pi-hole.net/ftldns/configfile/#dns
+              FTLCONF_dns_listeningMode: "ALL"
             probes:
               liveness:
                 enabled: true
