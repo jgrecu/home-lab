@@ -34,9 +34,10 @@ spec:
               # See: https://docs.pi-hole.net/ftldns/configfile/#dns
               FTLCONF_dns_listeningMode: "ALL"
               # Conditional forwarding using FTL's native revServers configuration
-              # Format: "server#port,domain" (semicolon-delimited for multiple entries)
+              # Format: "enabled,ip-address/prefix,server#port,domain"
+              # For domain forwarding (not reverse DNS), use 0.0.0.0/0 as the address range
               # See: https://docs.pi-hole.net/ftldns/configfile/#reverse-servers
-              FTLCONF_dns_revServers: "192.168.1.56,${SECRET_DOMAIN}"
+              FTLCONF_dns_revServers: "true,0.0.0.0/0,192.168.1.56,${SECRET_DOMAIN}"
             probes:
               liveness:
                 enabled: true
