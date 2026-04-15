@@ -35,9 +35,9 @@ spec:
               FTLCONF_dns_listeningMode: "ALL"
               # Conditional forwarding: forward *.jgrecu.dev queries to k8s_gateway
               # FTL v6.x doesn't read /etc/dnsmasq.d/ by default, so inject via dnsmasq_lines
-              # Array format: FTLCONF_misc_dnsmasq_lines_N where N is the index
+              # Array format in TOML: must pass as JSON array in env var
               # See: https://docs.pi-hole.net/ftldns/configfile/#miscellaneous
-              FTLCONF_misc_dnsmasq_lines_0: "server=/${SECRET_DOMAIN}/#{ cluster_dns_gateway_addr }#"
+              FTLCONF_misc_dnsmasq_lines: '["server=/${SECRET_DOMAIN}/#{ cluster_dns_gateway_addr }#"]'
             probes:
               liveness:
                 enabled: true
