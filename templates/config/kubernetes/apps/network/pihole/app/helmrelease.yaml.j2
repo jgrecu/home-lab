@@ -34,9 +34,9 @@ spec:
               # See: https://docs.pi-hole.net/ftldns/configfile/#dns
               FTLCONF_dns_listeningMode: "ALL"
               # Conditional forwarding using FTL's native revServers configuration
-              # Format: FTLCONF_dns_revServers_N="server#port,domain"
+              # Format: "server#port,domain" (semicolon-delimited for multiple entries)
               # See: https://docs.pi-hole.net/ftldns/configfile/#reverse-servers
-              FTLCONF_dns_revServers_0: "#{ cluster_dns_gateway_addr }#,${SECRET_DOMAIN}"
+              FTLCONF_dns_revServers: "#{ cluster_dns_gateway_addr }#,${SECRET_DOMAIN}"
             probes:
               liveness:
                 enabled: true
