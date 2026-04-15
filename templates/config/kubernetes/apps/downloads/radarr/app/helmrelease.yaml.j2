@@ -70,11 +70,10 @@ spec:
 
       # NFS media library — Radarr imports finished movies here.
       # Root folder in Radarr UI should be set to /media/Films
+      # Uses shared static PV pointing to /videos on NAS
       media:
         type: persistentVolumeClaim
-        storageClass: nfs-media
-        size: 1Ti
-        accessMode: ReadWriteMany
+        existingClaim: radarr-media
         globalMounts:
           - path: /media
 

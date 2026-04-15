@@ -1,9 +1,9 @@
 ---
-# Static PV pointing to existing /immich/library on NAS
+# Static PV pointing to existing /books on NAS
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: immich-library
+  name: kavita-books
 spec:
   capacity:
     storage: 1Ti
@@ -16,17 +16,17 @@ spec:
     - noatime
   nfs:
     server: "192.168.1.37"
-    path: /immich/library
+    path: /books
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: immich-library
+  name: kavita-books
 spec:
   accessModes:
     - ReadWriteMany
   storageClassName: ""  # Empty to use static PV
-  volumeName: immich-library  # Bind to static PV above
+  volumeName: kavita-books  # Bind to static PV above
   resources:
     requests:
       storage: 1Ti

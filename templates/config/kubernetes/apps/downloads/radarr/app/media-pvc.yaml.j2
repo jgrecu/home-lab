@@ -1,0 +1,15 @@
+---
+# PVC for Radarr media - binds to shared nfs-media-videos PV
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: radarr-media
+  namespace: downloads
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""  # Empty to use static PV
+  volumeName: nfs-media-videos  # Bind to shared static PV
+  resources:
+    requests:
+      storage: 10Ti
