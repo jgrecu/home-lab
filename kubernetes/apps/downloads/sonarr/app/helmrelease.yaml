@@ -19,11 +19,14 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/home-operations/sonarr
-              # renovate: datasource=docker depName=ghcr.io/home-operations/sonarr
-              tag: 4.0.13.2932
+              repository: lscr.io/linuxserver/sonarr
+              # renovate: datasource=docker depName=lscr.io/linuxserver/sonarr
+              tag: latest
             env:
               TZ: "Europe/Madrid"
+              # LinuxServer: drop to this UID/GID after s6-overlay init
+              PUID: "1000"
+              PGID: "1000"
             probes:
               liveness: &probes
                 enabled: true
@@ -35,9 +38,10 @@ spec:
                   initialDelaySeconds: 30
                   periodSeconds: 30
               readiness: *probes
+            # LinuxServer images use s6-overlay which starts as root and drops
+            # to PUID/PGID. Do not drop all capabilities or the init will fail.
             securityContext:
               allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
             resources:
               requests:
                 cpu: 10m

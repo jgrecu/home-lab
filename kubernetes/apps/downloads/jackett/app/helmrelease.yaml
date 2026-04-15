@@ -16,7 +16,7 @@ spec:
             image:
               repository: lscr.io/linuxserver/jackett
               # renovate: datasource=docker depName=lscr.io/linuxserver/jackett
-              tag: 0.21.3279
+              tag: latest
             env:
               TZ: "Europe/Madrid"
               # LinuxServer: drop to this UID/GID after s6-overlay init
