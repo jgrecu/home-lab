@@ -1,0 +1,68 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: immich
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: immich
+  interval: 1h
+  values:
+    # Override Immich image version
+    image:
+      tag: v2.7.5
+
+    env:
+      # Database — CNPG creates the immich-postgres-app secret automatically
+      DB_HOSTNAME: immich-postgres-rw
+      DB_DATABASE_NAME: immich
+      DB_USERNAME: immich
+      DB_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: immich-postgres-app
+            key: password
+      REDIS_HOSTNAME: "{{ .Release.Name }}-redis-master"
+
+    immich:
+      persistence:
+        # Photo library on NFS — originals, thumbnails, encoded videos.
+        # All stored on your NAS: large files belong there, not on cluster SSDs.
+        library:
+          enabled: true
+          storageClass: nfs-photos
+          # Size is advisory for NFS — actual capacity is your NAS share size
+          size: 1Ti
+
+    # Machine learning model cache on Longhorn — models are ~2-4GB and
+    # downloaded once. Fast local SSD means quicker startup after pod restarts.
+    machine-learning:
+      persistence:
+        cache:
+          enabled: true
+          storageClass: longhorn
+          size: 10Gi
+
+    # Redis for job queues — standalone, no auth needed inside the cluster
+    redis:
+      enabled: true
+      architecture: standalone
+      auth:
+        enabled: false
+      master:
+        persistence:
+          storageClass: longhorn
+          size: 1Gi
+
+    # PostgreSQL managed by CloudNativePG — disable the bundled subchart
+    postgresql:
+      enabled: false
+
+    route:
+      enabled: true
+      hostnames: ["immich.${SECRET_DOMAIN}"]
+      parentRefs:
+        - name: envoy-external
+          namespace: network
+          sectionName: https
