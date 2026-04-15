@@ -6,6 +6,9 @@ metadata:
 spec:
   dependsOn:
     - name: cloudnative-pg
+      namespace: database-system
+    - name: dragonfly-instance
+      namespace: database-system
   interval: 1h
   path: ./kubernetes/apps/entertainment/immich/app
   postBuild:
