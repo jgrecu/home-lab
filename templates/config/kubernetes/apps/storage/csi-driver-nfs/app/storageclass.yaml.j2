@@ -36,10 +36,10 @@ parameters:
   # Downloads are kept on a local Longhorn PVC (fast SSD), not here.
   # Radarr/Sonarr copy-then-delete from Longhorn into this share on import.
   # Your NAS share should look like:
-  #   /media/
-  #     movies/
-  #     tv/
-  #     music/    (optional)
+  #   /videos/
+  #     Films/      ← Radarr imports here
+  #     Series/     ← Sonarr imports here
+  #     music/      (optional)
   mountPermissions: "0755"
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
