@@ -10,7 +10,7 @@ spec:
     - name: garage
       namespace: storage
   interval: 1h
-  path: ./kubernetes/apps/database/cloudnative-pg/app
+  path: ./kubernetes/apps/database-system/cloudnative-pg/app
   postBuild:
     substituteFrom:
       - name: cluster-secrets
@@ -20,7 +20,7 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: database
+  targetNamespace: database-system
   # wait: true so any app with dependsOn: cloudnative-pg won't start
   # until the operator and its CRDs are fully installed
   wait: true
