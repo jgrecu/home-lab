@@ -4,15 +4,18 @@
 # PVCs are ReadWriteOnce. Label your chosen node before deploying:
 #   kubectl label node <node-name> media-node=true
 #
-# Size: set this to however much download buffer you need. 200Gi covers several
-# large queues. Files are deleted after Radarr/Sonarr import them to NFS.
+# Size: 20Gi for download buffer. Files are deleted after Radarr/Sonarr import
+# them to NFS. Single replica to save space on RPi nodes.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: media-downloads
+  annotations:
+    # Use only 1 replica to save space on small RPi storage
+    longhorn.io/numberOfReplicas: "1"
 spec:
   storageClassName: longhorn
   accessModes: [ReadWriteOnce]
   resources:
     requests:
-      storage: 100Gi
+      storage: 20Gi
