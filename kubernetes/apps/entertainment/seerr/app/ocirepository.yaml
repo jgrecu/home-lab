@@ -1,0 +1,11 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: seerr
+spec:
+  interval: 24h
+  provider: generic
+  url: oci://tccr.io/truecharts/seerr
+  ref:
+    semver: "*"

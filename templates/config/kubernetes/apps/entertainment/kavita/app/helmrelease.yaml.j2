@@ -1,0 +1,75 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kavita
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: kavita
+  interval: 1h
+  values:
+    controllers:
+      kavita:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/kareadita/kavita
+              tag: v0.8.9.1-ls104
+            env:
+              TZ: "Europe/Madrid"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 5000
+                  initialDelaySeconds: 15
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 15m
+              limits:
+                memory: 512Mi
+    persistence:
+      # Kavita config + SQLite database — kept locally on Longhorn
+      config:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 2Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /kavita/config
+      # Book library on NFS — manga, comics, PDFs, ebooks
+      books:
+        type: persistentVolumeClaim
+        storageClass: nfs-books
+        size: 1Ti
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /books
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["kavita.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
