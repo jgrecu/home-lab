@@ -21,7 +21,7 @@ spec:
             image:
               repository: lscr.io/linuxserver/sonarr
               # renovate: datasource=docker depName=lscr.io/linuxserver/sonarr
-              tag: 4.0.17.2952
+              tag: 4.0.17
             env:
               TZ: "Europe/Madrid"
               # LinuxServer: drop to this UID/GID after s6-overlay init
