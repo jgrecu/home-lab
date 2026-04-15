@@ -50,11 +50,10 @@ spec:
         globalMounts:
           - path: /kavita/config
       # Book library on NFS — manga, comics, PDFs, ebooks
+      # Uses static PV pointing directly to /books on NAS
       books:
         type: persistentVolumeClaim
-        storageClass: nfs-books
-        size: 1Ti
-        accessMode: ReadWriteOnce
+        existingClaim: kavita-books
         globalMounts:
           - path: /books
     service:

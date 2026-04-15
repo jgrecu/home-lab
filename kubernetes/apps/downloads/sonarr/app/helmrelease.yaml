@@ -70,11 +70,10 @@ spec:
 
       # NFS media library — Sonarr imports finished episodes here.
       # Root folder in Sonarr UI should be set to /media/Series
+      # Uses shared static PV pointing to /videos on NAS
       media:
         type: persistentVolumeClaim
-        storageClass: nfs-media
-        size: 1Ti
-        accessMode: ReadWriteMany
+        existingClaim: sonarr-media
         globalMounts:
           - path: /media
 

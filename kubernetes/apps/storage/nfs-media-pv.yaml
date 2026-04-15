@@ -1,0 +1,20 @@
+---
+# Static PV pointing to existing /videos on NAS
+# Shared by Radarr, Sonarr, and Jellyfin
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-media-videos
+spec:
+  capacity:
+    storage: 10Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=4.1
+    - hard
+    - noatime
+  nfs:
+    server: "192.168.1.37"
+    path: /videos

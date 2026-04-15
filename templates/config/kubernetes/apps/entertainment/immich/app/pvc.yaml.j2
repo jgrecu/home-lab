@@ -1,4 +1,23 @@
 ---
+# Static PV pointing to existing /immich/library on NAS
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-library
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=4.1
+    - hard
+    - noatime
+  nfs:
+    server: "#{ nfs_server_addr }#"
+    path: /immich/library
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -6,7 +25,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: nfs-photos
+  storageClassName: ""  # Empty to use static PV
+  volumeName: immich-library  # Bind to static PV above
   resources:
     requests:
       storage: 1Ti

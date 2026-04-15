@@ -53,13 +53,12 @@ spec:
           - path: /config
 
       # Media library on NFS — same share that Radarr/Sonarr import into.
-      # Your NAS should look like: /videos/movies  /videos/tv
+      # Your NAS should look like: /videos/Films  /videos/Series
       # Jellyfin will see both folders and can have separate libraries for each.
+      # Uses shared static PV pointing to /videos on NAS
       media:
         type: persistentVolumeClaim
-        storageClass: nfs-media
-        size: 1Ti
-        accessMode: ReadWriteMany
+        existingClaim: jellyfin-media
         globalMounts:
           - path: /media
 

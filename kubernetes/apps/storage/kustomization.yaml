@@ -8,6 +8,7 @@ components:
 
 resources:
   - ./namespace.yaml
+  - ./nfs-media-pv.yaml
   - ./longhorn/ks.yaml
   - ./csi-driver-nfs/ks.yaml
   - ./garage/ks.yaml
