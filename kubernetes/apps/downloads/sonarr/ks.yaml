@@ -5,7 +5,7 @@ metadata:
   name: sonarr
 spec:
   interval: 1h
-  path: ./kubernetes/apps/entertainment/sonarr/app
+  path: ./kubernetes/apps/downloads/sonarr/app
   postBuild:
     substituteFrom:
       - name: cluster-secrets

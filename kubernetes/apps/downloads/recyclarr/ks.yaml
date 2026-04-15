@@ -5,7 +5,7 @@ metadata:
   name: recyclarr
 spec:
   interval: 1h
-  path: ./kubernetes/apps/entertainment/recyclarr/app
+  path: ./kubernetes/apps/downloads/recyclarr/app
   postBuild:
     substituteFrom:
       - name: cluster-secrets
