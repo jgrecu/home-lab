@@ -16,7 +16,7 @@ spec:
             image:
               repository: ghcr.io/hotio/seerr
               # renovate: datasource=docker depName=ghcr.io/hotio/seerr
-              tag: 3.1.1
+              tag: latest
             env:
               TZ: "Europe/Madrid"
             probes:
