@@ -23,7 +23,9 @@ spec:
           secretKeyRef:
             name: immich-postgres-app
             key: password
-      REDIS_HOSTNAME: "{{ .Release.Name }}-redis-master"
+      # Redis — use Dragonfly in database-system namespace
+      REDIS_HOSTNAME: dragonfly.database-system.svc.cluster.local
+      REDIS_PORT: "6379"
 
     immich:
       persistence:
@@ -44,16 +46,9 @@ spec:
           storageClass: longhorn
           size: 10Gi
 
-    # Redis for job queues — standalone, no auth needed inside the cluster
+    # Redis managed by Dragonfly in database-system namespace — disable bundled Redis
     redis:
-      enabled: true
-      architecture: standalone
-      auth:
-        enabled: false
-      master:
-        persistence:
-          storageClass: longhorn
-          size: 1Gi
+      enabled: false
 
     # PostgreSQL managed by CloudNativePG — disable the bundled subchart
     postgresql:
