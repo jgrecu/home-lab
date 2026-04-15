@@ -36,9 +36,10 @@ spec:
             resources:
               requests:
                 cpu: 100m
+                memory: 512Mi
               limits:
-                # Increase if you enable hardware transcoding
-                memory: 4Gi
+                # Reduced for RPi cluster constraints (increase on ThinkCentre)
+                memory: 2Gi
 
     persistence:
       # Jellyfin config, metadata cache, and transcoding temp on Longhorn.

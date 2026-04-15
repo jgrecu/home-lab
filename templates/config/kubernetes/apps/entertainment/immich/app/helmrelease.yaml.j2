@@ -31,11 +31,9 @@ spec:
       persistence:
         # Photo library on NFS — originals, thumbnails, encoded videos.
         # All stored on your NAS: large files belong there, not on cluster SSDs.
+        # Chart 0.11.1+ requires existingClaim instead of creating PVC
         library:
-          enabled: true
-          storageClass: nfs-photos
-          # Size is advisory for NFS — actual capacity is your NAS share size
-          size: 1Ti
+          existingClaim: immich-library
 
     # Machine learning model cache on Longhorn — models are ~2-4GB and
     # downloaded once. Fast local SSD means quicker startup after pod restarts.
