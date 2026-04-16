@@ -38,33 +38,3 @@ spec:
   nfs:
     server: "#{ nfs_server_addr }#"
     path: /videos
----
-# PVC for downloads namespace (Radarr, Sonarr)
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: media-library
-  namespace: downloads
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: ""  # Empty to use static PV
-  volumeName: nfs-media-videos-downloads  # Bind to downloads PV
-  resources:
-    requests:
-      storage: 10Ti
----
-# PVC for entertainment namespace (Jellyfin)
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: media-library
-  namespace: entertainment
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: ""  # Empty to use static PV
-  volumeName: nfs-media-videos-entertainment  # Bind to entertainment PV
-  resources:
-    requests:
-      storage: 10Ti
