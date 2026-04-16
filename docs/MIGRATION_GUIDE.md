@@ -97,7 +97,7 @@ This guide covers migrating from the current Raspberry Pi 4 cluster (1 controlle
 #### Database System
 - **CloudNative-PG**: PostgreSQL operator with Garage S3 backups
   - Manages databases for: Immich, Home Assistant, Nextcloud, Forgejo
-  - Barman continuous WAL archiving (30-day retention)
+  - Barman continuous WAL archiving (180-day retention)
 - **Dragonfly**: Redis-compatible cache (v1.38.0)
   - Used by: Immich (job queues), Nextcloud (file locking/sessions)
 
@@ -107,9 +107,10 @@ This guide covers migrating from the current Raspberry Pi 4 cluster (1 controlle
   - Buckets: `longhorn-backups`, `cnpg-backups`, `volsync-backups`
 - **NFS CSI Driver**: For media library access
 - **Volsync**: Automated PVC backups to Garage S3
-  - Daily backups: Homepage (1 AM), Home Assistant (2 AM), Nextcloud (1 AM), Forgejo (3 AM)
-  - Daily backups: Immich DB (3 AM), Kavita (3 AM), Grafana (4 AM)
-  - Retention: 7 daily, 4 weekly, 3 monthly snapshots
+  - Daily backups: Homepage (3:15 AM), Home Assistant (2 AM), Nextcloud (1 AM), Forgejo (3 AM)
+  - Daily backups: Immich DB (2:30 AM), Kavita (3 AM), Grafana (3:30 AM)
+  - Retention: 7 daily, 8 weekly, 6 monthly snapshots (~6 months)
+  - Uses Restic with deduplication for efficient storage
 
 ---
 
