@@ -65,7 +65,7 @@ This guide covers migrating from the current Raspberry Pi 4 cluster (1 controlle
 **NFS Storage Architecture**: All NFS-backed PVCs now use static PersistentVolumes pointing directly to existing NAS directory structures (no more `pvc-*` subdirectories from dynamic provisioning).
 
 #### Home Automation Namespace
-- **Home Assistant**: 2025.4.0 - Smart home automation platform
+- **Home Assistant**: 2025.12.5 - Smart home automation platform
   - Uses CNPG PostgreSQL database (2 instances, 10Gi)
   - 5Gi Longhorn PVC for config, automations, scripts
   - Internal access only (envoy-internal gateway)
@@ -73,9 +73,9 @@ This guide covers migrating from the current Raspberry Pi 4 cluster (1 controlle
   - Volsync daily backups to Garage
 
 #### Cloud Namespace
-- **Nextcloud**: 30.0.2-apache - Private cloud file sync and sharing
+- **Nextcloud**: 30.0.17-apache - Private cloud file sync and sharing
   - Uses CNPG PostgreSQL database (2 instances, 10Gi)
-  - Uses standalone Redis for caching/locking
+  - Uses shared Dragonfly instance for caching/locking
   - 10Gi Longhorn PVC for installation/config
   - 1Ti NFS PVC for user data (on NAS `/nextcloud`)
   - External access via envoy-external gateway
@@ -90,7 +90,7 @@ This guide covers migrating from the current Raspberry Pi 4 cluster (1 controlle
   - Built-in container registry enabled
   - Homepage integration enabled
   - Volsync daily backups to Garage
-- **Forgejo Runner**: 6.3.1 (2 replicas) - GitHub Actions-compatible CI/CD runners
+- **Forgejo Runner**: 6.4.0 (2 replicas) - GitHub Actions-compatible CI/CD runners
   - Requires manual registration token after Forgejo first deploys
   - Supports `ubuntu-latest` and `ubuntu-22.04` labels
 
@@ -99,7 +99,7 @@ This guide covers migrating from the current Raspberry Pi 4 cluster (1 controlle
   - Manages databases for: Immich, Home Assistant, Nextcloud, Forgejo
   - Barman continuous WAL archiving (30-day retention)
 - **Dragonfly**: Redis-compatible cache (v1.38.0)
-  - Used by Immich for job queues
+  - Used by: Immich (job queues), Nextcloud (file locking/sessions)
 
 #### Storage System
 - **Longhorn**: Block storage with 2 replicas
@@ -581,7 +581,7 @@ If starting fresh (not restoring PVCs), reconfigure:
 - Initial setup wizard will:
   - Create admin account (or use credentials from secret)
   - Detect PostgreSQL database automatically (CNPG managed)
-  - Detect Redis cache automatically
+  - Detect Dragonfly cache automatically (shared Redis-compatible instance)
 - Data directory: `/var/www/html/data` (NFS-backed)
 - Upload files, sync clients, configure users through web UI
 - Apps can be installed from Nextcloud App Store
