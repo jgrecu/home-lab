@@ -5,6 +5,10 @@ resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
   - ./configmap.yaml
+  - ./services-config.yaml
+  - ./bookmarks-config.yaml
+  - ./settings-config.yaml
+  - ./widgets-config.yaml
   - ./serviceaccount.yaml
   - ./clusterrole.yaml
   - ./clusterrolebinding.yaml
