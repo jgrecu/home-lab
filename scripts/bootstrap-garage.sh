@@ -382,7 +382,7 @@ function main() {
     fi
 
     # Create required buckets
-    local required_buckets=("longhorn-backups" "cnpg-backups")
+    local required_buckets=("longhorn-backups" "cnpg-backups" "volsync-backups")
     local existing_buckets
     existing_buckets=$(list_buckets)
 

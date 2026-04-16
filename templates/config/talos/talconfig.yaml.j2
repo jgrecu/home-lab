@@ -64,7 +64,7 @@ nodes:
         #% endif %#
         #% endif %#
     #% if talos_patches('%s' % (item.name)) | length == 0 %#
-    #% if item.encrypt_disk | default(false, true) or (item.kernel_modules | default([], true) | length > 0) %#
+    #% if item.encrypt_disk | default(false, true) or (item.kernel_modules | default([], true) | length > 0) or item.media_node | default(false, true) %#
     patches:
     #% if item.encrypt_disk | default(false, true) %#
       - # Encrypt system disk with TPM
@@ -91,6 +91,13 @@ nodes:
               #% for module in item.kernel_modules %#
               - name: #{ module }#
               #% endfor %#
+    #% endif %#
+    #% if item.media_node | default(false, true) %#
+      - # Label node for media workloads
+        |-
+        machine:
+          nodeLabels:
+            media-node: "true"
     #% endif %#
     #% endif %#
     #% else %#
@@ -120,6 +127,12 @@ nodes:
               #% for module in item.kernel_modules %#
               - name: #{ module }#
               #% endfor %#
+    #% endif %#
+    #% if item.media_node | default(false, true) %#
+      - |-
+        machine:
+          nodeLabels:
+            media-node: "true"
     #% endif %#
     #% endif %#
       - "@./patches/#{ item.name }#/#{ file | basename }#"
