@@ -16,7 +16,7 @@ spec:
           app:
             image:
               repository: nextcloud
-              tag: 30.0.17-apache
+              tag: 33.0.2-apache
             env:
               # Initial admin account — only used on first boot.
               # After init, credentials are stored in the Longhorn PVC.
