@@ -8,6 +8,16 @@ spec:
     kind: OCIRepository
     name: homepage
   interval: 1h
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: homepage
+            patch: |
+              - op: replace
+                path: /spec/template/spec/serviceAccountName
+                value: homepage
   values:
     controllers:
       homepage:
