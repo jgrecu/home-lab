@@ -16,7 +16,7 @@ spec:
           app:
             image:
               repository: nextcloud
-              tag: 30.0.2-apache
+              tag: 30.0.17-apache
             env:
               # Initial admin account — only used on first boot.
               # After init, credentials are stored in the Longhorn PVC.
@@ -41,7 +41,8 @@ spec:
                     key: password
               # Redis for file locking and session caching.
               # Without Redis, Nextcloud uses DB-level locking which is slow.
-              REDIS_HOST: nextcloud-redis-master
+              # Using shared Dragonfly instance from database-system namespace.
+              REDIS_HOST: dragonfly.database-system.svc.cluster.local
               REDIS_HOST_PORT: "6379"
               # PHP memory limit — 512Mi covers most workloads including
               # thumbnail generation and file uploads

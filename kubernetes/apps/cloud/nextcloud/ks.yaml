@@ -8,6 +8,7 @@ spec:
     - name: cloudnative-pg
     - name: longhorn
     - name: csi-driver-nfs
+    - name: dragonfly-instance
   interval: 1h
   path: ./kubernetes/apps/cloud/nextcloud/app
   postBuild:
