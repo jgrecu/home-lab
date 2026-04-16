@@ -73,7 +73,7 @@ spec:
       # Uses shared static PV pointing to /videos on NAS
       media:
         type: persistentVolumeClaim
-        existingClaim: radarr-media
+        existingClaim: media-library
         globalMounts:
           - path: /media
 
