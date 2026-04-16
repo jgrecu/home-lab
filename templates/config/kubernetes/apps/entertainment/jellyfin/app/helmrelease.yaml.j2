@@ -79,3 +79,10 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Entertainment
+          gethomepage.dev/name: Jellyfin
+          gethomepage.dev/icon: jellyfin.png
+          gethomepage.dev/description: Media streaming server
+          gethomepage.dev/href: https://jellyfin.${SECRET_DOMAIN}
