@@ -5,7 +5,5 @@ resources:
   - ./secret.sops.yaml
   - ./garage-secret.sops.yaml
   - ./postgres.yaml
-  - ./redis-ocirepository.yaml
-  - ./redis-helmrelease.yaml
   - ./ocirepository.yaml
   - ./helmrelease.yaml
