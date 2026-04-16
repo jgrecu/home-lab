@@ -36,6 +36,11 @@
       overrideDepName: "{{packageName}}",
     },
     {
+      description: "Disable Renovate for Forgejo Helm chart (Codeberg OCI not supported)",
+      matchPackagePatterns: ["^codeberg\\.org/forgejo-helm/forgejo$"],
+      enabled: false,
+    },
+    {
       description: "Flux Operator Group",
       groupName: "flux-operator",
       matchDatasources: ["docker"],
