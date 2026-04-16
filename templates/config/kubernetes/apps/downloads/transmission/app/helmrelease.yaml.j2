@@ -91,6 +91,13 @@ spec:
 
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/name: Transmission
+          gethomepage.dev/icon: transmission.png
+          gethomepage.dev/description: BitTorrent client
+          gethomepage.dev/href: https://transmission.${SECRET_DOMAIN}
         hostnames: ["transmission.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
@@ -100,11 +107,4 @@ spec:
           - backendRefs:
               - identifier: app
                 port: 9091
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Downloads
-          gethomepage.dev/name: Transmission
-          gethomepage.dev/icon: transmission.png
-          gethomepage.dev/description: BitTorrent client
-          gethomepage.dev/href: https://transmission.${SECRET_DOMAIN}
     # Internal only — web UI is available within the cluster only

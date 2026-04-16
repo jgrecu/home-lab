@@ -85,6 +85,13 @@ spec:
 
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/name: Sonarr
+          gethomepage.dev/icon: sonarr.png
+          gethomepage.dev/description: TV series collection manager
+          gethomepage.dev/href: https://sonarr.${SECRET_DOMAIN}
         hostnames: ["sonarr.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
@@ -94,11 +101,4 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Downloads
-          gethomepage.dev/name: Sonarr
-          gethomepage.dev/icon: sonarr.png
-          gethomepage.dev/description: TV series collection manager
-          gethomepage.dev/href: https://sonarr.${SECRET_DOMAIN}
     # Internal only — accessible via ClusterIP from Jackett, Transmission, Jellyseerr

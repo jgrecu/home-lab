@@ -85,6 +85,13 @@ spec:
 
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/name: Radarr
+          gethomepage.dev/icon: radarr.png
+          gethomepage.dev/description: Movie collection manager
+          gethomepage.dev/href: https://radarr.${SECRET_DOMAIN}
         hostnames: ["radarr.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
@@ -94,10 +101,3 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Downloads
-          gethomepage.dev/name: Radarr
-          gethomepage.dev/icon: radarr.png
-          gethomepage.dev/description: Movie collection manager
-          gethomepage.dev/href: https://radarr.${SECRET_DOMAIN}
