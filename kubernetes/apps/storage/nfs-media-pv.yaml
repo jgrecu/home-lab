@@ -1,6 +1,6 @@
 ---
 # Static PV pointing to existing /videos on NAS
-# Shared by Radarr, Sonarr, and Jellyfin
+# Shared by Radarr, Sonarr, and Jellyfin via a single PVC
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -18,3 +18,19 @@ spec:
   nfs:
     server: "192.168.1.37"
     path: /videos
+---
+# Shared PVC for all media services
+# Radarr, Sonarr, and Jellyfin all mount this to access /videos
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-library
+  namespace: storage
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""  # Empty to use static PV
+  volumeName: nfs-media-videos  # Bind to static PV above
+  resources:
+    requests:
+      storage: 10Ti
