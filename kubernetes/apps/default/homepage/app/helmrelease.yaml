@@ -9,9 +9,6 @@ spec:
     name: homepage
   interval: 1h
   values:
-    serviceAccount:
-      homepage:
-        create: true
     controllers:
       homepage:
         strategy: RollingUpdate
