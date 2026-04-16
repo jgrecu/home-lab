@@ -59,4 +59,23 @@ spec:
         ports:
           http:
             port: *port
+
+    route:
+      app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/name: Jackett
+          gethomepage.dev/icon: jackett.png
+          gethomepage.dev/description: Torrent indexer proxy
+          gethomepage.dev/href: https://jackett.${SECRET_DOMAIN}
+        hostnames: ["jackett.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
     # Internal only — Radarr/Sonarr reach Jackett via ClusterIP
