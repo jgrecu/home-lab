@@ -1,0 +1,24 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nextcloud-redis
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: nextcloud-redis
+  interval: 1h
+  values:
+    # Standalone Redis — no cluster needed for a single Nextcloud instance
+    architecture: standalone
+    auth:
+      enabled: false
+    master:
+      persistence:
+        storageClass: longhorn
+        size: 1Gi
+      resources:
+        requests:
+          cpu: 10m
+        limits:
+          memory: 128Mi
