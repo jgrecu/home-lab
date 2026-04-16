@@ -52,6 +52,16 @@ spec:
               limits:
                 memory: 256Mi
     persistence:
+      # Persistent storage for logs and other runtime data
+      # Mount to /data instead of /app/config to avoid conflicts with ConfigMaps
+      config:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /data
+
       # Kubernetes integration config
       kubernetes-config:
         type: configMap
@@ -96,15 +106,6 @@ spec:
           - path: /app/config/widgets.yaml
             subPath: widgets.yaml
             readOnly: true
-
-      # Persistent storage for logs and other runtime data
-      config:
-        type: persistentVolumeClaim
-        storageClass: longhorn
-        size: 1Gi
-        accessMode: ReadWriteOnce
-        globalMounts:
-          - path: /app/config
     service:
       app:
         ports:
