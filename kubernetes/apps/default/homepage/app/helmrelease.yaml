@@ -61,7 +61,43 @@ spec:
             subPath: kubernetes.yaml
             readOnly: true
 
-      # User-editable config (bookmarks, custom services, settings)
+      # Services configuration
+      services-config:
+        type: configMap
+        name: homepage-services
+        globalMounts:
+          - path: /app/config/services.yaml
+            subPath: services.yaml
+            readOnly: true
+
+      # Bookmarks configuration
+      bookmarks-config:
+        type: configMap
+        name: homepage-bookmarks
+        globalMounts:
+          - path: /app/config/bookmarks.yaml
+            subPath: bookmarks.yaml
+            readOnly: true
+
+      # Settings configuration
+      settings-config:
+        type: configMap
+        name: homepage-settings
+        globalMounts:
+          - path: /app/config/settings.yaml
+            subPath: settings.yaml
+            readOnly: true
+
+      # Widgets configuration
+      widgets-config:
+        type: configMap
+        name: homepage-widgets
+        globalMounts:
+          - path: /app/config/widgets.yaml
+            subPath: widgets.yaml
+            readOnly: true
+
+      # Persistent storage for logs and other runtime data
       config:
         type: persistentVolumeClaim
         storageClass: longhorn
