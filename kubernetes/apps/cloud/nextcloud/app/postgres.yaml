@@ -32,4 +32,4 @@ spec:
           key: ACCESS_SECRET_KEY
       wal:
         compression: gzip
-    retentionPolicy: "30d"
+    retentionPolicy: "180d"  # 6 months retention to match Volsync
