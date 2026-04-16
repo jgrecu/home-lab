@@ -44,11 +44,11 @@ spec:
     persistence:
       # Jellyfin config, metadata cache, and transcoding temp on Longhorn.
       # First boot will scan /media and build the library index here.
-      # NOTE: Reduced to 5Gi for RPi testing - increase to 10Gi for ThinkCentre deployment
+      # NOTE: Reduced to 1Gi for RPi testing - increase to 10Gi for ThinkCentre deployment
       config:
         type: persistentVolumeClaim
         storageClass: longhorn
-        size: 5Gi
+        size: 1Gi
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /config
