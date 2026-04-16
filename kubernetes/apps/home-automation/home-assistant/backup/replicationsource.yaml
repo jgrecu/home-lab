@@ -11,9 +11,9 @@ spec:
   restic:
     repository: home-assistant-config-restic-secret
     retain:
-      daily: 7
-      weekly: 4
-      monthly: 3
+      daily: 7      # Last week
+      weekly: 8     # Last 2 months
+      monthly: 6    # Last 6 months
     copyMethod: Snapshot
     storageClassName: longhorn
     volumeSnapshotClassName: longhorn
