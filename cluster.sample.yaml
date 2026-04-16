@@ -129,6 +129,29 @@ nfs_garage_path: "/garage"
 nfs_nextcloud_path: "/nextcloud"
 
 # ============================================================================
+# Forgejo Configuration
+# ============================================================================
+
+# -- Forgejo admin email address (for initial admin account)
+#    (REQUIRED if using Forgejo)
+forgejo_admin_email: "admin@example.com"
+
+# -- Forgejo Actions runner registration token
+#    This token is required for the Forgejo runner to register and execute CI/CD jobs.
+#
+#    How to obtain:
+#    1. Deploy Forgejo first (will deploy without runners initially)
+#    2. Log into Forgejo UI as admin
+#    3. Navigate to: Site Administration → Runners → New runner token
+#    4. Copy the generated token and paste it here
+#    5. Run 'task configure --yes' and commit/push
+#    6. Flux will reconcile and deploy the runners
+#
+#    (REQUIRED for Forgejo Actions runners)
+#    NOTE: This will be encrypted with SOPS when you run 'task configure'
+forgejo_runner_secret: ""
+
+# ============================================================================
 # Garage S3 Configuration
 # ============================================================================
 
