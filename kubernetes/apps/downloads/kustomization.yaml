@@ -11,9 +11,17 @@ resources:
   - ./downloads-pvc.yaml
   - ./media-pvc.yaml
   - ./autobrr/ks.yaml
+  - ./autobrr/backup-ks.yaml
+  - ./bazarr/ks.yaml
+  - ./bazarr/backup-ks.yaml
   - ./flaresolverr/ks.yaml
   - ./jackett/ks.yaml
+  - ./jackett/backup-ks.yaml
   - ./radarr/ks.yaml
+  - ./radarr/backup-ks.yaml
   - ./recyclarr/ks.yaml
+  - ./recyclarr/backup-ks.yaml
   - ./sonarr/ks.yaml
+  - ./sonarr/backup-ks.yaml
   - ./transmission/ks.yaml
+  - ./transmission/backup-ks.yaml
