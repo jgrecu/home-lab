@@ -23,31 +23,7 @@ spec:
         - Remote-Email
       path: /api/verify?rd=https://auth.jgrecu.dev
 ---
-# HTTPRoute-level bypass for echo app (used for testing/webhooks)
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: echo-bypass
-  namespace: default
-  annotations:
-    gethomepage.dev/enabled: "false"  # Hide from homepage since it's for testing
-spec:
-  parentRefs:
-    - name: envoy-external
-      namespace: network
-      sectionName: https
-  hostnames:
-    - echo.jgrecu.dev
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: echo
-          port: 80
----
-# SecurityPolicy to bypass auth for echo
+# SecurityPolicy to bypass auth for echo app (testing/webhooks)
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
@@ -57,7 +33,7 @@ spec:
   targetRef:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
-    name: echo-bypass
+    name: echo
   # Empty extAuth section = no authentication required
 ---
 # SecurityPolicy to bypass auth for Authelia itself (prevent circular dependency)
