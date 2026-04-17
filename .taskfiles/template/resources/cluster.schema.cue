@@ -43,6 +43,21 @@ import (
 	garage_admin_token?:            string & !=""
 	garage_s3_access_key_id?:       string
 	garage_s3_secret_access_key?:   string
+	// Forgejo Configuration
+	forgejo_admin_email?:           string
+	forgejo_runner_secret?:         string
+	// Volsync Backup Configuration
+	volsync_restic_password?:       string
+	volsync_s3_access_key?:         string
+	volsync_s3_secret_key?:         string
+	// Authelia IAP Configuration
+	authelia_username?:             string
+	authelia_displayname?:          string
+	authelia_email?:                string
+	authelia_password_hash?:        string
+	authelia_session_secret?:       string
+	authelia_storage_encryption_key?: string
+	authelia_jwt_secret?:           string
 }
 
 #Config
