@@ -27,10 +27,10 @@ spec:
                   httpGet:
                     path: /
                     port: &port 5000
-                  initialDelaySeconds: 15
+                  initialDelaySeconds: 30
                   periodSeconds: 30
-                  timeoutSeconds: 5
-                  failureThreshold: 5
+                  timeoutSeconds: 10
+                  failureThreshold: 10
               readiness: *probes
             securityContext:
               allowPrivilegeEscalation: false
@@ -39,7 +39,7 @@ spec:
               requests:
                 cpu: 15m
               limits:
-                memory: 512Mi
+                memory: 1Gi
     persistence:
       # Kavita config + SQLite database — kept locally on Longhorn
       config:
