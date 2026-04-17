@@ -33,7 +33,6 @@ spec:
               AUTHELIA_TELEMETRY_METRICS_ADDRESS: tcp://0.0.0.0:8080
               AUTHELIA_THEME: dark
               X_AUTHELIA_CONFIG: /config/configuration.yml
-              X_AUTHELIA_CONFIG_FILTERS: template
             envFrom:
               - secretRef:
                   name: authelia-secrets
