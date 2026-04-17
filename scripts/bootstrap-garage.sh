@@ -346,10 +346,14 @@ function update_cluster_config() {
         # macOS sed requires -i with empty string
         sed -i '' "s|^garage_s3_access_key_id:.*|garage_s3_access_key_id: \"${access_key_id}\"|" "${cluster_yaml}"
         sed -i '' "s|^garage_s3_secret_access_key:.*|garage_s3_secret_access_key: \"${secret_access_key}\"|" "${cluster_yaml}"
+        sed -i '' "s|^volsync_s3_access_key:.*|volsync_s3_access_key: \"${access_key_id}\"|" "${cluster_yaml}"
+        sed -i '' "s|^volsync_s3_secret_key:.*|volsync_s3_secret_key: \"${secret_access_key}\"|" "${cluster_yaml}"
     else
         # Linux sed
         sed -i "s|^garage_s3_access_key_id:.*|garage_s3_access_key_id: \"${access_key_id}\"|" "${cluster_yaml}"
         sed -i "s|^garage_s3_secret_access_key:.*|garage_s3_secret_access_key: \"${secret_access_key}\"|" "${cluster_yaml}"
+        sed -i "s|^volsync_s3_access_key:.*|volsync_s3_access_key: \"${access_key_id}\"|" "${cluster_yaml}"
+        sed -i "s|^volsync_s3_secret_key:.*|volsync_s3_secret_key: \"${secret_access_key}\"|" "${cluster_yaml}"
     fi
 
     log info "cluster.yaml updated successfully"
