@@ -51,11 +51,24 @@ spec:
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
-  name: authelia-bypass
+  name: authelia-bypass-echo
   namespace: default
 spec:
   targetRef:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: echo-bypass
+  # Empty extAuth section = no authentication required
+---
+# SecurityPolicy to bypass auth for Authelia itself (prevent circular dependency)
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: authelia-bypass-self
+  namespace: security
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: authelia
   # Empty extAuth section = no authentication required
