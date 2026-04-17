@@ -19,6 +19,8 @@ spec:
       - x-forwarded-proto
       - x-forwarded-host
       - x-forwarded-uri
+      - x-forwarded-method
+      - x-original-url
     http:
       backendRef:
         name: authelia
@@ -29,7 +31,7 @@ spec:
         - remote-groups
         - remote-name
         - remote-email
-      path: /api/authz/ext-authz
+      path: /api/verify
 ---
 # SecurityPolicy to bypass auth for echo app (testing/webhooks)
 apiVersion: gateway.envoyproxy.io/v1alpha1
