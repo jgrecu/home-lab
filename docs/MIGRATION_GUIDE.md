@@ -240,128 +240,295 @@ Then label it: `kubectl label node <chosen-worker> media-node=true`
 
 ## 🚀 Migration Process
 
-### Phase 1: Prepare Configuration
+### Phase 1: Clean Up and Prepare Configuration
 
 1. **Backup Current Cluster State**:
 ```bash
 cd /Users/I337469/Downloads/talos-rpi4/home-lab
 
-# Backup current configs
-cp talos/talconfig.yaml talos/talconfig.yaml.rpi-backup
-cp cluster.yaml cluster.yaml.rpi-backup
-
 # Commit current state
 git add -A
-git commit -m "backup: final RPI cluster state before migration"
+git commit -m "backup: final RPi4 cluster state before ThinkCentre migration"
 git push
+
+# Backup age key to secure location
+cp age.key ~/Desktop/age.key.backup.$(date +%Y%m%d)
 ```
 
-2. **Update Talos Configuration**:
+2. **Reset Generated Files**:
 ```bash
-# Edit for new hardware
-vim talos/talconfig.yaml
+# Clean up all generated files from RPi4 setup
+task template:reset
 
-# Update:
-# - Node count (1 controller + 2 workers)
-# - Hostnames (e.g., thinkcentre-ctrl, thinkcentre-wrk1, thinkcentre-wrk2)
-# - IP addresses
-# - MAC addresses (from new machines)
-# - Add nodeLabels.media-node: "true" to one worker
-
-# Validate
-talhelper validate talconfig talos/talconfig.yaml
+# This removes:
+# - talos/clusterconfig/ (node configs)
+# - talos/talsecret.yaml (cluster secrets)
+# - talos/talconfig.yaml (generated from template)
+# - kubernetes/ (all generated manifests)
+# - bootstrap/ (bootstrap scripts)
+# - kubeconfig, talosconfig (cluster access files)
 ```
 
-3. **Update Cluster Configuration**:
+3. **Generate x86_64 Talos Schematic**:
+
+Visit https://factory.talos.dev/ and:
+- Select Talos version: **v1.12.6** (match current version)
+- Select architecture: **amd64** (x86_64)
+- Select platform: **metal** (bare metal)
+- Select system extensions:
+  - `iscsi-tools` - Required for Longhorn storage
+  - `intel-ucode` - Intel CPU microcode updates
+  - `i915-ucode` - Intel GPU microcode (optional, for integrated graphics)
+
+Click "Generate Schematic" and **copy the 64-character schematic ID**.
+
+Download the ISO:
 ```bash
-# Edit network IPs
+export SCHEMATIC_ID="YOUR_SCHEMATIC_ID_HERE"
+curl -LO "https://factory.talos.dev/image/${SCHEMATIC_ID}/v1.12.6/metal-amd64.iso"
+```
+
+Flash to USB drive (macOS):
+```bash
+# Find USB drive
+diskutil list
+
+# Unmount (replace diskN with your USB drive number)
+diskutil unmountDisk /dev/diskN
+
+# Write ISO
+sudo dd if=metal-amd64.iso of=/dev/rdiskN bs=1m
+
+# Eject
+diskutil eject /dev/diskN
+```
+
+4. **Boot ThinkCentre Machines into Maintenance Mode**:
+
+For each machine (you can reuse the same USB stick):
+1. Insert USB drive with Talos ISO
+2. Power on and enter BIOS (F1 or F12)
+3. Set boot order: USB first
+4. Boot from USB
+5. Machine boots into Talos maintenance mode (listening on port 50000)
+6. **Remove USB stick once booted** - maintenance mode runs from RAM
+7. Reuse USB stick for next machine
+
+Discover machines on network:
+```bash
+nmap -Pn -n -p 50000 192.168.1.0/24 -vv | grep 'Discovered'
+```
+
+5. **Collect Hardware Information**:
+
+For each machine, get disk and MAC information:
+```bash
+# Get disk information (replace X with actual IP from nmap)
+talosctl get disks -n 192.168.1.X --insecure
+
+# Get MAC address
+talosctl get links -n 192.168.1.X --insecure
+```
+
+Record in table format:
+
+| Machine | Role | Temp IP | Final IP | Disk Path | MAC Address | Hostname |
+|---------|------|---------|----------|-----------|-------------|----------|
+| 1 | Controller | 192.168.1.X | 192.168.1.50 | /dev/sda or /dev/nvme0n1 | aa:bb:cc:dd:ee:ff | tc-ctrl |
+| 2 | Worker | 192.168.1.Y | 192.168.1.51 | /dev/sda or /dev/nvme0n1 | 11:22:33:44:55:66 | tc-wrk1 |
+| 3 | Worker | 192.168.1.Z | 192.168.1.52 | /dev/sda or /dev/nvme0n1 | 77:88:99:aa:bb:cc | tc-wrk2 |
+
+6. **Update Configuration Files**:
+
+**Generate config files from samples**:
+```bash
+# If starting fresh, generate from sample files
+task init
+```
+
+**Edit nodes.yaml**:
+```bash
+vim nodes.yaml
+```
+
+Replace entire `nodes:` section with your new hardware:
+```yaml
+---
+nodes:
+  - name: "tc-ctrl"
+    address: "192.168.1.50"
+    controller: true
+    disk: "/dev/sda"  # or /dev/nvme0n1 from hardware discovery
+    mac_addr: "aa:bb:cc:dd:ee:ff"  # from hardware discovery
+    schematic_id: "YOUR_NEW_SCHEMATIC_ID"  # from factory.talos.dev
+  - name: "tc-wrk1"
+    address: "192.168.1.51"
+    controller: false
+    disk: "/dev/sda"
+    mac_addr: "11:22:33:44:55:66"
+    schematic_id: "YOUR_NEW_SCHEMATIC_ID"
+    media_node: true  # for Transmission, Radarr, Sonarr
+  - name: "tc-wrk2"
+    address: "192.168.1.52"
+    controller: false
+    disk: "/dev/sda"
+    mac_addr: "77:88:99:aa:bb:cc"
+    schematic_id: "YOUR_NEW_SCHEMATIC_ID"
+```
+
+**Review cluster.yaml**:
+```bash
 vim cluster.yaml
-
-# Update:
-# - cluster_api_addr
-# - cluster_dns_gateway_addr
-# - cluster_gateway_addr
-# - cloudflare_gateway_addr
-# - pihole_dns_addr
-# - nfs_server_addr (if NAS IP changed)
-
-# Optional: Increase storage sizes
-vim templates/config/kubernetes/apps/downloads/downloads-pvc.yaml.j2
-vim templates/config/kubernetes/apps/database-system/dragonfly-instance/app/dragonfly.yaml.j2
 ```
 
-4. **Regenerate All Configs**:
+Keep existing network IPs and credentials, or update as needed:
+- `cluster_api_addr`, `cluster_dns_gateway_addr`, etc.
+- Garage S3 credentials (will be regenerated during bootstrap)
+- NFS server address
+
+Optional: Increase storage sizes for 512GB SSDs:
 ```bash
-# Regenerate Kubernetes manifests
+vim templates/config/kubernetes/apps/downloads/downloads-pvc.yaml.j2
+# Change: 20Gi → 100Gi
+```
+
+7. **Regenerate All Configurations**:
+```bash
+# Template out kubernetes and talos configuration files
+task configure
+
+# Or with auto-approval:
 task configure --yes
+```
 
-# Regenerate Talos configs
-task talos:generate-config
+Expected output:
+- ✓ Validated cluster.yaml and nodes.yaml schemas
+- ✓ Rendered ~127 templates
+- ✓ Generated Talos configs for 3 nodes
+- ✓ Encrypted secrets with SOPS
+- ✓ Validated Kubernetes manifests
 
-# Review changes
-git diff
+Verify generated configs:
+```bash
+# Check generated Talos config
+cat talos/talconfig.yaml | grep -A 20 "nodes:"
 
-# Commit
+# Verify node configs exist
+ls -l talos/clusterconfig/
+# Should show: tc-ctrl.yaml, tc-wrk1.yaml, tc-wrk2.yaml, talosconfig
+
+# Verify schematic IDs
+grep "talosImageURL" talos/talconfig.yaml
+```
+
+8. **Commit Changes**:
+```bash
 git add -A
-git commit -m "feat: migrate cluster config to ThinkCentre hardware"
+git diff --cached  # Review
+git commit -m "feat: migrate cluster from RPi4 to ThinkCentre x86_64
+
+- Update nodes.yaml with 3 ThinkCentre machines (1 ctrl, 2 workers)
+- Generate new x86_64 schematic with Intel extensions
+- Keep same IP addresses and network configuration
+- Label tc-wrk1 as media-node
+- Schematic ID: YOUR_NEW_SCHEMATIC_ID"
+
 git push
 ```
 
 ### Phase 2: Bootstrap New Cluster
 
-1. **Install Talos on New Nodes**:
+1. **Bootstrap Talos**:
+
+Install Talos to all nodes (controller + workers):
+
 ```bash
-# Boot nodes from Talos ISO or via PXE
-# Apply configurations (one at a time)
+cd /Users/I337469/Downloads/talos-rpi4/home-lab
 
-# Apply to controller first
-talosctl apply-config --nodes <controller-ip> \
-  --file ./talos/clusterconfig/thinkcentre-ctrl.yaml
-
-# Wait for controller to be ready
-talosctl --nodes <controller-ip> health
-
-# Bootstrap etcd on controller
-talosctl bootstrap --nodes <controller-ip>
-
-# Apply to workers
-talosctl apply-config --nodes <worker1-ip> \
-  --file ./talos/clusterconfig/thinkcentre-wrk1.yaml
-
-talosctl apply-config --nodes <worker2-ip> \
-  --file ./talos/clusterconfig/thinkcentre-wrk2.yaml
+# Bootstrap Talos cluster
+task bootstrap:talos
 ```
 
-2. **Get Kubeconfig**:
-```bash
-# Retrieve kubeconfig
-talosctl --nodes <controller-ip> kubeconfig .
+**What this does:**
+1. Generates Talos secrets (if not already present)
+2. Applies configuration to all nodes (controller + workers)
+3. Waits for nodes to install Talos to disk and reboot
+4. Bootstraps etcd on the controller
+5. Retrieves kubeconfig
+6. Merges talosconfig for easier management
 
-# Verify cluster access
-kubectl get nodes
+**Monitor progress:**
+```bash
+# Watch nodes boot and join
+talosctl --nodes 192.168.1.50 dmesg --follow --insecure
+
+# Check all nodes joined
+export KUBECONFIG=/Users/I337469/Downloads/talos-rpi4/home-lab/kubeconfig
+kubectl get nodes -w
 ```
 
-3. **Bootstrap Flux**:
-```bash
-# Install Flux (will deploy everything from Git)
-task bootstrap:flux
+Expected: All 3 nodes shown as `NotReady` (CNI not deployed yet)
 
-# Monitor deployment
+2. **Commit Encrypted Secrets**:
+```bash
+# Push the generated encrypted secrets to git
+git add -A
+git commit -m "chore: add talhelper encrypted secret :lock:"
+git push
+```
+
+3. **Bootstrap Kubernetes Applications**:
+
+Deploy Cilium (CNI), CoreDNS, Spegel, Flux, and sync all cluster applications:
+
+```bash
+# Install cilium, coredns, spegel, flux and sync the cluster
+task bootstrap:apps
+```
+
+**What this does:**
+1. Installs Flux CRDs and controllers
+2. Deploys SOPS secrets (GitHub deploy key, age key)
+3. Creates GitRepository pointing to your repo
+4. Deploys Cilium CNI (nodes become Ready)
+5. Deploys CoreDNS
+6. Deploys Spegel (local registry mirror)
+7. Deploys root Kustomization (recursively deploys all apps)
+
+**Monitor deployment:**
+```bash
+# Watch all pods come up
+kubectl get pods --all-namespaces --watch
+
+# Or watch Flux kustomizations
 flux get kustomizations --watch
-
-# Check pods across all namespaces
-kubectl get pods -A
 ```
 
-4. **Verify Storage**:
+**Timeline (10-15 minutes):**
+- Flux system: 1-2 min
+- Cilium CNI: 2-3 min (nodes become Ready)
+- CoreDNS: 1-2 min
+- Spegel: 2-3 min
+- Cert-manager: 2-3 min
+- Longhorn storage: 5-10 min
+- Garage S3: 3-5 min
+- CNPG operator: 2-3 min (after Garage)
+- Database clusters: 5-10 min (after CNPG)
+- All other applications: 5-10 min
+
+4. **Wait for Core Infrastructure**:
 ```bash
-# Wait for Longhorn to be ready
-kubectl get pods -n storage
+# Wait for nodes to become Ready (Cilium deployed)
+kubectl wait --for=condition=ready nodes --all --timeout=600s
 
-# Check Garage is healthy
-kubectl get helmrelease -n storage garage
+# Verify media-node label
+kubectl get nodes --show-labels | grep media-node
 
-# Verify NFS storage classes
+# Wait for storage
+kubectl wait --for=condition=ready pod -n storage -l app.kubernetes.io/name=longhorn-manager --timeout=600s
+kubectl wait --for=condition=ready pod -n storage -l app.kubernetes.io/name=csi-driver-nfs --timeout=600s
+
+# Check storage classes
 kubectl get storageclass
 ```
 
@@ -378,7 +545,7 @@ task storage:bootstrap-garage
 
 # This will:
 # 1. Configure Garage cluster layout
-# 2. Create buckets (longhorn-backups, cnpg-backups, etc.)
+# 2. Create buckets (longhorn-backups, cnpg-backups, volsync-backups)
 # 3. Generate S3 access keys
 # 4. Update cluster.yaml with new credentials
 # 5. Regenerate configs with new credentials
@@ -392,23 +559,13 @@ git push
 flux reconcile kustomization cluster-apps --with-source
 ```
 
-**Note**: The bootstrap task will update your `cluster.yaml` with new S3 credentials:
-```yaml
-garage_s3_access_key_id: "GK..."
-garage_s3_secret_access_key: "..."
-```
-
-**Verify Garage is ready**:
+6. **Verify Application Deployment**:
 ```bash
-# Check Garage HelmRelease status
-kubectl get helmrelease -n storage garage
+# Check all pods
+kubectl get pods -A
 
-# Should show: Ready=True, Status="Helm upgrade succeeded"
-
-# Check that CNPG can now proceed
-kubectl get kustomization -n database-system cloudnative-pg
-
-# Should show: Ready=True (no longer blocked by Garage dependency)
+# Check for failures
+kubectl get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded
 ```
 
 ### Phase 3: Verify Applications
@@ -805,6 +962,151 @@ kubectl edit secret -n flux-system flux-system
 
 ---
 
+## 🔐 Post-Deployment: Setup Authelia IAP (Optional but Recommended)
+
+After your cluster is deployed, you can add Identity-Aware Proxy authentication to protect your external apps (Immich, Nextcloud, Kavita, Jellyfin) with centralized authentication and MFA.
+
+### Why Add Authelia?
+
+- **Security:** Kavita has NO built-in authentication and is publicly accessible ⚠️
+- **MFA Protection:** TOTP (Google Authenticator/Authy) required for all external apps
+- **Single Sign-On:** One login for all protected services
+- **Location Independent:** Access from anywhere with proper credentials
+
+### Setup Steps
+
+1. **Generate Authelia credentials:**
+
+```bash
+# Generate password hash
+docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --password 'YourStrongPassword'
+# Copy the output starting with $argon2id$v=19$...
+
+# Generate secrets
+openssl rand -hex 32  # session_secret
+openssl rand -hex 32  # storage_encryption_key  
+openssl rand -hex 32  # jwt_secret
+```
+
+2. **Add to your `cluster.yaml`:**
+
+```yaml
+# Authelia IAP configuration (add at end of file)
+authelia_username: "admin"
+authelia_displayname: "Your Name"
+authelia_email: "your@jgrecu.dev"
+authelia_password_hash: "$argon2id$v=19$m=65536,t=3,p=4$..."  # from step 1
+authelia_session_secret: "abc123..."  # from step 1
+authelia_storage_encryption_key: "def456..."  # from step 1
+authelia_jwt_secret: "ghi789..."  # from step 1
+```
+
+3. **Generate and deploy:**
+
+```bash
+cd /Users/I337469/Downloads/talos-rpi4/home-lab
+
+# Generate kubernetes manifests
+task configure --yes
+
+# Verify generated files
+ls -la kubernetes/apps/security/
+ls -la kubernetes/apps/network/envoy-gateway/app/authelia-securitypolicy.yaml
+
+# Commit and push
+git add -A
+git commit -m "feat: add Authelia IAP for external apps"
+git push
+```
+
+4. **Monitor deployment:**
+
+```bash
+# Watch Flux reconcile (5-10 minutes)
+flux get kustomizations --watch
+
+# Check Authelia deployment
+kubectl get pods -n security
+
+# Verify SecurityPolicy applied
+kubectl get securitypolicy -n network authelia-external-auth
+
+# Test authentication
+curl -I https://immich.jgrecu.dev
+# Should return: HTTP/2 302 (redirect to auth.jgrecu.dev)
+```
+
+5. **First login and MFA setup:**
+
+- Visit any protected app: `https://immich.jgrecu.dev`
+- You'll be redirected to: `https://auth.jgrecu.dev`
+- Login with your username and password
+- Scan QR code with Google Authenticator/Authy/1Password
+- Enter TOTP code
+- You'll be redirected back to the app
+
+### What Gets Protected
+
+- ✅ **Immich** - Photo management (auth.jgrecu.dev → immich.jgrecu.dev)
+- ✅ **Nextcloud** - Cloud storage (auth.jgrecu.dev → nextcloud.jgrecu.dev)
+- ✅ **Kavita** - Ebook reader (auth.jgrecu.dev → kavita.jgrecu.dev)
+- ✅ **Jellyfin** - Media streaming (auth.jgrecu.dev → jellyfin.jgrecu.dev)
+- ✅ **Authelia** - Appears on Homepage dashboard under "Infrastructure"
+- ⚠️ **Echo** - Bypassed (for testing/webhooks)
+
+### Session Details
+
+- **Session Duration:** 12 hours (absolute), 2 hours (inactivity)
+- **Remember Me:** 1 month
+- **Backup:** Volsync backs up Authelia database daily at 3:15 AM
+- **Storage:** SQLite (1Gi PVC on Longhorn)
+
+### Troubleshooting
+
+**Authelia pod not starting:**
+```bash
+kubectl describe pod -n security -l app.kubernetes.io/name=authelia
+kubectl logs -n security -l app.kubernetes.io/name=authelia
+```
+
+**Apps not redirecting to auth:**
+```bash
+# Verify SecurityPolicy is applied
+kubectl get securitypolicy -n network authelia-external-auth -o yaml
+
+# Check Envoy Gateway logs
+kubectl logs -n network -l gateway.envoyproxy.io/owning-gateway-name=envoy-external
+```
+
+**Can't login (incorrect password):**
+```bash
+# Regenerate password hash
+docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --password 'NewPassword'
+
+# Update cluster.yaml with new hash
+# Run: task configure --yes
+# Commit and push
+```
+
+---
+
+## 🔐 Important Files to Keep (Continued)
+
+### Keep Safe (Not in Git)
+- `age.key` - SOPS encryption key (same key on new cluster)
+- `kubeconfig` - Generated after bootstrap
+- `talos/clusterconfig/talosconfig` - Generated after Talos bootstrap
+
+### In Git Repository
+- All `kubernetes/` manifests
+- All `templates/` Jinja2 templates
+- `cluster.yaml` - Cluster configuration
+- `talos/talconfig.yaml` - Talos configuration
+- `.sops.yaml` - SOPS configuration
+- `Taskfile.yaml` - Task automation
+
+---
+
 ## 📝 Pre-Migration Checklist
 
 Before starting migration:
@@ -913,41 +1215,58 @@ Your migration is successful when:
 ## 🎯 Quick Start (TL;DR)
 
 ```bash
-# 1. Update configs for new hardware
-vim talos/talconfig.yaml    # Update nodes, add media-node label
-vim cluster.yaml             # Update IPs
+# 1. Clean up and backup
+git add -A && git commit -m "backup: RPi4 state" && git push
+cp age.key ~/Desktop/age.key.backup.$(date +%Y%m%d)
+task template:reset
 
-# 2. Regenerate everything
+# 2. Generate x86_64 schematic at factory.talos.dev
+# - Version: v1.12.6, Arch: amd64, Platform: metal
+# - Extensions: iscsi-tools, intel-ucode, i915-ucode
+# - Copy schematic ID and download ISO
+
+# 3. Boot ThinkCentre machines
+# - Flash ISO to USB
+# - Boot each machine (remove USB after boot, reuse for next)
+# - nmap -Pn -n -p 50000 192.168.1.0/24 -vv | grep 'Discovered'
+
+# 4. Collect hardware info
+talosctl get disks -n 192.168.1.X --insecure
+talosctl get links -n 192.168.1.X --insecure
+
+# 5. Update configs
+task init  # if starting fresh
+vim nodes.yaml  # Update with new hardware details + schematic ID
+vim cluster.yaml  # Review/update network IPs
+
+# 6. Regenerate configs
 task configure --yes
-task talos:generate-config
 
-# 3. Commit
-git add -A && git commit -m "feat: migrate to ThinkCentre" && git push
+# 7. Commit
+git add -A && git commit -m "feat: migrate to ThinkCentre x86_64" && git push
 
-# 4. Install Talos on new nodes
-talosctl apply-config --nodes <ctrl-ip> --file ./talos/clusterconfig/ctrl.yaml
-talosctl bootstrap --nodes <ctrl-ip>
-talosctl apply-config --nodes <wrk1-ip> --file ./talos/clusterconfig/wrk1.yaml
-talosctl apply-config --nodes <wrk2-ip> --file ./talos/clusterconfig/wrk2.yaml
+# 8. Bootstrap Talos (installs + bootstraps etcd + kubeconfig)
+task bootstrap:talos
 
-# 5. Get kubeconfig
-talosctl --nodes <ctrl-ip> kubeconfig .
+# 9. Commit encrypted secrets
+git add -A && git commit -m "chore: add talhelper encrypted secret" && git push
 
-# 6. Bootstrap Flux (deploys everything)
-task bootstrap:flux
+# 10. Bootstrap apps (Cilium, CoreDNS, Spegel, Flux, all apps)
+task bootstrap:apps
 
-# 7. Bootstrap Garage S3 storage (CRITICAL - required before CNPG can start)
+# 11. Bootstrap Garage S3 (CRITICAL - required before CNPG)
 kubectl wait --for=condition=ready pod -n storage -l app.kubernetes.io/name=garage --timeout=300s
 task storage:bootstrap-garage
 git add cluster.yaml kubernetes/ bootstrap/ && git commit -m "chore: update Garage credentials" && git push
 flux reconcile kustomization cluster-apps --with-source
 
-# 8. Watch deployment
+# 12. Watch deployment
 flux get kustomizations --watch
-
-# 8. Verify
 kubectl get pods -A
+
+# 13. Verify
 kubectl get nodes --show-labels | grep media-node
+kubectl get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded
 ```
 
 ---
