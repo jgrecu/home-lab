@@ -2,9 +2,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./authelia-securitypolicy.yaml
-  - ./certificate.yaml
-  - ./envoy.yaml
+  - ./authelia-secret.sops.yaml
   - ./helmrelease.yaml
+  - ./httproute.yaml
   - ./ocirepository.yaml
-  - ./podmonitor.yaml

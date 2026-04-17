@@ -17,7 +17,7 @@ spec:
       strategy: rollback
       retries: 3
   values:
-    domain: #{cloudflare_domain}#
+    domain: jgrecu.dev
 
     configMap:
       # Authentication backend
@@ -37,8 +37,8 @@ spec:
         inactivity: 2h
         remember_me: 1M
         cookies:
-          - domain: #{cloudflare_domain}#
-            authelia_url: https://auth.#{cloudflare_domain}#
+          - domain: jgrecu.dev
+            authelia_url: https://auth.jgrecu.dev
 
       # Storage (SQLite for simplicity, could upgrade to CNPG PostgreSQL later)
       storage:
@@ -53,10 +53,10 @@ spec:
         rules:
           # Allow all authenticated users to these apps
           - domain:
-              - immich.#{cloudflare_domain}#
-              - nextcloud.#{cloudflare_domain}#
-              - kavita.#{cloudflare_domain}#
-              - jellyfin.#{cloudflare_domain}#
+              - immich.jgrecu.dev
+              - nextcloud.jgrecu.dev
+              - kavita.jgrecu.dev
+              - jellyfin.jgrecu.dev
             policy: two_factor
 
       # Notifier (for MFA setup)
@@ -146,7 +146,7 @@ spec:
     # Service
     service:
       annotations:
-        external-dns.alpha.kubernetes.io/hostname: auth.#{cloudflare_domain}#
+        external-dns.alpha.kubernetes.io/hostname: auth.jgrecu.dev
 
     # Ingress/HTTPRoute disabled (we create it manually)
     ingress:
