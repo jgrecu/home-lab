@@ -6,6 +6,6 @@ metadata:
   namespace: security
 spec:
   interval: 12h
-  url: oci://ghcr.io/authelia/charts
+  url: oci://ghcr.io/authelia/charts/authelia
   ref:
     semver: ">=0.9.0 <1.0.0"
