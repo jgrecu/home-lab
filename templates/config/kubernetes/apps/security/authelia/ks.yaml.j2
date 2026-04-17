@@ -19,5 +19,5 @@ spec:
     namespace: flux-system
   wait: false
   dependsOn:
-    - name: security
-    - name: network
+    - name: envoy-gateway
+      namespace: network
