@@ -10,6 +10,11 @@ data:
 
     server:
       address: 'tcp://0.0.0.0:9091'
+      headers:
+        x_forwarded_for: true
+        x_forwarded_proto: true
+        x_forwarded_host: true
+        x_forwarded_uri: true
 
     log:
       level: info
