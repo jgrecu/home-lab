@@ -29,7 +29,7 @@ spec:
         - remote-groups
         - remote-name
         - remote-email
-      path: /api/verify
+      path: /api/authz/ext-authz
 ---
 # SecurityPolicy to bypass auth for echo app (testing/webhooks)
 apiVersion: gateway.envoyproxy.io/v1alpha1
