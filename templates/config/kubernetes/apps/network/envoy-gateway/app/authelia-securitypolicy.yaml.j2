@@ -31,7 +31,7 @@ spec:
         - remote-groups
         - remote-name
         - remote-email
-      path: /api/verify
+      path: /api/verify?rd=https://auth.#{cloudflare_domain}#
 ---
 # SecurityPolicy to bypass auth for echo app (testing/webhooks)
 apiVersion: gateway.envoyproxy.io/v1alpha1
