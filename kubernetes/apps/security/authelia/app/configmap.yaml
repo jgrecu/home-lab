@@ -29,7 +29,6 @@ data:
 
     session:
       name: authelia_session
-      domain: jgrecu.dev
       expiration: 12h
       inactivity: 2h
       remember_me: 1M
@@ -40,7 +39,7 @@ data:
     storage:
       local:
         path: /config/db.sqlite3
-      encryption_key: {{ .Env.AUTHELIA_STORAGE_ENCRYPTION_KEY }}
+      encryption_key: ${AUTHELIA_STORAGE_ENCRYPTION_KEY}
 
     access_control:
       default_policy: deny
@@ -67,4 +66,4 @@ data:
 
     identity_validation:
       reset_password:
-        jwt_secret: {{ .Env.AUTHELIA_JWT_SECRET }}
+        jwt_secret: ${AUTHELIA_JWT_SECRET}
