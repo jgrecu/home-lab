@@ -44,8 +44,8 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: echo-server
-          port: 8080
+        - name: echo
+          port: 80
 ---
 # SecurityPolicy to bypass auth for echo
 apiVersion: gateway.envoyproxy.io/v1alpha1
