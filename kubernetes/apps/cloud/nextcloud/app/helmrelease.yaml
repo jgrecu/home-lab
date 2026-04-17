@@ -85,7 +85,7 @@ spec:
           cron:
             image:
               repository: nextcloud
-              tag: 30.0.2-apache
+              tag: 30.0.17-apache
             command: ["php", "-f", "/var/www/html/cron.php"]
             securityContext:
               allowPrivilegeEscalation: false
