@@ -1,0 +1,158 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: authelia
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: authelia
+      version: 0.9.10
+      sourceRef:
+        kind: OCIRepository
+        name: authelia
+        namespace: security
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    domain: #{cloudflare_domain}#
+
+    configMap:
+      # Authentication backend
+      authentication_backend:
+        password_reset:
+          disable: false
+        file:
+          enabled: true
+          path: /config/users_database.yml
+          watch: true
+
+      # Session configuration
+      session:
+        name: authelia_session
+        secret: ${AUTHELIA_SESSION_SECRET}
+        expiration: 12h
+        inactivity: 2h
+        remember_me: 1M
+        cookies:
+          - domain: #{cloudflare_domain}#
+            authelia_url: https://auth.#{cloudflare_domain}#
+
+      # Storage (SQLite for simplicity, could upgrade to CNPG PostgreSQL later)
+      storage:
+        local:
+          enabled: true
+          path: /config/db.sqlite3
+        encryption_key: ${AUTHELIA_STORAGE_ENCRYPTION_KEY}
+
+      # Access control rules
+      access_control:
+        default_policy: deny
+        rules:
+          # Allow all authenticated users to these apps
+          - domain:
+              - immich.#{cloudflare_domain}#
+              - nextcloud.#{cloudflare_domain}#
+              - kavita.#{cloudflare_domain}#
+              - jellyfin.#{cloudflare_domain}#
+            policy: two_factor
+
+      # Notifier (for MFA setup)
+      notifier:
+        disable_startup_check: false
+        filesystem:
+          enabled: true
+          filename: /config/notification.txt
+
+      # TOTP MFA
+      totp:
+        disable: false
+        issuer: authelia.com
+        algorithm: sha1
+        digits: 6
+        period: 30
+        skew: 1
+
+      # JWT secret
+      identity_validation:
+        reset_password:
+          jwt_secret: ${AUTHELIA_JWT_SECRET}
+
+    # Pod configuration
+    pod:
+      kind: Deployment
+      replicas: 1
+
+      annotations:
+        reloader.stakater.com/auto: "true"
+
+      securityContext:
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
+
+      env:
+        - name: AUTHELIA_SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: authelia-secrets
+              key: session_secret
+        - name: AUTHELIA_STORAGE_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: authelia-secrets
+              key: storage_encryption_key
+        - name: AUTHELIA_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: authelia-secrets
+              key: jwt_secret
+
+    # Persistence
+    persistence:
+      config:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        retain: true
+        volumeMounts:
+          - name: config
+            mountPath: /config
+          - name: users-database
+            mountPath: /config/users_database.yml
+            subPath: users_database.yml
+      users-database:
+        enabled: true
+        type: secret
+        name: authelia-users
+        advancedMounts:
+          main:
+            main:
+              - path: /config/users_database.yml
+                subPath: users_database.yml
+
+    # Service
+    service:
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: auth.#{cloudflare_domain}#
+
+    # Ingress/HTTPRoute disabled (we create it manually)
+    ingress:
+      enabled: false
