@@ -82,6 +82,14 @@ spec:
           concurrencyPolicy: Forbid
           failedJobsHistory: 1
           successfulJobsHistory: 1
+        pod:
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/controller: nextcloud
+                  topologyKey: kubernetes.io/hostname
         containers:
           cron:
             image:
