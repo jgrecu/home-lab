@@ -32,11 +32,16 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
+              runAsUser: 1000
+              runAsGroup: 1000
             resources:
               requests:
                 cpu: 10m
               limits:
                 memory: 128Mi
+        pod:
+          securityContext:
+            fsGroup: 1000
 
     persistence:
       # Recyclarr stores its config and cache here. The recyclarr.yml is

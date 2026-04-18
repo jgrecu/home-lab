@@ -20,6 +20,10 @@ spec:
   values:
     replicaCount: 1
 
+    # Disable group snapshots - CRD not installed
+    args:
+      enableVolumeGroupSnapshots: false
+
     resources:
       limits:
         memory: 128Mi
