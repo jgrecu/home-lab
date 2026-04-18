@@ -11,7 +11,7 @@ spec:
   values:
     controllers:
       forgejo-runner:
-        replicas: 2
+        replicas: 1
         strategy: RollingUpdate
         containers:
           app:
