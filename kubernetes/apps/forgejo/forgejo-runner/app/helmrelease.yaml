@@ -21,14 +21,15 @@ spec:
             command: ["/bin/sh", "-c"]
             args:
               - |
-                forgejo-runner register \
-                  --no-interactive \
-                  --instance "${FORGEJO_INSTANCE_URL}" \
-                  --token "${FORGEJO_RUNNER_REGISTRATION_TOKEN}" \
-                  --name "${HOSTNAME}" \
-                  --labels "ubuntu-latest:docker://node:20-bullseye,ubuntu-22.04:docker://node:20-bullseye" \
-                  2>/dev/null || true
-                forgejo-runner daemon --config /data/config.yaml
+                if [ ! -f /data/.runner ]; then
+                  forgejo-runner register \
+                    --no-interactive \
+                    --instance "${FORGEJO_INSTANCE_URL}" \
+                    --token "${FORGEJO_RUNNER_REGISTRATION_TOKEN}" \
+                    --name "${HOSTNAME}" \
+                    --labels "ubuntu-latest:docker://node:20-bullseye,ubuntu-22.04:docker://node:20-bullseye"
+                fi
+                forgejo-runner daemon
             env:
               FORGEJO_INSTANCE_URL: "https://forgejo.${SECRET_DOMAIN}"
               FORGEJO_RUNNER_REGISTRATION_TOKEN:
