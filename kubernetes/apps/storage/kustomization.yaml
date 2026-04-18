@@ -12,3 +12,4 @@ resources:
   - ./longhorn/ks.yaml
   - ./csi-driver-nfs/ks.yaml
   - ./garage/ks.yaml
+  - ./volsync/ks.yaml
