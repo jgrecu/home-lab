@@ -123,7 +123,7 @@ spec:
           "lbipam.cilium.io/ips": "#{ pihole_dns_addr }#"
           "lbipam.cilium.io/dns": "true"
           "io.cilium/lb-algorithm": "maglev"
-        externalTrafficPolicy: Local
+        externalTrafficPolicy: Cluster
         ports:
           dns-tcp:
             port: 53
