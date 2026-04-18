@@ -139,7 +139,7 @@ forgejo_admin_email: "admin@example.com"
 # -- Forgejo admin password (for initial admin account)
 #    Generate with: openssl rand -base64 16
 #    (REQUIRED if using Forgejo)
-forgejo_admin_password: ""
+forgejo_admin_password: "n4hWddbXSvtbLuRtfdKJOOTBaA0NqwyUVpSYvbjA"
 
 # -- Forgejo Actions runner registration token
 #    This token is required for the Forgejo runner to register and execute CI/CD jobs.
