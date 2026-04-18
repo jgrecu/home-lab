@@ -45,6 +45,7 @@ import (
 	garage_s3_secret_access_key?:   string
 	// Forgejo Configuration
 	forgejo_admin_email?:           string
+	forgejo_admin_password?:        string
 	forgejo_runner_secret?:         string
 	// Volsync Backup Configuration
 	volsync_restic_password?:       string
