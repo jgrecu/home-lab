@@ -1,0 +1,12 @@
+---
+# SecurityPolicy to bypass Authelia auth for echo app (testing/webhooks)
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: authelia-bypass-echo
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: echo
+  # Empty extAuth section = no authentication required
