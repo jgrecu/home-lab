@@ -15,4 +15,5 @@ spec:
   wait: true
   dependsOn:
     - name: volsync
+      namespace: flux-system
     - name: forgejo
