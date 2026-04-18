@@ -12,13 +12,14 @@ spec:
     name: envoy-external
   extAuth:
     headersToExtAuth:
-      - accept
-      - cookie
-      - authorization
-      - x-forwarded-proto
-      - x-forwarded-host
-      - x-forwarded-uri
-      - x-forwarded-for
+      - 'accept'
+      - 'cookie'
+      - 'location'
+      - 'authorization'
+      - 'proxy-authorization'
+      - 'x-forwarded-for'
+      - 'x-forwarded-proto'
+      - 'x-forwarded-host'
     http:
       backendRef:
         name: authelia
@@ -29,7 +30,7 @@ spec:
         - remote-groups
         - remote-name
         - remote-email
-      path: /api/verify?rd=https://auth.#{cloudflare_domain}#
+      path: /api/authz/ext-authz/
 ---
 # SecurityPolicy to bypass auth for echo app (testing/webhooks)
 apiVersion: gateway.envoyproxy.io/v1alpha1
