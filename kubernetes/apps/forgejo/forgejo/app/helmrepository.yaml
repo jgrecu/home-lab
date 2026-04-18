@@ -1,6 +1,4 @@
 ---
-# Forgejo Helm chart - using Gitea's chart as base since Codeberg OCI has auth issues
-# The forgejo chart is based on gitea chart with minimal changes
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:

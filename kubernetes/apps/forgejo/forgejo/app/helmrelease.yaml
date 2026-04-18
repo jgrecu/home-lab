@@ -77,18 +77,6 @@ spec:
     redis-cluster:
       enabled: false
 
+    # Route managed separately via httproute.yaml
     route:
-      enabled: true
-      # Exposed externally so you can push/pull code from anywhere
-      hostnames: ["forgejo.${SECRET_DOMAIN}"]
-      parentRefs:
-        - name: envoy-external
-          namespace: network
-          sectionName: https
-      annotations:
-        gethomepage.dev/enabled: "true"
-        gethomepage.dev/group: Development
-        gethomepage.dev/name: Forgejo
-        gethomepage.dev/icon: forgejo.png
-        gethomepage.dev/description: Self-hosted Git service
-        gethomepage.dev/href: https://forgejo.${SECRET_DOMAIN}
+      enabled: false
