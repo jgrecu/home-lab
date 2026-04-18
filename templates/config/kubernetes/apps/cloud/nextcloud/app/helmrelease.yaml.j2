@@ -61,9 +61,10 @@ spec:
                   timeoutSeconds: 10
                   failureThreshold: 5
               readiness: *probes
+            # Nextcloud requires root and CHOWN capability for rsync during init
             securityContext:
-              allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
+              runAsUser: 0
+              runAsGroup: 0
             resources:
               requests:
                 cpu: 50m
@@ -88,8 +89,8 @@ spec:
               tag: 33.0.2-apache
             command: ["php", "-f", "/var/www/html/cron.php"]
             securityContext:
-              allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
+              runAsUser: 0
+              runAsGroup: 0
             resources:
               requests:
                 cpu: 10m
