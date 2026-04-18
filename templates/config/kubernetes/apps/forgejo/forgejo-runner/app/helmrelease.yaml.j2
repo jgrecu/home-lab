@@ -21,8 +21,6 @@ spec:
             command: ["/bin/sh", "-c"]
             args:
               - |
-                echo "Instance URL: $FORGEJO_INSTANCE_URL"
-                echo "Token: $FORGEJO_RUNNER_REGISTRATION_TOKEN"
                 if [ ! -f /data/.runner ]; then
                   forgejo-runner register \
                     --no-interactive \
@@ -33,7 +31,7 @@ spec:
                 fi
                 forgejo-runner daemon
             env:
-              FORGEJO_INSTANCE_URL: "https://forgejo.${SECRET_DOMAIN}"
+              FORGEJO_INSTANCE_URL: "http://forgejo-http.forgejo.svc.cluster.local:3000"
               FORGEJO_RUNNER_REGISTRATION_TOKEN:
                 valueFrom:
                   secretKeyRef:
