@@ -8,5 +8,6 @@ components:
 
 resources:
   - ./namespace.yaml
+  - ./nextcloud-pvc.yaml
   - ./nextcloud/ks.yaml
   - ./nextcloud/backup-ks.yaml
