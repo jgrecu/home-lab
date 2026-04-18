@@ -27,6 +27,9 @@ spec:
       postInitApplicationSQL:
         - CREATE EXTENSION IF NOT EXISTS vectors;
         - CREATE EXTENSION IF NOT EXISTS earthdistance CASCADE;
+        - ALTER DATABASE immich SET search_path TO public, vectors;
+        - GRANT USAGE ON SCHEMA vectors TO immich;
+        - GRANT ALL ON ALL TABLES IN SCHEMA vectors TO immich;
   backup:
     barmanObjectStore:
       destinationPath: "s3://cnpg-backups/immich-postgres/"
