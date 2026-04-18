@@ -136,6 +136,11 @@ nfs_nextcloud_path: "/nextcloud"
 #    (REQUIRED if using Forgejo)
 forgejo_admin_email: "admin@example.com"
 
+# -- Forgejo admin password (for initial admin account)
+#    Generate with: openssl rand -base64 16
+#    (REQUIRED if using Forgejo)
+forgejo_admin_password: ""
+
 # -- Forgejo Actions runner registration token
 #    This token is required for the Forgejo runner to register and execute CI/CD jobs.
 #
@@ -229,4 +234,3 @@ authelia_storage_encryption_key: ""
 #    (REQUIRED if using Authelia)
 #    NOTE: This will be encrypted with SOPS when you run 'task configure'
 authelia_jwt_secret: ""
-
