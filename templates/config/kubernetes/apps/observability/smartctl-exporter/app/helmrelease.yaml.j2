@@ -31,18 +31,19 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  httpGet:
-                    path: /health
+                  tcpSocket:
                     port: &port 9633
-                  initialDelaySeconds: 10
-                  periodSeconds: 30
+                  initialDelaySeconds: 30
+                  periodSeconds: 60
+                  failureThreshold: 5
               readiness:
                 enabled: true
                 custom: true
                 spec:
-                  httpGet:
-                    path: /health
+                  tcpSocket:
                     port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 30
             resources:
               requests:
                 cpu: 10m
