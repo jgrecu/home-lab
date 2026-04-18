@@ -11,8 +11,6 @@ spec:
   values:
     controllers:
       smartctl-exporter:
-        # DaemonSet — one exporter per node so every disk is covered.
-        # The HP EliteDesk 800 G3 has one SSD; this catches it on all 3 nodes.
         type: daemonset
         containers:
           app:
@@ -22,6 +20,7 @@ spec:
             args:
               - --smartctl.path=/usr/sbin/smartctl
               - --web.listen-address=:9633
+              - --smartctl.device=/dev/nvme0
             # smartctl needs privileged access to read raw disk device data
             securityContext:
               privileged: true

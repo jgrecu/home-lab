@@ -1,4 +1,17 @@
 ---
+#% set smartctl_devices = [] %#
+#% for node in nodes %#
+#%   if '/dev/nvme' in node.disk %#
+#%     set device = '/dev/nvme0' %#
+#%   elif node.disk.startswith('/dev/sd') %#
+#%     set device = '/dev/' ~ node.disk[5:8] %#
+#%   else %#
+#%     set device = none %#
+#%   endif %#
+#%   if device and device not in smartctl_devices %#
+#%     set _ = smartctl_devices.append(device) %#
+#%   endif %#
+#% endfor %#
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -11,8 +24,6 @@ spec:
   values:
     controllers:
       smartctl-exporter:
-        # DaemonSet — one exporter per node so every disk is covered.
-        # The HP EliteDesk 800 G3 has one SSD; this catches it on all 3 nodes.
         type: daemonset
         containers:
           app:
@@ -22,6 +33,9 @@ spec:
             args:
               - --smartctl.path=/usr/sbin/smartctl
               - --web.listen-address=:9633
+              #% for device in smartctl_devices %#
+              - --smartctl.device=#{ device }#
+              #% endfor %#
             # smartctl needs privileged access to read raw disk device data
             securityContext:
               privileged: true
