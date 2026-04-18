@@ -121,7 +121,9 @@ spec:
           # Pin a specific unused IP from your node_cidr so the DNS address
           # is stable. Set pihole_dns_addr in cluster.yaml.
           "lbipam.cilium.io/ips": "#{ pihole_dns_addr }#"
-        externalTrafficPolicy: Cluster
+          "lbipam.cilium.io/dns": "true"
+          "io.cilium/lb-algorithm": "maglev"
+        externalTrafficPolicy: Local
         ports:
           dns-tcp:
             port: 53
