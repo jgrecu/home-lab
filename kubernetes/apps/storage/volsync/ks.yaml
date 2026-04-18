@@ -16,3 +16,4 @@ spec:
   dependsOn:
     - name: longhorn
     - name: snapshot-controller
+      namespace: kube-system
