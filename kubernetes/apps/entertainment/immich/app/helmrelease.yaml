@@ -67,6 +67,8 @@ spec:
           enabled: true
           storageClass: longhorn
           size: 10Gi
+      route:
+        enabled: false
 
     route:
       enabled: true

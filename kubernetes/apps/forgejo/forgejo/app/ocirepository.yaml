@@ -1,17 +1,11 @@
 ---
-# Forgejo Helm chart from Codeberg OCI registry
-# Note: Renovate cannot auto-update this chart (Codeberg OCI not supported)
-# Check for updates manually at: https://codeberg.org/forgejo-contrib/forgejo-helm/releases
-# renovate: datasource=docker depName=codeberg.org/forgejo-contrib/forgejo-helm versioning=semver
+# Forgejo Helm chart - using Gitea's chart as base since Codeberg OCI has auth issues
+# The forgejo chart is based on gitea chart with minimal changes
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: OCIRepository
+kind: HelmRepository
 metadata:
   name: forgejo
 spec:
-  interval: 15m
-  layerSelector:
-    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
-    operation: copy
-  ref:
-    tag: "v16.0.1"
-  url: oci://codeberg.org/forgejo-contrib/forgejo-helm
+  interval: 1h
+  url: oci://code.forgejo.org/forgejo-helm
+  type: oci
