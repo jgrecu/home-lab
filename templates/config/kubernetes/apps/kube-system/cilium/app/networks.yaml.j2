@@ -28,6 +28,7 @@ kind: CiliumL2AnnouncementPolicy
 metadata:
   name: dns-l2-policy
 spec:
+  loadBalancerIPs: true
   serviceSelector:
     matchLabels:
       lbipam.cilium.io/dns: "true"
