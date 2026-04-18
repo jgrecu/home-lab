@@ -14,6 +14,7 @@ spec:
       masquerade: true
       # Ref: https://github.com/siderolabs/talos/issues/10002
       hostLegacyRouting: true
+      ctMapMax: 524288
     #% if cilium_bgp_enabled %#
     bgpControlPlane:
       enabled: true
@@ -49,6 +50,8 @@ spec:
     loadBalancer:
       algorithm: maglev
       mode: "#{ cilium_loadbalancer_mode }#"
+    maglev:
+      tableSize: 65521
     localRedirectPolicies:
       enabled: true
     operator:
