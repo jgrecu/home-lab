@@ -16,9 +16,7 @@ spec:
   values:
     gitea:
       admin:
-        username: admin
         existingSecret: forgejo-secret
-        existingSecretKey: admin-password
         email: "#{ forgejo_admin_email }#"
       config:
         server:
