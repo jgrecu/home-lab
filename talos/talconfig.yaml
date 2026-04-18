@@ -18,93 +18,48 @@ cniConfig:
   name: none
 
 nodes:
-  - hostname: "rpi-ctrl"
-    ipAddress: "192.168.1.50"
-    installDisk: "/dev/sda"
+  - hostname: "m900-ctrl"
+    ipAddress: "192.168.1.160"
+    installDisk: "/dev/nvme0n1"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/c9078f9419961640c712a8bf2bb9174933dfcf1da383fd8ea2b7dc21493f8bac
+    talosImageURL: factory.talos.dev/installer/9ffda6da42b0e45bb9f486a3579c3c672c6971c1acaba0cc8ed8e9a0a5bb9e09
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "e4:5f:01:0b:ce:d7"
+          hardwareAddr: "00:23:24:df:a2:64"
         dhcp: false
         addresses:
-          - "192.168.1.50/24"
+          - "192.168.1.160/24"
         routes:
           - gateway: "192.168.1.1"
             network: 0.0.0.0/0
         mtu: 1500
         vip:
           ip: "192.168.1.55"
-  - hostname: "rpi-wrk1"
-    ipAddress: "192.168.1.51"
-    installDisk: "/dev/sda"
+  - hostname: "m900-wrk1"
+    ipAddress: "192.168.1.161"
+    installDisk: "/dev/nvme0n1"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/c9078f9419961640c712a8bf2bb9174933dfcf1da383fd8ea2b7dc21493f8bac
+    talosImageURL: factory.talos.dev/installer/9ffda6da42b0e45bb9f486a3579c3c672c6971c1acaba0cc8ed8e9a0a5bb9e09
     controlPlane: false
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "e4:5f:01:0f:13:02"
+          hardwareAddr: "00:23:24:df:a4:57"
         dhcp: false
         addresses:
-          - "192.168.1.51/24"
+          - "192.168.1.161/24"
         routes:
           - gateway: "192.168.1.1"
             network: 0.0.0.0/0
         mtu: 1500
-  - hostname: "rpi-wrk2"
-    ipAddress: "192.168.1.52"
-    installDisk: "/dev/sda"
-    machineSpec:
-      secureboot: false
-    talosImageURL: factory.talos.dev/installer/c9078f9419961640c712a8bf2bb9174933dfcf1da383fd8ea2b7dc21493f8bac
-    controlPlane: false
-    networkInterfaces:
-      - deviceSelector:
-          hardwareAddr: "dc:a6:32:d1:39:a2"
-        dhcp: false
-        addresses:
-          - "192.168.1.52/24"
-        routes:
-          - gateway: "192.168.1.1"
-            network: 0.0.0.0/0
-        mtu: 1500
-  - hostname: "rpi-wrk3"
-    ipAddress: "192.168.1.53"
-    installDisk: "/dev/sda"
-    machineSpec:
-      secureboot: false
-    talosImageURL: factory.talos.dev/installer/c9078f9419961640c712a8bf2bb9174933dfcf1da383fd8ea2b7dc21493f8bac
-    controlPlane: false
-    networkInterfaces:
-      - deviceSelector:
-          hardwareAddr: "dc:a6:32:03:05:dc"
-        dhcp: false
-        addresses:
-          - "192.168.1.53/24"
-        routes:
-          - gateway: "192.168.1.1"
-            network: 0.0.0.0/0
-        mtu: 1500
-  - hostname: "rpi-wrk4"
-    ipAddress: "192.168.1.54"
-    installDisk: "/dev/sda"
-    machineSpec:
-      secureboot: false
-    talosImageURL: factory.talos.dev/installer/c9078f9419961640c712a8bf2bb9174933dfcf1da383fd8ea2b7dc21493f8bac
-    controlPlane: false
-    networkInterfaces:
-      - deviceSelector:
-          hardwareAddr: "dc:a6:32:58:b3:7d"
-        dhcp: false
-        addresses:
-          - "192.168.1.54/24"
-        routes:
-          - gateway: "192.168.1.1"
-            network: 0.0.0.0/0
-        mtu: 1500
+    patches:
+      - # Label node for media workloads
+        |-
+        machine:
+          nodeLabels:
+            media-node: "true"
 
 # Global patches
 patches:
