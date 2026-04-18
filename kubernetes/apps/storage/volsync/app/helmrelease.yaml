@@ -36,15 +36,14 @@ spec:
         labels:
           prometheus: kube-prometheus
 
-    # Security context
+    # Container security context
     securityContext:
       runAsNonRoot: true
       runAsUser: 65534
-      fsGroup: 65534
       seccompProfile:
         type: RuntimeDefault
 
-    # Pod security
+    # Pod security context (fsGroup goes here, not in securityContext)
     podSecurityContext:
       runAsNonRoot: true
       runAsUser: 65534
