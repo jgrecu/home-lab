@@ -17,7 +17,7 @@ spec:
     gitea:
       admin:
         existingSecret: forgejo-secret
-        email: "admin@jgrecu.dev"
+        email: "admin@example.com"
       config:
         server:
           DOMAIN: "forgejo.${SECRET_DOMAIN}"
