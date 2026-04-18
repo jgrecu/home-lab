@@ -1,8 +1,8 @@
 ---
 # Forgejo Helm chart from Codeberg OCI registry
 # Note: Renovate cannot auto-update this chart (Codeberg OCI not supported)
-# Check for updates manually at: https://codeberg.org/forgejo-helm/forgejo/releases
-# renovate: datasource=docker depName=codeberg.org/forgejo-helm/forgejo versioning=semver
+# Check for updates manually at: https://codeberg.org/forgejo-contrib/forgejo-helm/releases
+# renovate: datasource=docker depName=codeberg.org/forgejo-contrib/forgejo-helm versioning=semver
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
@@ -13,5 +13,5 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 11.0.3
-  url: oci://codeberg.org/forgejo-helm/forgejo
+    tag: v16.0.1
+  url: oci://codeberg.org/forgejo-contrib/forgejo-helm
