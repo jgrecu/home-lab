@@ -6,9 +6,13 @@ metadata:
 spec:
   dependsOn:
     - name: cloudnative-pg
+      namespace: database-system
     - name: longhorn
+      namespace: storage
     - name: csi-driver-nfs
+      namespace: storage
     - name: dragonfly-instance
+      namespace: database-system
   interval: 1h
   path: ./kubernetes/apps/cloud/nextcloud/app
   postBuild:
