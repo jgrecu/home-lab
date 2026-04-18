@@ -25,6 +25,7 @@ import (
 	secureboot?:     bool
 	encrypt_disk?:   bool
 	kernel_modules?: [...string]
+	media_node?:     bool
 }
 
 #Config
