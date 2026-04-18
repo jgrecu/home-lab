@@ -36,6 +36,15 @@ spec:
           HOST: "forgejo-postgres-rw:5432"
           NAME: forgejo
           USER: forgejo
+        cache:
+          ADAPTER: redis
+          HOST: redis://dragonfly.database-system.svc.cluster.local:6379/0
+        session:
+          PROVIDER: redis
+          PROVIDER_CONFIG: redis://dragonfly.database-system.svc.cluster.local:6379/1
+        queue:
+          TYPE: redis
+          CONN_STR: redis://dragonfly.database-system.svc.cluster.local:6379/2
         packages:
           # Enables the built-in container registry.
           # Push/pull images: forgejo.${SECRET_DOMAIN}/username/image:tag
@@ -64,6 +73,10 @@ spec:
     postgresql:
       enabled: false
     postgresql-ha:
+      enabled: false
+
+    # Redis is handled by shared Dragonfly instance
+    redis-cluster:
       enabled: false
 
     route:
