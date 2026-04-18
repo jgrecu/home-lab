@@ -16,6 +16,9 @@ spec:
   storage:
     storageClass: longhorn-single
     size: 10Gi
+  postgresql:
+    shared_preload_libraries:
+      - "vectors.so"
   bootstrap:
     initdb:
       database: immich
