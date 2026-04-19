@@ -21,6 +21,8 @@ spec:
             command: ["/bin/sh", "-c"]
             args:
               - |
+                # Wait for Docker daemon to be ready
+                while ! nc -z localhost 2375; do sleep 1; done
                 if [ ! -f /data/.runner ]; then
                   forgejo-runner register \
                     --no-interactive \
@@ -37,6 +39,7 @@ spec:
                   secretKeyRef:
                     name: forgejo-runner-secret
                     key: registration-token
+              DOCKER_HOST: tcp://localhost:2375
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
@@ -47,6 +50,20 @@ spec:
                 cpu: 50m
               limits:
                 memory: 512Mi
+          # Docker-in-Docker sidecar for running containerized jobs
+          dind:
+            image:
+              repository: docker
+              tag: 27-dind
+            env:
+              DOCKER_TLS_CERTDIR: ""  # Disable TLS for localhost communication
+            securityContext:
+              privileged: true
+            resources:
+              requests:
+                cpu: 100m
+              limits:
+                memory: 2Gi
         pod:
           securityContext:
             fsGroup: 1000
@@ -62,3 +79,10 @@ spec:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /data
+      # Docker storage for DinD — images, layers, build cache
+      docker:
+        type: emptyDir
+        advancedMounts:
+          forgejo-runner:
+            dind:
+              - path: /var/lib/docker
