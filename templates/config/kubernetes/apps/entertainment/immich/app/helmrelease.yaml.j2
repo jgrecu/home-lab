@@ -9,10 +9,6 @@ spec:
     name: immich
   interval: 1h
   values:
-    # Override Immich image version
-    image:
-      tag: v2.7.5
-
     # Server component configuration
     server:
       controllers:
@@ -42,6 +38,10 @@ spec:
         # Chart 0.11.1+ requires existingClaim instead of creating PVC
         library:
           existingClaim: immich-library
+
+    # Override image version to match database backup
+    image:
+      tag: v2.7.5
 
     # Machine learning model cache on Longhorn — models are ~2-4GB and
     # downloaded once. Fast local SSD means quicker startup after pod restarts.

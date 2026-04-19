@@ -20,3 +20,6 @@ talosconfig
 .DS_Store
 **/.DS_Store
 Thumbs.db
+*.tar.gz
+*.dump
+*.sql
