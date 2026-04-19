@@ -51,6 +51,10 @@ pihole_dns_addr: "192.168.1.60"
 #    (REQUIRED for Pi-hole) / (NOTE: This will be encrypted in the Pi-hole secret)
 pihole_admin_password: "ChangeMe-SecurePassword123!"
 
+# -- Grafana admin password
+#    (REQUIRED) / (NOTE: This will be encrypted in the Grafana secret)
+grafana_admin_password: "ChangeMe-SecurePassword123!"
+
 # -- GitHub repository
 #    (REQUIRED) / (e.g. "onedr0p/cluster-template")
 repository_name: "your-github-username/your-repo-name"
