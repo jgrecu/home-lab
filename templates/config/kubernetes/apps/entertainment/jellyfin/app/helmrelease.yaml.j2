@@ -72,7 +72,7 @@ spec:
       app:
         hostnames: ["jellyfin.${SECRET_DOMAIN}"]
         parentRefs:
-          - name: envoy-external
+          - name: envoy-internal
             namespace: network
             sectionName: https
         rules:
