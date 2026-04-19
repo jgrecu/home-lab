@@ -14,7 +14,6 @@ spec:
       masquerade: true
       # Ref: https://github.com/siderolabs/talos/issues/10002
       hostLegacyRouting: true
-      ctMapMax: 524288
     cni:
       # Required for pairing with Multus CNI
       exclusive: false
@@ -46,8 +45,6 @@ spec:
     loadBalancer:
       algorithm: maglev
       mode: "dsr"
-    maglev:
-      tableSize: 65521
     localRedirectPolicies:
       enabled: true
     operator:
