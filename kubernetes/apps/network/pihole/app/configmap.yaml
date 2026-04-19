@@ -7,4 +7,4 @@ data:
   02-conditional-forward.conf: |
     # Conditional forwarding for cluster domain
     # Forward *.jgrecu.dev queries to k8s_gateway
-    server=/${SECRET_DOMAIN}/192.168.1.56
+    server=/${SECRET_DOMAIN}/192.168.1.159
