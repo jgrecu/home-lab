@@ -25,6 +25,8 @@ import (
 	// Pi-hole Configuration
 	pihole_dns_addr?:        net.IPv4 & !=""
 	pihole_admin_password?:  string & !=""
+	// Grafana Configuration
+	grafana_admin_password?: string & !=""
 	// Cilium Configuration
 	cilium_bgp_router_addr?: net.IPv4 & !=""
 	cilium_bgp_router_asn?: string & !=""
