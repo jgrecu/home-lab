@@ -16,7 +16,7 @@ spec:
     - noatime
   nfs:
     server: "192.168.1.37"
-    path: /immich/library
+    path: /immich
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
