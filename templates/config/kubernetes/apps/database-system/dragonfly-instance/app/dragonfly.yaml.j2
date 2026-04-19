@@ -38,3 +38,4 @@ spec:
     - --cache_mode=true       # Enable cache mode for Redis/Valkey replacement
     - --maxmemory=512mb       # Max memory usage (256MB per proactor thread)
     - --proactor_threads=2    # CPU threads (adjust for Pi performance)
+    - --default_lua_flags=allow-undeclared-keys  # Required for BullMQ (Immich)
