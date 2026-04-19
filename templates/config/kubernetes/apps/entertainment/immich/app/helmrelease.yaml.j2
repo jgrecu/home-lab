@@ -38,6 +38,12 @@ spec:
                 # Redis — use Dragonfly in database-system namespace
                 REDIS_HOSTNAME: dragonfly.database-system.svc.cluster.local
                 REDIS_PORT: "6379"
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 1Gi
+                limits:
+                  memory: 6Gi
       route:
         enabled: false
 
@@ -72,6 +78,12 @@ spec:
                     periodSeconds: 30
                     timeoutSeconds: 10
                     failureThreshold: 3
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 512Mi
+                limits:
+                  memory: 4Gi
       persistence:
         cache:
           enabled: true
