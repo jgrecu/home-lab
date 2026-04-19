@@ -23,8 +23,9 @@ spec:
                   secretKeyRef:
                     name: pihole-secret
                     key: admin-password
-              # Upstream DNS servers for fallback (when conditional forwarding doesn't match)
-              PIHOLE_DNS_: "1.1.1.1;1.0.0.1"
+              # Use k8s-gateway as primary upstream - it handles cluster domains
+              # and falls back to upstream DNS for external domains
+              PIHOLE_DNS_: "192.168.1.159;1.1.1.1"
               DNSSEC: "true"
               # The hostname Pi-hole will recognise for its own web UI
               VIRTUAL_HOST: "pihole.${SECRET_DOMAIN}"
@@ -33,9 +34,6 @@ spec:
               # Options: LOCAL (default, local subnet only), ALL (all interfaces), SINGLE (primary interface)
               # See: https://docs.pi-hole.net/ftldns/configfile/#dns
               FTLCONF_dns_listeningMode: "ALL"
-              # Conditional forwarding using dnsmasq server= directive
-              # Forward cluster domain queries to k8s-gateway LoadBalancer IP
-              FTLCONF_misc_dnsmasq_lines: "server=/${SECRET_DOMAIN}/192.168.1.159"
             probes:
               liveness:
                 enabled: true
