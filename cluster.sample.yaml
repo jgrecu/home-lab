@@ -157,6 +157,18 @@ forgejo_admin_password: "n4hWddbXSvtbLuRtfdKJOOTBaA0NqwyUVpSYvbjA"
 forgejo_runner_secret: ""
 
 # ============================================================================
+# Recyclarr Configuration (TRaSH Guides sync for Radarr/Sonarr)
+# ============================================================================
+
+# -- Radarr API key (found in Radarr → Settings → General → API Key)
+#    (REQUIRED if using Recyclarr)
+recyclarr_radarr_api_key: ""
+
+# -- Sonarr API key (found in Sonarr → Settings → General → API Key)
+#    (REQUIRED if using Recyclarr)
+recyclarr_sonarr_api_key: ""
+
+# ============================================================================
 # Garage S3 Configuration
 # ============================================================================
 
