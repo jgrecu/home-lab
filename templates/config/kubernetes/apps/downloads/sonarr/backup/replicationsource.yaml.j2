@@ -5,7 +5,7 @@ metadata:
   name: sonarr-config-backup
   namespace: downloads
 spec:
-  sourcePVC: sonarr-config
+  sourcePVC: sonarr
   trigger:
     schedule: "0 3 * * *"  # Daily at 3 AM
   restic:
