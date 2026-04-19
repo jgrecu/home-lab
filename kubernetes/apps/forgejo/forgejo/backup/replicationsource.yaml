@@ -5,7 +5,7 @@ metadata:
   name: forgejo-data-backup
   namespace: forgejo
 spec:
-  sourcePVC: forgejo-data
+  sourcePVC: gitea-shared-storage
   trigger:
     schedule: "0 3 * * *"  # Daily at 3 AM
   restic:

@@ -5,7 +5,7 @@ metadata:
   name: transmission-config-backup
   namespace: downloads
 spec:
-  sourcePVC: transmission-config
+  sourcePVC: transmission
   trigger:
     schedule: "0 3 * * *"  # Daily at 3 AM
   restic:
