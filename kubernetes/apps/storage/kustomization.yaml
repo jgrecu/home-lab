@@ -13,4 +13,5 @@ resources:
   - ./longhorn/ks.yaml
   - ./csi-driver-nfs/ks.yaml
   - ./garage/ks.yaml
+  - ./s3manager/ks.yaml
   - ./volsync/ks.yaml
