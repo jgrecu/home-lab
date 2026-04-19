@@ -5,7 +5,7 @@ metadata:
   name: nextcloud-html-backup
   namespace: cloud
 spec:
-  sourcePVC: nextcloud-html
+  sourcePVC: nextcloud
   trigger:
     schedule: "0 1 * * *"  # Daily at 1 AM
   restic:

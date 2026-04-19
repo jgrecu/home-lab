@@ -5,7 +5,7 @@ metadata:
   name: authelia-config-backup
   namespace: security
 spec:
-  sourcePVC: authelia-config
+  sourcePVC: authelia
   trigger:
     schedule: "15 3 * * *"  # 3:15 AM daily
   restic:

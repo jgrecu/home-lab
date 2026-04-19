@@ -5,7 +5,7 @@ metadata:
   name: kavita-config-backup
   namespace: entertainment
 spec:
-  sourcePVC: kavita-config
+  sourcePVC: kavita
   trigger:
     schedule: "0 3 * * *"  # Daily at 3 AM
   restic:
