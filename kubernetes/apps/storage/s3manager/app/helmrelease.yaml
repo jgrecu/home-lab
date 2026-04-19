@@ -16,7 +16,7 @@ spec:
           app:
             image:
               repository: cloudlena/s3manager
-              tag: v2.7.1
+              tag: latest
             env:
               ENDPOINT: "garage.storage.svc.cluster.local:3900"
               USE_SSL: "false"
