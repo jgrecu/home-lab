@@ -58,11 +58,10 @@ spec:
                     port: *webPort
                   initialDelaySeconds: 15
                   periodSeconds: 10
-            # WireGuard requires NET_ADMIN and SYS_MODULE capabilities
+            # WireGuard requires NET_ADMIN capability
             securityContext:
-              privileged: true
               capabilities:
-                add: ["NET_ADMIN", "SYS_MODULE"]
+                add: ["NET_ADMIN"]
             resources:
               requests:
                 cpu: 10m
