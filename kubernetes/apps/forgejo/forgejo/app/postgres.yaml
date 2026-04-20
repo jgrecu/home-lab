@@ -23,25 +23,26 @@ spec:
     initdb:
       database: forgejo
       owner: forgejo
-  backup:
-    barmanObjectStore:
-      # Continuous WAL archiving + scheduled base backups → Garage S3
-      destinationPath: "s3://cnpg-backups/forgejo-postgres/"
-      endpointURL: "http://garage-s3.storage.svc.cluster.local:3900"
-      s3Credentials:
-        accessKeyId:
-          name: garage-cnpg-secret
-          key: ACCESS_KEY_ID
-        secretAccessKey:
-          name: garage-cnpg-secret
-          key: ACCESS_SECRET_KEY
-      data:
-        immediateCheckpoint: false
-        jobs: 2
-      wal:
-        compression: gzip
-        maxParallel: 2
-        archiveAdditionalCommandArgs:
-          - "--cloud-provider=aws-s3"
-      serverName: forgejo-postgres
-    retentionPolicy: "180d"  # 6 months retention to match Volsync
+  # Backup disabled due to Garage S3 API incompatibility with barman-cloud HeadBucket
+  # Volsync provides daily PVC backups as alternative
+  # backup:
+  #   barmanObjectStore:
+  #     destinationPath: "s3://cnpg-backups/forgejo-postgres/"
+  #     endpointURL: "http://garage-s3.storage.svc.cluster.local:3900"
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: garage-cnpg-secret
+  #         key: ACCESS_KEY_ID
+  #       secretAccessKey:
+  #         name: garage-cnpg-secret
+  #         key: ACCESS_SECRET_KEY
+  #     data:
+  #       immediateCheckpoint: false
+  #       jobs: 2
+  #     wal:
+  #       compression: gzip
+  #       maxParallel: 2
+  #       archiveAdditionalCommandArgs:
+  #         - "--cloud-provider=aws-s3"
+  #     serverName: forgejo-postgres
+  #   retentionPolicy: "180d"
