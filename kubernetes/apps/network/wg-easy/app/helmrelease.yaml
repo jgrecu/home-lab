@@ -17,7 +17,7 @@ spec:
             image:
               repository: ghcr.io/place1/wg-access-server
               # renovate: datasource=docker depName=ghcr.io/place1/wg-access-server
-              tag: v0.13.0
+              tag: latest
             env:
               TZ: "Europe/Madrid"
               # WireGuard configuration
