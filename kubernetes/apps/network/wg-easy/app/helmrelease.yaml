@@ -60,6 +60,7 @@ spec:
                   periodSeconds: 10
             # WireGuard requires NET_ADMIN and SYS_MODULE capabilities
             securityContext:
+              privileged: true
               capabilities:
                 add: ["NET_ADMIN", "SYS_MODULE"]
             resources:
