@@ -12,9 +12,6 @@ spec:
     controllers:
       jellyfin:
         pod:
-          # Schedule on m900-ctrl (ThinkCentre with i5-6500T for Intel Quick Sync)
-          nodeSelector:
-            kubernetes.io/hostname: m900-ctrl
           securityContext:
             # Supplemental group for /dev/dri access (render group GID 44 on Talos)
             supplementalGroups: [44]
