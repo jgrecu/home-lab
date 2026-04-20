@@ -22,12 +22,12 @@ spec:
               TZ: "Europe/Madrid"
               # External endpoint - must match current WG_HOST
               WG_HOST: "#{ wg_easy_external_host }#"
-              # Web UI password
-              PASSWORD:
+              # Web UI password hash (bcrypt)
+              PASSWORD_HASH:
                 valueFrom:
                   secretKeyRef:
                     name: wg-easy-secret
-                    key: admin-password
+                    key: admin-password-hash
               # DNS server for VPN clients (Pi-hole)
               WG_DEFAULT_DNS: "#{ pihole_dns_addr }#"
               # Split tunnel: route cluster and home networks through VPN
