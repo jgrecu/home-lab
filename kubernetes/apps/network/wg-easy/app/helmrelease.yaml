@@ -58,8 +58,9 @@ spec:
                     port: *webPort
                   initialDelaySeconds: 15
                   periodSeconds: 10
-            # WireGuard requires NET_ADMIN and NET_RAW capabilities for iptables
+            # WireGuard requires privileged mode for iptables access
             securityContext:
+              privileged: true
               capabilities:
                 add: ["NET_ADMIN", "NET_RAW"]
             resources:
