@@ -44,11 +44,8 @@ spec:
               requests:
                 cpu: 100m
                 memory: 1Gi
-                # Request GPU resources for Intel Quick Sync
-                gpu.intel.com/i915: "1"
               limits:
                 memory: 4Gi
-                gpu.intel.com/i915: "1"
 
     persistence:
       # Jellyfin config, metadata cache, and transcoding temp on Longhorn.
