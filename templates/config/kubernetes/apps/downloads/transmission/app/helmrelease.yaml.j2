@@ -81,6 +81,8 @@ spec:
       peer:
         controller: transmission
         type: LoadBalancer
+        annotations:
+          io.cilium/lb-ipam-ips: "#{ transmission_peer_addr }#"
         ports:
           peer-tcp:
             port: 51413
