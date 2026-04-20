@@ -13,4 +13,3 @@ resources:
   - ./envoy-gateway/ks.yaml
   - ./k8s-gateway/ks.yaml
   - ./pihole/ks.yaml
-  - ./wg-easy/ks.yaml
