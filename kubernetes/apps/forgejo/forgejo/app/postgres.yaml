@@ -27,7 +27,7 @@ spec:
     barmanObjectStore:
       # Continuous WAL archiving + scheduled base backups → Garage S3
       destinationPath: "s3://cnpg-backups/forgejo-postgres/"
-      endpointURL: "http://garage.storage.svc.cluster.local:3900"
+      endpointURL: "http://garage-s3.storage.svc.cluster.local:3900"
       s3Credentials:
         accessKeyId:
           name: garage-cnpg-secret
