@@ -35,6 +35,13 @@ spec:
         secretAccessKey:
           name: garage-cnpg-secret
           key: ACCESS_SECRET_KEY
+      data:
+        immediateCheckpoint: false
+        jobs: 2
       wal:
         compression: gzip
+        maxParallel: 2
+        archiveAdditionalCommandArgs:
+          - "--cloud-provider=aws-s3"
+      serverName: forgejo-postgres
     retentionPolicy: "180d"  # 6 months retention to match Volsync
