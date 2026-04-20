@@ -25,6 +25,8 @@ import (
 	// Pi-hole Configuration
 	pihole_dns_addr?:        net.IPv4 & !=""
 	pihole_admin_password?:  string & !=""
+	// Transmission Configuration
+	transmission_peer_addr?: net.IPv4 & !=""
 	// Grafana Configuration
 	grafana_admin_password?: string & !=""
 	// Cilium Configuration

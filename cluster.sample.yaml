@@ -43,6 +43,10 @@ cluster_dns_gateway_addr: "192.168.1.56"
 #    (REQUIRED) / (NOTE: Choose an unused IP in node_cidr)
 cluster_gateway_addr: "192.168.1.57"
 
+# -- The Load balancer IP for Transmission peer port
+#    (REQUIRED for Transmission) / (NOTE: Choose an unused IP in node_cidr)
+transmission_peer_addr: "192.168.1.58"
+
 # -- The Load balancer IP for Pi-hole DNS server
 #    (REQUIRED for Pi-hole) / (NOTE: Choose an unused IP in node_cidr)
 pihole_dns_addr: "192.168.1.60"
