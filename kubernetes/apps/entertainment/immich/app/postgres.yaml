@@ -33,7 +33,7 @@ spec:
   backup:
     barmanObjectStore:
       destinationPath: "s3://cnpg-backups/immich-postgres/"
-      endpointURL: "http://garage.storage.svc.cluster.local:3900"
+      endpointURL: "http://garage-s3.storage.svc.cluster.local:3900"
       s3Credentials:
         accessKeyId:
           name: garage-cnpg-secret
