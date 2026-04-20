@@ -11,6 +11,13 @@ spec:
   values:
     controllers:
       jellyfin:
+        pod:
+          # Schedule on m900-ctrl (ThinkCentre with i5-6500T for Intel Quick Sync)
+          nodeSelector:
+            kubernetes.io/hostname: m900-ctrl
+          securityContext:
+            # Supplemental group for /dev/dri access (render group GID 44 on Talos)
+            supplementalGroups: [44]
         containers:
           app:
             image:
@@ -36,10 +43,12 @@ spec:
             resources:
               requests:
                 cpu: 100m
-                memory: 512Mi
+                memory: 1Gi
+                # Request GPU resources for Intel Quick Sync
+                gpu.intel.com/i915: "1"
               limits:
-                # Reduced for RPi cluster constraints (increase on ThinkCentre)
-                memory: 2Gi
+                memory: 4Gi
+                gpu.intel.com/i915: "1"
 
     persistence:
       # Jellyfin config, metadata cache, and transcoding temp on Longhorn.
@@ -51,6 +60,13 @@ spec:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /config
+
+      # Intel GPU device for Quick Sync Video hardware transcoding
+      dri:
+        type: hostPath
+        hostPath: /dev/dri
+        globalMounts:
+          - path: /dev/dri
 
       # Media library on NFS — same share that Radarr/Sonarr import into.
       # Your NAS should look like: /videos/Films  /videos/Series
