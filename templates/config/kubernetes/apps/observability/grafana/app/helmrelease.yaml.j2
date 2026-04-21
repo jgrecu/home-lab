@@ -46,6 +46,21 @@ spec:
             options:
               path: /var/lib/grafana/dashboards/default
 
+    # Enable sidecar to watch for ConfigMaps with grafana_dashboard label
+    sidecar:
+      dashboards:
+        enabled: true
+        label: grafana_dashboard
+        labelValue: "1"
+        searchNamespace: ALL
+        folderAnnotation: grafana_folder
+        provider:
+          disableDelete: false
+          allowUiUpdates: true
+          foldersFromFilesStructure: true
+      datasources:
+        enabled: false
+
     dashboards:
       default:
         # Kubernetes cluster overview
