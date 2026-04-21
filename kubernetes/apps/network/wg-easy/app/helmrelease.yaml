@@ -46,19 +46,6 @@ spec:
               PORT: "51821"
               # Allow HTTP access (behind internal gateway with HTTPS)
               INSECURE: "true"
-              # Unattended setup - these only apply on first run
-              INIT_ENABLED: "true"
-              INIT_USERNAME: "admin"
-              INIT_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: wg-easy-secret
-                    key: admin-password
-              INIT_HOST: "vpn.jgrecu.dev"
-              INIT_PORT: "51820"
-              INIT_DNS: "192.168.1.166"
-              INIT_IPV4_CIDR: "10.8.0.0/24"
-              INIT_ALLOWED_IPS: "192.168.1.0/24, 10.42.0.0/16, 10.43.0.0/16"
             probes:
               liveness:
                 enabled: true
