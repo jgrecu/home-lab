@@ -20,10 +20,7 @@ data:
       "liveNow": false,
       "panels": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "Prometheus",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -74,10 +71,7 @@ data:
           "type": "stat"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "Prometheus",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -132,10 +126,7 @@ data:
           "type": "stat"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "Prometheus",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -220,10 +211,7 @@ data:
           "type": "timeseries"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "Prometheus",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -305,10 +293,7 @@ data:
           "type": "table"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "Prometheus",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -366,10 +351,7 @@ data:
           "type": "gauge"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "Prometheus",
           "fieldConfig": {
             "defaults": {
               "color": {
