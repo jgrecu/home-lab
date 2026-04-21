@@ -37,20 +37,6 @@ spec:
               # Ports
               PORT: "51821"
               WG_PORT: "51820"
-              # Override PostUp/PostDown with nftables instead of iptables
-              WG_POST_UP: |
-                nft add table ip nat 2>/dev/null || true;
-                nft add chain ip nat postrouting { type nat hook postrouting priority 100 \; } 2>/dev/null || true;
-                nft add rule ip nat postrouting oifname "eth0" ip saddr 10.8.0.0/24 masquerade;
-                nft add table ip filter 2>/dev/null || true;
-                nft add chain ip filter input { type filter hook input priority 0 \; } 2>/dev/null || true;
-                nft add rule ip filter input udp dport 51820 accept;
-                nft add chain ip filter forward { type filter hook forward priority 0 \; } 2>/dev/null || true;
-                nft add rule ip filter forward iifname "wg0" accept;
-                nft add rule ip filter forward oifname "wg0" accept;
-              WG_POST_DOWN: |
-                nft flush table ip nat 2>/dev/null || true;
-                nft flush table ip filter 2>/dev/null || true;
             probes:
               liveness:
                 enabled: true
