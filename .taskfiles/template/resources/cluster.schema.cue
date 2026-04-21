@@ -28,10 +28,10 @@ import (
 	// Transmission Configuration
 	transmission_peer_addr?: net.IPv4 & !=""
 	// WireGuard Easy Configuration
-	wg_easy_vpn_addr?:            net.IPv4 & !=""
-	wg_easy_admin_password_hash?: string & !=""
-	wg_easy_external_host?:       string & !=""
-	wg_easy_server_private_key?:  string & !=""
+	wg_easy_vpn_addr?:         net.IPv4 & !=""
+	wg_easy_admin_password?:   string & !=""
+	wg_easy_external_host?:    string & !=""
+	wg_easy_server_private_key?: string & !=""
 	// Grafana Configuration
 	grafana_admin_password?: string & !=""
 	// Cilium Configuration

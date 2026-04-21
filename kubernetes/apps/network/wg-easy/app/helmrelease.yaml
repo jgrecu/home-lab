@@ -42,26 +42,23 @@ spec:
               tag: 15
             env:
               TZ: "Europe/Madrid"
-              # External endpoint - must match current WG_HOST
-              WG_HOST: "vpn.jgrecu.dev"
-              # Web UI password (already hashed with bcrypt)
-              PASSWORD_HASH:
+              # Web UI port
+              PORT: "51821"
+              # Allow HTTP access (behind internal gateway with HTTPS)
+              INSECURE: "true"
+              # Unattended setup - these only apply on first run
+              INIT_ENABLED: "true"
+              INIT_USERNAME: "admin"
+              INIT_PASSWORD:
                 valueFrom:
                   secretKeyRef:
                     name: wg-easy-secret
-                    key: admin-password-hash
-              # DNS server for VPN clients (Pi-hole)
-              WG_DEFAULT_DNS: "192.168.1.166"
-              # Split tunnel: route cluster and home networks through VPN
-              WG_ALLOWED_IPS: "192.168.1.0/24, 10.42.0.0/16, 10.43.0.0/16"
-              # Keepalive for NAT traversal
-              WG_PERSISTENT_KEEPALIVE: "25"
-              # Ports
-              PORT: "51821"
-              WG_PORT: "51820"
-              # Disable wg-easy's built-in iptables (we use nftables instead)
-              WG_POST_UP: "echo 'nftables rules set by initContainer'"
-              WG_POST_DOWN: "echo 'nftables cleanup handled by pod termination'"
+                    key: admin-password
+              INIT_HOST: "vpn.jgrecu.dev"
+              INIT_PORT: "51820"
+              INIT_DNS: "192.168.1.166"
+              INIT_IPV4_CIDR: "10.8.0.0/24"
+              INIT_ALLOWED_IPS: "192.168.1.0/24, 10.42.0.0/16, 10.43.0.0/16"
             probes:
               liveness:
                 enabled: true
