@@ -22,12 +22,14 @@ spec:
         datasources:
           - name: Prometheus
             type: prometheus
+            uid: prometheus
             url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090
             isDefault: true
             jsonData:
               timeInterval: 1m
           - name: Loki
             type: loki
+            uid: loki
             url: http://loki-gateway.observability.svc.cluster.local:80
             jsonData:
               maxLines: 1000
