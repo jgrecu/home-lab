@@ -1,0 +1,18 @@
+---
+# ServiceMonitor for WireGuard Easy pod metrics
+# Monitors basic pod/container metrics via kubelet
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: wg-easy
+  namespace: network
+  labels:
+    app.kubernetes.io/name: wg-easy
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wg-easy
+  endpoints:
+    - port: http
+      interval: 30s
+      path: /metrics
