@@ -54,6 +54,7 @@ spec:
         labelValue: "1"
         searchNamespace: ALL
         folderAnnotation: grafana_folder
+        folder: /var/lib/grafana/dashboards/default
         provider:
           disableDelete: false
           allowUiUpdates: true
