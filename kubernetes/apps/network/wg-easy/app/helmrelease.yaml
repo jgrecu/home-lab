@@ -12,6 +12,28 @@ spec:
   values:
     controllers:
       wg-easy:
+        initContainers:
+          # Set up nftables rules before WireGuard starts
+          nftables-setup:
+            image:
+              repository: alpine
+              tag: 3.19
+            command:
+              - /bin/sh
+              - -c
+              - |
+                apk add --no-cache nftables
+                nft add table ip nat
+                nft add chain ip nat postrouting { type nat hook postrouting priority 100 \; }
+                nft add rule ip nat postrouting oifname "eth0" ip saddr 10.8.0.0/24 masquerade
+                nft add table ip filter
+                nft add chain ip filter input { type filter hook input priority 0 \; }
+                nft add rule ip filter input udp dport 51820 accept
+                nft add chain ip filter forward { type filter hook forward priority 0 \; }
+                nft add rule ip filter forward iifname "wg0" accept
+                nft add rule ip filter forward oifname "wg0" accept
+            securityContext:
+              privileged: true
         containers:
           app:
             image:
@@ -37,6 +59,9 @@ spec:
               # Ports
               PORT: "51821"
               WG_PORT: "51820"
+              # Disable wg-easy's built-in iptables (we use nftables instead)
+              WG_POST_UP: "echo 'nftables rules set by initContainer'"
+              WG_POST_DOWN: "echo 'nftables cleanup handled by pod termination'"
             probes:
               liveness:
                 enabled: true
