@@ -73,10 +73,9 @@ spec:
                   initialDelaySeconds: 15
                   periodSeconds: 10
             # WireGuard requires NET_ADMIN and SYS_MODULE capabilities
+            # Talos Linux requires privileged mode for these capabilities
             securityContext:
-              allowPrivilegeEscalation: true
-              capabilities:
-                add: ["NET_ADMIN", "SYS_MODULE"]
+              privileged: true
             resources:
               requests:
                 cpu: 10m
