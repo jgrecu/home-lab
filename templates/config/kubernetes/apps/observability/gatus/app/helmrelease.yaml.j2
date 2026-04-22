@@ -249,19 +249,15 @@ spec:
 
               - name: NFS Media Server
                 group: Infrastructure
-                url: "192.168.1.37"
+                url: "tcp://192.168.1.37:2049"
                 interval: 3m
-                tcp:
-                  port: 2049
                 conditions:
                   - "[CONNECTED] == true"
 
               - name: Dragonfly Cache
                 group: Infrastructure
-                url: "dragonfly.database-system.svc.cluster.local:6379"
+                url: "tcp://dragonfly.database-system.svc.cluster.local:6379"
                 interval: 3m
-                tcp:
-                  port: 6379
                 conditions:
                   - "[CONNECTED] == true"
 
