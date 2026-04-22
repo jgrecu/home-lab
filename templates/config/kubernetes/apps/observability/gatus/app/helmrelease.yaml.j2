@@ -107,7 +107,7 @@ spec:
                 url: "https://registry-1.docker.io/v2/"
                 interval: 2m
                 conditions:
-                  - "([STATUS] == 200) || ([STATUS] == 401)"
+                  - "[STATUS] == 401"
                   - "[RESPONSE_TIME] < 5000"
 
               - name: CloudFlare Status
@@ -259,7 +259,7 @@ spec:
                 url: "http://garage-s3.storage.svc.cluster.local:3900"
                 interval: 3m
                 conditions:
-                  - "([STATUS] == 200) || ([STATUS] == 403)"
+                  - "[STATUS] == 403"
 
               - name: Garage Health
                 group: Infrastructure
