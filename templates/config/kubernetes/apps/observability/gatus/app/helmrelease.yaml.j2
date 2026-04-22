@@ -107,7 +107,7 @@ spec:
                 url: "https://registry-1.docker.io/v2/"
                 interval: 2m
                 conditions:
-                  - "[STATUS] == 200 || [STATUS] == 401"
+                  - "([STATUS] == 200) || ([STATUS] == 401)"
                   - "[RESPONSE_TIME] < 5000"
 
               - name: CloudFlare Status
@@ -168,49 +168,42 @@ spec:
               # Downloads - Media Management
               - name: Sonarr
                 group: Downloads
-                url: "https://sonarr.${SECRET_DOMAIN}/ping"
+                url: "http://sonarr.downloads.svc.cluster.local:8989/ping"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
 
               - name: Radarr
                 group: Downloads
-                url: "https://radarr.${SECRET_DOMAIN}/ping"
+                url: "http://radarr.downloads.svc.cluster.local:7878/ping"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
 
               - name: Prowlarr
                 group: Downloads
-                url: "https://prowlarr.${SECRET_DOMAIN}"
+                url: "http://prowlarr.downloads.svc.cluster.local:9696"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
 
               - name: Bazarr
                 group: Downloads
-                url: "https://bazarr.${SECRET_DOMAIN}"
+                url: "http://bazarr.downloads.svc.cluster.local:6767"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
 
               - name: Transmission
                 group: Downloads
-                url: "https://transmission.${SECRET_DOMAIN}"
+                url: "http://transmission-app.downloads.svc.cluster.local:9091"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
 
               - name: Autobrr
                 group: Downloads
-                url: "https://autobrr.${SECRET_DOMAIN}/api/healthz/liveness"
-                interval: 5m
-                conditions:
-                  - "[STATUS] == 200"
-
-              - name: Jackett
-                group: Downloads
-                url: "http://jackett.downloads.svc.cluster.local:9117"
+                url: "http://autobrr.downloads.svc.cluster.local:7474/api/healthz/liveness"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
@@ -218,7 +211,7 @@ spec:
               # Entertainment - Media Consumption
               - name: Jellyfin
                 group: Entertainment
-                url: "https://jellyfin.${SECRET_DOMAIN}/health"
+                url: "http://jellyfin.entertainment.svc.cluster.local:8096/health"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
@@ -226,7 +219,7 @@ spec:
 
               - name: Seerr
                 group: Entertainment
-                url: "https://seerr.${SECRET_DOMAIN}/api/v1/status"
+                url: "http://seerr.entertainment.svc.cluster.local:5055/api/v1/status"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
@@ -234,7 +227,7 @@ spec:
               # Home Automation
               - name: Home Assistant
                 group: Home Automation
-                url: "https://home-assistant.${SECRET_DOMAIN}"
+                url: "http://home-assistant.home-automation.svc.cluster.local:8123"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
@@ -242,7 +235,7 @@ spec:
               # Infrastructure
               - name: Pi-hole
                 group: Infrastructure
-                url: "https://pihole.${SECRET_DOMAIN}/admin/"
+                url: "http://pihole-web.network.svc.cluster.local/admin/"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
@@ -266,11 +259,11 @@ spec:
                 url: "http://garage-s3.storage.svc.cluster.local:3900"
                 interval: 3m
                 conditions:
-                  - "[STATUS] == 200"
+                  - "([STATUS] == 200) || ([STATUS] == 403)"
 
               - name: Garage Health
                 group: Infrastructure
-                url: "http://garage.storage.svc.cluster.local:3903/health"
+                url: "http://garage-admin.storage.svc.cluster.local:3903/health"
                 interval: 3m
                 conditions:
                   - "[STATUS] == 200"
