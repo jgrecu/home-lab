@@ -102,6 +102,8 @@ spec:
               - wg0
             securityContext:
               privileged: true
+              runAsUser: 0
+              runAsGroup: 0
               capabilities:
                 add: ["NET_ADMIN"]
             resources:
