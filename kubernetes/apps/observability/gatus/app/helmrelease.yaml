@@ -156,14 +156,14 @@ spec:
               # These check the services directly within the cluster (bypassing CloudFlare)
               - name: Immich
                 group: Internal Services
-                url: "http://immich-server.media.svc.cluster.local:3001/api/server-info/ping"
+                url: "http://immich-server.entertainment.svc.cluster.local:2283/api/server-info/ping"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
 
               - name: Nextcloud
                 group: Internal Services
-                url: "http://nextcloud.default.svc.cluster.local:80/status.php"
+                url: "http://nextcloud.cloud.svc.cluster.local:80/status.php"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
@@ -171,14 +171,14 @@ spec:
 
               - name: Forgejo
                 group: Internal Services
-                url: "http://forgejo-http.default.svc.cluster.local:3000"
+                url: "http://forgejo-http.forgejo.svc.cluster.local:3000"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
 
               - name: Kavita
                 group: Internal Services
-                url: "http://kavita.media.svc.cluster.local:5000"
+                url: "http://kavita.entertainment.svc.cluster.local:5000"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
