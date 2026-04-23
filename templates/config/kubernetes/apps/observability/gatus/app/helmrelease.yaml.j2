@@ -156,10 +156,11 @@ spec:
               # These check the services directly within the cluster (bypassing CloudFlare)
               - name: Immich
                 group: Internal Services
-                url: "http://immich-server.entertainment.svc.cluster.local:2283/api/server-info/ping"
+                url: "http://immich-server.entertainment.svc.cluster.local:2283/api/server/ping"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
+                  - "[BODY].res == pong"
 
               - name: Nextcloud
                 group: Internal Services
