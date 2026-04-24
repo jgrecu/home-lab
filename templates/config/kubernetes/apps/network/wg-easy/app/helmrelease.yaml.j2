@@ -56,6 +56,30 @@ spec:
               INIT_IPV4_CIDR: "10.8.0.0/24"
               # Route all traffic through VPN (disable split-tunnel)
               INIT_ALLOWED_IPS: "0.0.0.0/0"
+            # Lifecycle hook to manually bring up WireGuard interface
+            # wg-quick fails on Talos because it tries to use iptables,
+            # but nftables rules are set up in initContainer
+            lifecycle:
+              postStart:
+                exec:
+                  command:
+                    - /bin/sh
+                    - -c
+                    - |
+                      # Wait for wg0.conf to be created
+                      for i in $(seq 1 30); do
+                        if [ -f /etc/wireguard/wg0.conf ]; then
+                          break
+                        fi
+                        sleep 1
+                      done
+                      # Strip wg-quick specific directives and bring up interface manually
+                      grep -v "^Address\|^MTU\|^PreUp\|^PostUp\|^PreDown\|^PostDown" /etc/wireguard/wg0.conf > /tmp/wg0-stripped.conf || true
+                      ip link add dev wg0 type wireguard || true
+                      wg setconf wg0 /tmp/wg0-stripped.conf || true
+                      ip address add 10.8.0.1/24 dev wg0 || true
+                      ip address add fdcc:ad94:bacf:61a4::cafe:1/112 dev wg0 || true
+                      ip link set mtu 1420 up dev wg0 || true
             probes:
               liveness:
                 enabled: true
