@@ -10,8 +10,6 @@ metadata:
     gethomepage.dev/icon: immich.png
     gethomepage.dev/description: Photo and video management
     gethomepage.dev/href: https://immich.${SECRET_DOMAIN}
-    gethomepage.dev/widget.type: kubernetes
-    gethomepage.dev/pod-selector: app.kubernetes.io/instance=immich
 spec:
   parentRefs:
     - name: envoy-external
