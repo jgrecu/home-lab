@@ -45,23 +45,7 @@ spec:
                 limits:
                   memory: 6Gi
       route:
-        app:
-          hostnames: ["immich.${SECRET_DOMAIN}"]
-          parentRefs:
-            - name: envoy-external
-              namespace: network
-              sectionName: https
-          rules:
-            - backendRefs:
-                - identifier: app
-                  port: 2283
-          annotations:
-            gethomepage.dev/enabled: "true"
-            gethomepage.dev/group: Entertainment
-            gethomepage.dev/name: Immich
-            gethomepage.dev/icon: immich.png
-            gethomepage.dev/description: Photo and video management
-            gethomepage.dev/href: https://immich.${SECRET_DOMAIN}
+        enabled: false
 
     immich:
       persistence:
