@@ -12,7 +12,8 @@ spec:
     controllers:
       forgejo-runner:
         replicas: 1
-        strategy: Recreate
+        strategy:
+          type: Recreate
         containers:
           app:
             image:
