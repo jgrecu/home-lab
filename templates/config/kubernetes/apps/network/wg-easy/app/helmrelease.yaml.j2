@@ -54,7 +54,8 @@ spec:
               INIT_PORT: "51820"
               INIT_DNS: "#{ pihole_dns_addr }#"
               INIT_IPV4_CIDR: "10.8.0.0/24"
-              INIT_ALLOWED_IPS: "192.168.1.0/24, 10.42.0.0/16, 10.43.0.0/16"
+              # Route all traffic through VPN (disable split-tunnel)
+              INIT_ALLOWED_IPS: "0.0.0.0/0"
             probes:
               liveness:
                 enabled: true
