@@ -13,7 +13,7 @@ metadata:
   labels:
     app.kubernetes.io/name: flux
 spec:
-  jobLabel: app.kubernetes.io/name
+  jobLabel: app.kubernetes.io/component
   namespaceSelector:
     matchNames:
       - flux-system
@@ -23,4 +23,4 @@ spec:
       path: /metrics
   selector:
     matchLabels:
-      app.kubernetes.io/name: flux
+      app.kubernetes.io/part-of: flux
