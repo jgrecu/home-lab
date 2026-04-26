@@ -15,7 +15,7 @@ spec:
           app:
             image:
               repository: pihole/pihole
-              tag: 2026.04.0
+              tag: 2026.04.1
             env:
               TZ: "UTC"
               WEBPASSWORD:
