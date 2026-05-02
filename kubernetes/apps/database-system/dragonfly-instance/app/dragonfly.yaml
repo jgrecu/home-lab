@@ -31,7 +31,7 @@ spec:
       memory: 768Mi
 
   # Dragonfly container configuration
-  image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.38.0
+  image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.38.1
 
   # Additional Dragonfly args (optional)
   args:
