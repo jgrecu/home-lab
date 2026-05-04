@@ -91,11 +91,19 @@ spec:
       s3:
         enabled: true
         port: 8333
-        # Allow bucket operations without authentication initially
-        # Bootstrap script will configure credentials
         allowEmptyFolder: true
-        enableAuth: false
+        # Enable S3 authentication - credentials configured via s3.configure
+        enableAuth: true
         auditLogConfig: {}
+        # S3 credentials config - mounted from secret
+        extraVolumes:
+          - name: s3-config
+            secret:
+              secretName: seaweedfs-s3-config
+        extraVolumeMounts:
+          - name: s3-config
+            mountPath: /etc/seaweedfs
+            readOnly: true
       # Longhorn for filer metadata
       data:
         type: persistentVolumeClaim
