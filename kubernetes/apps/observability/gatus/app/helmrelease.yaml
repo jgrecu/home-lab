@@ -278,7 +278,7 @@ spec:
                 url: "http://seaweedfs-filer.storage.svc.cluster.local:8333"
                 interval: 3m
                 conditions:
-                  - "[STATUS] == 200"
+                  - "[STATUS] == 403"
 
               - name: SeaweedFS Master
                 group: Infrastructure
