@@ -147,6 +147,11 @@ nfs_books_path: "/books"
 #    (REQUIRED if using Garage)
 nfs_garage_path: "/garage"
 
+# -- NFS export path for SeaweedFS volume data
+#    SeaweedFS volume server stores all S3 object data here.
+#    (REQUIRED if using SeaweedFS)
+nfs_seaweedfs_path: "/seaweedfs"
+
 # -- NFS export path for Nextcloud data
 #    Nextcloud manages its own directory structure within this share.
 #    (REQUIRED if using Nextcloud)
@@ -223,10 +228,21 @@ garage_s3_secret_access_key: ""
 #    NOTE: This will be encrypted with SOPS when you run 'task configure'
 volsync_restic_password: ""
 
-# -- Volsync S3 credentials (for accessing Garage S3 backup bucket)
-#    These are set automatically when you run: task storage:bootstrap-garage
+# -- Volsync S3 credentials (for accessing SeaweedFS S3 backup bucket)
+#    These are set automatically when you run: task storage:bootstrap-seaweedfs
 #    The bootstrap script creates the 'volsync-backups' bucket and generates credentials.
 #    (REQUIRED if using Volsync - auto-populated by bootstrap task)
-#    NOTE: Use the same credentials as garage_s3_access_key_id/garage_s3_secret_access_key
+#    NOTE: Use the same credentials as seaweedfs_s3_access_key_id/seaweedfs_s3_secret_access_key
 volsync_s3_access_key: ""
 volsync_s3_secret_key: ""
+
+# ============================================================================
+# SeaweedFS S3 Configuration
+# ============================================================================
+
+# -- SeaweedFS S3 access credentials
+#    Leave empty until you run: task storage:bootstrap-seaweedfs
+#    This task will create buckets, generate keys, and update these values automatically.
+#    (REQUIRED after bootstrap)
+seaweedfs_s3_access_key_id: ""
+seaweedfs_s3_secret_access_key: ""
