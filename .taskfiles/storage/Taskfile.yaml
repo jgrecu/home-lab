@@ -13,6 +13,16 @@ tasks:
       - sh: kubectl get pod -n storage garage-0 &>/dev/null
         msg: Garage pod not found (have you deployed storage apps?)
 
+  bootstrap-seaweedfs:
+    desc: Bootstrap SeaweedFS S3 storage (creates buckets, keys, updates cluster.yaml)
+    cmd: bash {{.SCRIPTS_DIR}}/bootstrap-seaweedfs.sh
+    preconditions:
+      - test -f {{.KUBECONFIG}}
+      - test -f {{.SCRIPTS_DIR}}/bootstrap-seaweedfs.sh
+      - which kubectl jq curl openssl
+      - sh: kubectl get pod -n storage -l app.kubernetes.io/name=seaweedfs,app.kubernetes.io/component=filer -o name | grep -q pod
+        msg: SeaweedFS filer pod not found (have you deployed storage apps?)
+
   restore-pvc:
     desc: Restore a PVC from Volsync backup (usage - task storage:restore-pvc -- <namespace> <pvc-name> <capacity>)
     summary: |

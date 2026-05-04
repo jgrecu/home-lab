@@ -135,3 +135,23 @@ mountOptions:
   - nfsvers=4.1
   - hard
   - noatime
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-seaweedfs
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: "192.168.1.37"
+  share: "/seaweedfs"
+  # No subDir — SeaweedFS volume server manages its own internal structure.
+  # reclaimPolicy: Retain ensures deleting the PVC never removes NAS files.
+  mountPermissions: "0755"
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+mountOptions:
+  - nfsvers=4.1
+  - hard
+  - noatime

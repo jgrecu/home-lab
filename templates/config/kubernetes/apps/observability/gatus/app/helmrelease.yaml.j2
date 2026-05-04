@@ -273,16 +273,16 @@ spec:
                 conditions:
                   - "[CONNECTED] == true"
 
-              - name: Garage S3
+              - name: SeaweedFS S3
                 group: Infrastructure
-                url: "http://garage-s3.storage.svc.cluster.local:3900"
+                url: "http://seaweedfs-filer.storage.svc.cluster.local:8333"
                 interval: 3m
                 conditions:
-                  - "[STATUS] == 403"
+                  - "[STATUS] == 200"
 
-              - name: Garage Health
+              - name: SeaweedFS Master
                 group: Infrastructure
-                url: "http://garage-admin.storage.svc.cluster.local:3903/health"
+                url: "http://seaweedfs-master.storage.svc.cluster.local:9333/cluster/status"
                 interval: 3m
                 conditions:
                   - "[STATUS] == 200"

@@ -46,12 +46,16 @@ import (
 	nfs_photos_path?:           string & !=""
 	nfs_books_path?:            string & !=""
 	nfs_garage_path?:           string & !=""
+	nfs_seaweedfs_path?:        string & !=""
 	nfs_nextcloud_path?:        string & !=""
 	// Garage S3 Configuration
 	garage_rpc_secret?:             string & !=""
 	garage_admin_token?:            string & !=""
 	garage_s3_access_key_id?:       string
 	garage_s3_secret_access_key?:   string
+	// SeaweedFS S3 Configuration
+	seaweedfs_s3_access_key_id?:       string
+	seaweedfs_s3_secret_access_key?:   string
 	// Forgejo Configuration
 	forgejo_admin_email?:           string
 	forgejo_admin_password?:        string

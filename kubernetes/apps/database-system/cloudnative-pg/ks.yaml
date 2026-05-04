@@ -7,7 +7,7 @@ spec:
   dependsOn:
     - name: longhorn
       namespace: storage
-    - name: garage
+    - name: seaweedfs
       namespace: storage
   interval: 1h
   path: ./kubernetes/apps/database-system/cloudnative-pg/app
