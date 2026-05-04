@@ -12,6 +12,8 @@ resources:
   - ./nfs-nextcloud-pv.yaml
   - ./longhorn/ks.yaml
   - ./csi-driver-nfs/ks.yaml
-  - ./garage/ks.yaml
+  # Garage disabled - replaced by SeaweedFS for CNPG WAL backup support
+  # - ./garage/ks.yaml
+  - ./seaweedfs/ks.yaml
   - ./s3manager/ks.yaml
   - ./volsync/ks.yaml

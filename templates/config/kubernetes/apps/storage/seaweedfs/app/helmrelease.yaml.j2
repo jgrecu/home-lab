@@ -1,0 +1,129 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: seaweedfs
+spec:
+  chart:
+    spec:
+      chart: seaweedfs
+      version: "4.0.0"
+      sourceRef:
+        kind: HelmRepository
+        name: seaweedfs
+  interval: 1h
+  values:
+    global:
+      # Minimal deployment for RPi4 home lab
+      replicationPlacment: "000"
+      enableSecurity: false
+
+    master:
+      enabled: true
+      replicas: 1
+      port: 9333
+      grpcPort: 19333
+      # Longhorn for metadata - latency sensitive
+      data:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 1Gi
+      logs:
+        type: emptyDir
+      # Resource constraints for RPi4
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
+      livenessProbe:
+        enabled: true
+        initialDelaySeconds: 30
+        periodSeconds: 30
+      readinessProbe:
+        enabled: true
+        initialDelaySeconds: 15
+        periodSeconds: 15
+      # Default replication for volumes
+      defaultReplication: "000"
+
+    volume:
+      enabled: true
+      replicas: 1
+      port: 8080
+      grpcPort: 18080
+      # NFS for object data - high capacity storage on NAS
+      dataDirs:
+        - name: data
+          type: persistentVolumeClaim
+          storageClass: nfs-seaweedfs
+          size: 1Ti
+          maxVolumes: 0
+      idx:
+        type: emptyDir
+      logs:
+        type: emptyDir
+      # Resource constraints for RPi4
+      resources:
+        requests:
+          cpu: 25m
+          memory: 256Mi
+        limits:
+          memory: 512Mi
+      livenessProbe:
+        enabled: true
+        initialDelaySeconds: 30
+        periodSeconds: 30
+      readinessProbe:
+        enabled: true
+        initialDelaySeconds: 15
+        periodSeconds: 15
+      # Minimum free disk space percentage
+      minFreeSpacePercent: 1
+
+    filer:
+      enabled: true
+      replicas: 1
+      port: 8888
+      grpcPort: 18888
+      # S3 gateway runs as part of filer
+      s3:
+        enabled: true
+        port: 8333
+        # Allow bucket operations without authentication initially
+        # Bootstrap script will configure credentials
+        allowEmptyFolder: true
+        enableAuth: false
+        auditLogConfig: {}
+      # Longhorn for filer metadata
+      data:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 2Gi
+      logs:
+        type: emptyDir
+      # Resource constraints for RPi4
+      resources:
+        requests:
+          cpu: 15m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
+      livenessProbe:
+        enabled: true
+        initialDelaySeconds: 30
+        periodSeconds: 30
+      readinessProbe:
+        enabled: true
+        initialDelaySeconds: 15
+        periodSeconds: 15
+      # Default replication for filer entries
+      defaultReplicaPlacement: "000"
+
+    # Disable optional components not needed for S3 backup use case
+    cronjob:
+      enabled: false
+
+    cosi:
+      enabled: false

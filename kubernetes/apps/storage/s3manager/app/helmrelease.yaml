@@ -18,7 +18,7 @@ spec:
               repository: cloudlena/s3manager
               tag: latest
             env:
-              ENDPOINT: "garage-s3.storage.svc.cluster.local:3900"
+              ENDPOINT: "seaweedfs-filer.storage.svc.cluster.local:8333"
               USE_SSL: "false"
               SKIP_SSL_VERIFICATION: "true"
               ACCESS_KEY_ID:
@@ -78,6 +78,6 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/name: "S3 Manager"
           gethomepage.dev/group: "Storage"
-          gethomepage.dev/description: "Browse Garage S3 buckets"
+          gethomepage.dev/description: "Browse SeaweedFS S3 buckets"
           gethomepage.dev/icon: "minio.png"
           gethomepage.dev/href: "https://s3.${SECRET_DOMAIN}"

@@ -30,19 +30,19 @@ spec:
         - ALTER DATABASE immich SET search_path TO public, vectors;
         - GRANT USAGE ON SCHEMA vectors TO immich;
         - GRANT ALL ON ALL TABLES IN SCHEMA vectors TO immich;
-  # Backup disabled due to Garage S3 API incompatibility
-  # Volsync provides daily PVC backups as alternative
-  # backup:
-#   barmanObjectStore:
-#     destinationPath: "s3://cnpg-backups/immich-postgres/"
-#     endpointURL: "http://garage-s3.storage.svc.cluster.local:3900"
-#     s3Credentials:
-#       accessKeyId:
-#         name: garage-cnpg-secret
-#         key: ACCESS_KEY_ID
-#       secretAccessKey:
-#         name: garage-cnpg-secret
-#         key: ACCESS_SECRET_KEY
-#     wal:
-#       compression: gzip
-#   retentionPolicy: "180d"  # 6 months retention to match Volsync
+  # Continuous WAL archiving to SeaweedFS S3
+  # Provides point-in-time recovery with ~5 minute RPO
+  backup:
+    barmanObjectStore:
+      destinationPath: "s3://cnpg-backups/immich-postgres/"
+      endpointURL: "http://seaweedfs-filer.storage.svc.cluster.local:8333"
+      s3Credentials:
+        accessKeyId:
+          name: cnpg-backup-secret
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: cnpg-backup-secret
+          key: ACCESS_SECRET_KEY
+      wal:
+        compression: gzip
+    retentionPolicy: "180d"

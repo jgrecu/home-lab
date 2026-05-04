@@ -5,7 +5,7 @@ metadata:
   name: s3manager
 spec:
   dependsOn:
-    - name: garage
+    - name: seaweedfs
   interval: 1h
   path: ./kubernetes/apps/storage/s3manager/app
   postBuild:
