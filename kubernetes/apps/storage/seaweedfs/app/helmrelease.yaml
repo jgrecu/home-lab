@@ -92,18 +92,10 @@ spec:
         enabled: true
         port: 8333
         allowEmptyFolder: true
-        # Enable S3 authentication - credentials configured via s3.configure
+        # Enable S3 authentication with credentials from secret
         enableAuth: true
+        existingConfigSecret: seaweedfs-s3-secret
         auditLogConfig: {}
-        # S3 credentials config - mounted from secret
-        extraVolumes:
-          - name: s3-config
-            secret:
-              secretName: seaweedfs-s3-config
-        extraVolumeMounts:
-          - name: s3-config
-            mountPath: /etc/seaweedfs
-            readOnly: true
       # Longhorn for filer metadata
       data:
         type: persistentVolumeClaim
