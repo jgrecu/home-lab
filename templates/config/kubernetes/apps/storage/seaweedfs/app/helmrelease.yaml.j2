@@ -61,7 +61,9 @@ spec:
           size: 1Ti
           maxVolumes: 0
       idx:
-        type: emptyDir
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 10Gi
       logs:
         type: emptyDir
       # Resource constraints for RPi4
