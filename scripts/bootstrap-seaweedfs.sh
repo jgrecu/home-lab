@@ -226,10 +226,10 @@ function main() {
 
     # Check if credentials already exist in cluster.yaml
     local existing_key
-    existing_key=$(grep "^seaweedfs_s3_access_key_id:" "${ROOT_DIR}/cluster.yaml" | sed 's/.*: "\(.*\)".*/\1/' || echo "")
+    existing_key=$(grep "^seaweedfs_s3_access_key_id:" "${ROOT_DIR}/cluster.yaml" | sed -E 's/^[^:]+:[[:space:]]*"?([^"]*)"?$/\1/' || echo "")
 
-    if [[ -n "${existing_key}" ]] && [[ "${existing_key}" != "" ]]; then
-        log info "S3 credentials already configured in cluster.yaml"
+    if [[ -n "${existing_key}" ]]; then
+        log info "S3 credentials already configured in cluster.yaml" "access_key_id=${existing_key}"
         log info "To regenerate, clear seaweedfs_s3_access_key_id in cluster.yaml and run again"
     else
         # Generate new credentials
