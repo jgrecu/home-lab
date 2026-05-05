@@ -19,6 +19,8 @@ spec:
                 path: /spec/template/spec/serviceAccountName
                 value: homepage
   values:
+    defaultPodOptions:
+      automountServiceAccountToken: true
     controllers:
       homepage:
         strategy: RollingUpdate
