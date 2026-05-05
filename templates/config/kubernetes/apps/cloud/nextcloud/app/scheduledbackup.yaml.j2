@@ -1,0 +1,14 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: nextcloud-postgres-weekly
+  namespace: cloud
+spec:
+  # Weekly full backup every Sunday at 2 AM
+  schedule: "0 2 * * 0"
+  backupOwnerReference: self
+  cluster:
+    name: nextcloud-postgres
+  # Keep 4 weekly backups (1 month)
+  immediate: false

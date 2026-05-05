@@ -5,6 +5,7 @@ resources:
   - ./pvc.yaml
   - ./cnpg-secret.sops.yaml
   - ./postgres.yaml
+  - ./scheduledbackup.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
   - ./httproute.yaml

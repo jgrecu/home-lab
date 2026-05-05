@@ -1,0 +1,14 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: immich-postgres-weekly
+  namespace: entertainment
+spec:
+  # Weekly full backup every Sunday at 2 AM
+  schedule: "0 2 * * 0"
+  backupOwnerReference: self
+  cluster:
+    name: immich-postgres
+  # Keep 4 weekly backups (1 month)
+  immediate: false
