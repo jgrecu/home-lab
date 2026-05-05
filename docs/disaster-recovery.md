@@ -16,7 +16,7 @@ This guide covers recovery procedures for accidental deletions and catastrophic 
 
 ## Understanding the Backup System
 
-Your cluster uses **three backup systems** (all to Garage S3):
+Your cluster uses **three backup systems** (all to SeaweedFS S3):
 
 | System | What It Backs Up | Automatic Restore? |
 |--------|------------------|-------------------|
@@ -60,7 +60,7 @@ Within 1-5 minutes, Flux will:
 - ❌ Does NOT detect the PVC was deleted
 - ❌ Does NOT automatically restore from backup
 - ⚠️ **Will create new backups of the empty PVC** on next schedule
-- 💾 **Old backups remain safe in Garage** (until retention expires)
+- 💾 **Old backups remain safe in SeaweedFS** (until retention expires)
 
 ---
 
@@ -225,7 +225,7 @@ kubectl logs -n <namespace> -l app.kubernetes.io/name=<app-name> -f
    ```
 5. **Restore database** (if applicable):
    ```bash
-   # CNPG will attempt auto-recovery from Garage
+   # CNPG will attempt auto-recovery from SeaweedFS
    # If that fails, see "Database Recovery" section below
    ```
 
@@ -308,10 +308,10 @@ This is the **full disaster recovery** scenario.
    - Use same cluster name and network configuration
    - Apply Flux GitOps configuration
 
-2. **Bootstrap Garage** (if NAS survived):
+2. **Bootstrap SeaweedFS** (if NAS survived):
    ```bash
-   # Garage data on NAS is intact, just reconnect
-   task storage:bootstrap-garage
+   # SeaweedFS data on NAS is intact, just reconnect
+   task storage:bootstrap-seaweedfs
    ```
 
 3. **Deploy all apps via Flux**:
@@ -334,7 +334,7 @@ This is the **full disaster recovery** scenario.
    task storage:restore-pvc -- entertainment kavita-config 2Gi
    task storage:restore-pvc -- home-automation home-assistant-config 5Gi
    
-   # Databases will auto-recover from CNPG backups in Garage
+   # Databases will auto-recover from CNPG backups in SeaweedFS
    ```
 
 6. **Verify all services**:
@@ -419,7 +419,7 @@ You can restore to a **temporary PVC** and copy specific files:
 
 #### 3. Volsync Backups (Manual Restore)
 
-- ✅ Daily backups to Garage S3
+- ✅ Daily backups to SeaweedFS S3
 - ✅ 6-month retention (7 daily, 8 weekly, 6 monthly)
 - ✅ Restic deduplication saves space
 - ⚠️ Requires manual restore (see above)
@@ -460,7 +460,7 @@ You can restore to a **temporary PVC** and copy specific files:
 
 #### ❌ Backup of Backups
 
-- Garage S3 data is not backed up elsewhere
+- SeaweedFS S3 data is not backed up elsewhere
 - If NAS dies, backups are lost
 - **Recommendation**: Use NAS RAID or replicate to offsite S3
 
@@ -547,11 +547,12 @@ Set up alerts for:
 - ⚠️ Backup age >48 hours (stale backups)
 - ⚠️ CNPG backup failures
 
-#### 3. Monitor Garage Storage Usage
+#### 3. Monitor SeaweedFS Storage Usage
 
 ```bash
 # Check bucket sizes
-kubectl exec -n storage garage-0 -- garage bucket info volsync-backups
+kubectl exec -n storage seaweedfs-0 -- weed shell -master=localhost:9333 \
+  s3.bucket.list
 
 # Alert when >80% full
 ```
@@ -562,13 +563,13 @@ kubectl exec -n storage garage-0 -- garage bucket info volsync-backups
 
 - 📄 Store this guide outside the cluster (printed or on laptop)
 - 📄 Document your specific PVC names and capacities
-- 📄 Keep Garage S3 credentials in password manager
+- 📄 Keep SeaweedFS S3 credentials in password manager
 
 #### 2. Maintain Off-Cluster Access
 
 - 💾 Keep `kubeconfig` backed up outside cluster
 - 💾 Keep `age.key` (SOPS encryption) backed up securely
-- 💾 Keep Garage admin credentials accessible
+- 💾 Keep SeaweedFS admin credentials accessible
 
 #### 3. Practice Recovery Procedures
 
@@ -624,25 +625,25 @@ kubectl port-forward -n <namespace> svc/<service> 8080:80
 ### List Available Backups
 
 ```bash
-# Port-forward to Garage
-kubectl port-forward -n storage svc/garage-s3 3900:3900
+# Port-forward to SeaweedFS S3
+kubectl port-forward -n storage svc/seaweedfs-s3 8333:8333
 
-# Export credentials (get from cluster.yaml or Garage bootstrap output)
+# Export credentials (get from cluster.yaml or SeaweedFS bootstrap output)
 export AWS_ACCESS_KEY_ID="your-key"
 export AWS_SECRET_ACCESS_KEY="your-secret"
 
 # List Volsync backups
-aws s3 ls s3://volsync-backups/ --recursive --endpoint-url http://localhost:3900
+aws s3 ls s3://volsync-backups/ --recursive --endpoint-url http://localhost:8333
 
 # List CNPG backups
-aws s3 ls s3://cnpg-backups/ --recursive --endpoint-url http://localhost:3900
+aws s3 ls s3://cnpg-backups/ --recursive --endpoint-url http://localhost:8333
 ```
 
 ---
 
 ## Summary
 
-✅ **Backups exist** - Volsync, CNPG, and Longhorn all back up to Garage  
+✅ **Backups exist** - Volsync, CNPG, and Longhorn all back up to SeaweedFS  
 ⚠️ **Restore is manual** - You must trigger restoration explicitly  
 🎯 **Use the task** - `task storage:restore-pvc -- <namespace> <pvc> <size>`  
 📚 **Test regularly** - Practice restores quarterly  
@@ -651,7 +652,7 @@ aws s3 ls s3://cnpg-backups/ --recursive --endpoint-url http://localhost:3900
 
 **Your data is safe** as long as:
 - Volsync backups are running (check `kubectl get replicationsource -A`)
-- Garage is healthy and has space
+- SeaweedFS is healthy and has space
 - You follow the restore procedures in this guide
 
 When in doubt: **Don't panic, check backups exist, then restore methodically.** 🧘

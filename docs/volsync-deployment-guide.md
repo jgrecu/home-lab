@@ -1,25 +1,25 @@
 # Volsync Deployment Guide
 
-This guide walks you through deploying Volsync for automated PVC backups to Garage S3.
+This guide walks you through deploying Volsync for automated PVC backups to SeaweedFS S3.
 
 ## Prerequisites
 
 - ✅ Talos cluster running
 - ✅ Longhorn storage deployed
-- ✅ Garage S3 storage deployed
+- ✅ SeaweedFS S3 storage deployed
 - ✅ Flux GitOps configured
 
-## Step 1: Bootstrap Garage with Volsync Bucket
+## Step 1: Bootstrap SeaweedFS with Volsync Bucket
 
-The `task storage:bootstrap-garage` command now automatically creates the `volsync-backups` bucket.
+The `task storage:bootstrap-seaweedfs` command now automatically creates the `volsync-backups` bucket.
 
 ```bash
 # Run the bootstrap task
-task storage:bootstrap-garage
+task storage:bootstrap-seaweedfs
 ```
 
 This will:
-- Create `volsync-backups` bucket in Garage
+- Create `volsync-backups` bucket in SeaweedFS
 - Generate S3 access keys (if not exists)
 - Grant permissions to the key
 - Update `cluster.yaml` with credentials
@@ -39,9 +39,9 @@ volsync:
   # openssl rand -base64 32
   restic_password: ""  # Will be encrypted by SOPS
 
-  # S3 credentials (set by bootstrap-garage task)
-  s3_access_key: ""     # Set by bootstrap-garage
-  s3_secret_key: ""     # Set by bootstrap-garage, will be encrypted
+  # S3 credentials (set by bootstrap-seaweedfs task)
+  s3_access_key: ""     # Set by bootstrap-seaweedfs
+  s3_secret_key: ""     # Set by bootstrap-seaweedfs, will be encrypted
 ```
 
 ### Generate Restic Password
@@ -73,7 +73,7 @@ kind: Kustomization
 resources:
   - ./namespace.yaml
   - ./longhorn/ks.yaml
-  - ./garage/ks.yaml
+  - ./seaweedfs/ks.yaml
   - ./volsync/ks.yaml        # <-- Add this line
 ```
 
@@ -144,7 +144,7 @@ git diff kubernetes/
 git add kubernetes/ templates/
 
 # Commit
-git commit -m "feat(volsync): add automated PVC backups to Garage S3
+git commit -m "feat(volsync): add automated PVC backups to SeaweedFS S3
 
 - Deploy Volsync for backup automation
 - Configure ReplicationSources for critical PVCs:
@@ -153,7 +153,7 @@ git commit -m "feat(volsync): add automated PVC backups to Garage S3
   - homepage config (daily at 3:15 AM)
   - grafana (daily at 3:30 AM)
 - Retention: 7 daily, 4 weekly, 3 monthly backups
-- Target: Garage S3 volsync-backups bucket"
+- Target: SeaweedFS S3 volsync-backups bucket"
 
 # Push to trigger Flux reconciliation
 git push
@@ -230,13 +230,17 @@ Expected successful output:
 2026-04-16T14:30:45Z
 ```
 
-### Verify Backup in Garage
+### Verify Backup in SeaweedFS
 
 ```bash
-# List backups in S3 bucket
-kubectl run -it --rm aws-cli --image=amazon/aws-cli --restart=Never -- \
-  --endpoint-url https://garage.jgrecu.dev \
-  s3 ls s3://volsync-backups/
+# Port-forward to SeaweedFS S3
+kubectl port-forward -n storage svc/seaweedfs-s3 8333:8333
+
+# List backups in S3 bucket (in another terminal)
+aws s3 ls s3://volsync-backups/ \
+  --endpoint-url http://localhost:8333 \
+  --access-key-id "<your-key>" \
+  --secret-access-key "<your-secret>"
 
 # Expected output shows subdirectories for each PVC:
 PRE immich-db/
@@ -316,7 +320,7 @@ kubectl logs -n entertainment -l volsync.backube/replicationsource=immich-db-bac
 **Solution**:
 ```bash
 # Re-run bootstrap to grant permissions
-task storage:bootstrap-garage
+task storage:bootstrap-seaweedfs
 
 # Regenerate manifests
 task configure --yes
@@ -395,7 +399,7 @@ kubectl delete namespace backup-test
 - [Volsync Documentation](https://volsync.readthedocs.io/)
 - [Restore Procedures](./volsync-restore-procedures.md)
 - [Restic Documentation](https://restic.readthedocs.io/)
-- [Garage S3 API Docs](https://garagehq.deuxfleurs.fr/documentation/)
+- [SeaweedFS S3 API Docs](https://github.com/seaweedfs/seaweedfs/wiki/Amazon-S3-API)
 
 ## Quick Command Reference
 
@@ -414,9 +418,11 @@ kubectl patch replicationsource <name> -n <namespace> \
 kubectl logs -n <namespace> -l volsync.backube/replicationsource=<name>
 
 # Check S3 bucket contents
-kubectl run -it --rm aws-cli --image=amazon/aws-cli --restart=Never -- \
-  --endpoint-url https://garage.jgrecu.dev \
-  s3 ls s3://volsync-backups/ --recursive
+kubectl port-forward -n storage svc/seaweedfs-s3 8333:8333
+aws s3 ls s3://volsync-backups/ --recursive \
+  --endpoint-url http://localhost:8333 \
+  --access-key-id "<your-key>" \
+  --secret-access-key "<your-secret>"
 
 # Force reconcile all backups
 flux reconcile kustomization immich-backup

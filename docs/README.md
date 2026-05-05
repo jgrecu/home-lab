@@ -61,14 +61,14 @@ Volsync          Direct Access
 (backups)        (live data)
 │
 ↓
-Garage S3
+SeaweedFS S3
 ```
 
 ### Backup Strategy
 
 - **Longhorn**: Provides replica redundancy across nodes (3 replicas)
 - **Volsync**: Automated daily backups to S3 (7 daily, 4 weekly, 3 monthly)
-- **Garage**: S3-compatible object storage for backup target
+- **SeaweedFS**: S3-compatible object storage for backup target
 - **NFS**: Static PVs for media files (backed up at NAS level)
 
 ### What Gets Backed Up

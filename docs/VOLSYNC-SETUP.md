@@ -6,7 +6,7 @@ This document summarizes the Volsync backup solution implemented for the Talos R
 
 ## Architecture Decision
 
-**Selected Stack**: Longhorn + Volsync + Garage S3
+**Selected Stack**: Longhorn + Volsync + SeaweedFS S3
 
 ### Why Longhorn over OpenEBS?
 - ✅ Lighter resource footprint (critical for RPi4)
@@ -55,8 +55,8 @@ Each app has:
 - `docs/volsync-restore-procedures.md` - Complete restore procedures
 - `docs/README.md` - Documentation index
 
-### 4. Garage Integration
-- Modified `scripts/bootstrap-garage.sh` to create `volsync-backups` bucket
+### 4. SeaweedFS Integration
+- Modified `scripts/bootstrap-seaweedfs.sh` to create `volsync-backups` bucket
 
 ## Backup Configuration
 
@@ -75,14 +75,14 @@ Each app has:
 ### Prerequisites
 1. Talos cluster running
 2. Longhorn deployed
-3. Garage S3 deployed
+3. SeaweedFS S3 deployed
 4. Flux GitOps configured
 
 ### Step-by-Step
 
 ```bash
-# 1. Bootstrap Garage (creates volsync-backups bucket)
-task storage:bootstrap-garage
+# 1. Bootstrap SeaweedFS (creates volsync-backups bucket)
+task storage:bootstrap-seaweedfs
 
 # 2. Generate Restic password and add to cluster.yaml
 openssl rand -base64 32
