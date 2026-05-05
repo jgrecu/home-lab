@@ -1,0 +1,14 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: forgejo-postgres-weekly
+  namespace: forgejo
+spec:
+  # Weekly full backup every Sunday at 2 AM
+  schedule: "0 2 * * 0"
+  backupOwnerReference: self
+  cluster:
+    name: forgejo-postgres
+  # Keep 4 weekly backups (1 month)
+  immediate: false

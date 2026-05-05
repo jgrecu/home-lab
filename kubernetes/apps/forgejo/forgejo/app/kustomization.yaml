@@ -5,6 +5,7 @@ resources:
   - ./secret.sops.yaml
   - ./cnpg-secret.sops.yaml
   - ./postgres.yaml
+  - ./scheduledbackup.yaml
   - ./helmrelease.yaml
   - ./helmrepository.yaml
   - ./httproute.yaml
