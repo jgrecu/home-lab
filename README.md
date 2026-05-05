@@ -162,14 +162,6 @@ kubectl get pods -A
 - 🔄 [Disaster Recovery](./docs/disaster-recovery.md)
 - 💾 [Volsync Backups](./docs/volsync-deployment-guide.md)
 
-## 🙋 Support
-
-**Community:**
-- [GitHub Discussions](https://github.com/onedr0p/cluster-template/discussions)
-- [Home Operations Discord](https://discord.gg/home-operations) - `#support` or `#cluster-template`
-
-**Found a bug?** Open an issue!
-
 ---
 
 ## 📝 License
