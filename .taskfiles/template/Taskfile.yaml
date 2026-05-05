@@ -161,6 +161,22 @@ tasks:
       - test -f {{.MAKEJINJA_CONFIG_FILE}}
       - test -f {{.ROOT_DIR}}/.renovaterc.json5
 
+  :clean:
+    desc: Remove personal/deployment-specific files
+    prompt: This will remove all personal files (configs, keys, secrets)... continue?
+    cmds:
+      - rm -f {{.TEMPLATE_CONFIG_FILE}}
+      - rm -f {{.TEMPLATE_NODE_CONFIG_FILE}}
+      - rm -f {{.SOPS_AGE_KEY_FILE}}
+      - rm -f {{.ROOT_DIR}}/kubeconfig
+      - rm -f {{.ROOT_DIR}}/github-deploy.key
+      - rm -f {{.ROOT_DIR}}/github-deploy.key.pub
+      - rm -f {{.ROOT_DIR}}/github-push-token.txt
+      - rm -f {{.ROOT_DIR}}/cloudflare-tunnel.json
+      - rm -rf {{.ROOT_DIR}}/talos/clusterconfig/
+      - rm -rf {{.ROOT_DIR}}/.task/
+      - echo "✓ Personal files removed"
+
   reset:
     desc: Remove templated files and directories
     prompt: Remove all templated files and directories... continue?
