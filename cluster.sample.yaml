@@ -57,7 +57,7 @@ wg_easy_admin_password: ""
 
 # -- External hostname for WireGuard clients to connect
 #    (REQUIRED for WireGuard) / (NOTE: Must match current WG_HOST)
-wg_easy_external_host: "vpn.jgrecu.dev"
+wg_easy_external_host: "vpn.example.com"
 
 # -- Server private key (for migration - maintains same server identity)
 #    (REQUIRED for migration) / (NOTE: Extracted from existing wg0.conf)
@@ -163,7 +163,7 @@ forgejo_admin_email: "admin@example.com"
 # -- Forgejo admin password (for initial admin account)
 #    Generate with: openssl rand -base64 16
 #    (REQUIRED if using Forgejo)
-forgejo_admin_password: "n4hWddbXSvtbLuRtfdKJOOTBaA0NqwyUVpSYvbjA"
+forgejo_admin_password: ""
 
 # -- Forgejo Actions runner registration token
 #    This token is required for the Forgejo runner to register and execute CI/CD jobs.
