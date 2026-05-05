@@ -9,3 +9,4 @@ components:
 resources:
   - ./namespace.yaml
   - ./tuppr/ks.yaml
+  - ./tuppr/policies-ks.yaml
