@@ -1,6 +1,6 @@
 # 🏠 Home Lab
 
-> Self-hosted Kubernetes homelab on Raspberry Pi 4, powered by Talos Linux and Flux GitOps
+> Self-hosted Kubernetes homelab on Lenovo ThinkCentre M900, powered by Talos Linux and Flux GitOps
 
 A beginner-friendly homelab project that demonstrates how to run your own Kubernetes cluster for self-hosting applications. Learn GitOps principles, automated deployments, and infrastructure-as-code while building a production-like environment at home.
 
@@ -22,9 +22,16 @@ This homelab runs a collection of self-hosted applications organized by purpose:
 - **Loki** - Log aggregation
 
 **🎬 Media**
-- **Plex** - Media server
-- **Sonarr / Radarr / Prowlarr** - Media automation
-- **qBittorrent** - Download client
+- **Jellyfin** - Media server
+- **Immich** - Photo management and backup
+- **Kavita** - eBook and manga reader
+- **Seerr** - Media request management
+- **Sonarr / Radarr** - TV and movie automation
+- **Prowlarr / Jackett** - Indexer management
+- **Bazarr** - Subtitle management
+- **Transmission** - Download client
+- **Autobrr** - Torrent automation
+- **Recyclarr** - Quality profile sync
 
 **🌐 Networking**
 - **Cloudflare Tunnel** - Secure external access
@@ -45,9 +52,9 @@ This homelab runs a collection of self-hosted applications organized by purpose:
 ### Prerequisites
 
 **Hardware:**
-- 2+ Raspberry Pi 4 (4GB+ RAM recommended)
+- 2+ nodes (e.g., Lenovo ThinkCentre M900: Core i5 2.5GHz, 512GB SSD, 16GB RAM)
 - Network: Static IP addresses, router access
-- Storage: MicroSD cards (32GB+) or USB SSDs (recommended)
+- Storage: SSD or NVMe drives recommended
 
 **Accounts:**
 - GitHub account
@@ -84,8 +91,6 @@ Edit `cluster.yaml` and `nodes.yaml` with your:
 - Cloudflare domain and tunnel credentials
 - Network settings (gateway, DNS servers)
 
-[Configuration guide →](./docs/configuration.md)
-
 **3. Generate manifests**
 
 ```sh
@@ -97,7 +102,7 @@ This generates Kubernetes and Talos configuration from templates using your sett
 **4. Bootstrap Talos cluster**
 
 ```sh
-# Flash Talos to your Pis (see docs/installation.md)
+# Flash Talos to your nodes
 # Then install Talos
 task bootstrap:talos
 
@@ -128,8 +133,6 @@ flux get ks -A
 kubectl get pods -A
 ```
 
-[Detailed installation guide →](./docs/installation.md)
-
 ## 💡 Why This Project?
 
 **Template-Driven Configuration**
@@ -152,15 +155,12 @@ kubectl get pods -A
 - Real Kubernetes operations (kubectl, manifests, debugging)
 - Self-hosting applications (media, monitoring, storage)
 
-[Learn more about the architecture →](./docs/architecture.md)
-
 ## 📖 Learn More
 
 - 📚 [Full Documentation](./docs/)
-- 🏗️ [Architecture Overview](./docs/architecture.md)
-- 🔧 [Troubleshooting Guide](./docs/troubleshooting.md)
 - 📈 [Automated Upgrades (Tuppr)](./docs/tuppr-upgrades.md)
-- 🤖 [Renovate Setup](./docs/renovate.md)
+- 🔄 [Disaster Recovery](./docs/disaster-recovery.md)
+- 💾 [Volsync Backups](./docs/volsync-deployment-guide.md)
 
 ## 🙋 Support
 
