@@ -1,6 +1,6 @@
 # Volsync Restore Procedures
 
-This document outlines procedures for restoring PVCs from Volsync backups stored in Garage S3.
+This document outlines procedures for restoring PVCs from Volsync backups stored in SeaweedFS S3.
 
 ## Table of Contents
 
@@ -24,7 +24,7 @@ Before starting any restore operation, ensure you have:
 - [ ] Volsync installed and running
 - [ ] Restic secret with S3 credentials available
 - [ ] Application scaled down (replicas=0) if doing in-place restore
-- [ ] Recent backup timestamp noted from Garage S3 or Volsync status
+- [ ] Recent backup timestamp noted from SeaweedFS S3 or Volsync status
 
 ### Verify Volsync Status
 
