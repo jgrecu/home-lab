@@ -97,27 +97,6 @@ mountOptions:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: nfs-garage
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "false"
-provisioner: nfs.csi.k8s.io
-parameters:
-  server: "192.168.1.37"
-  share: "/garage"
-  # No subDir — Garage manages its own internal directory structure.
-  # Any data already on the share is preserved. reclaimPolicy: Retain
-  # ensures deleting the PVC never removes NAS files.
-  mountPermissions: "0755"
-reclaimPolicy: Retain
-volumeBindingMode: Immediate
-mountOptions:
-  - nfsvers=4.1
-  - hard
-  - noatime
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
   name: nfs-nextcloud
   annotations:
     storageclass.kubernetes.io/is-default-class: "false"
