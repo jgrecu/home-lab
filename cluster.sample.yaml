@@ -142,11 +142,6 @@ nfs_photos_path: "/immich"
 #    (REQUIRED if using Kavita)
 nfs_books_path: "/books"
 
-# -- NFS export path for Garage S3 object data
-#    Garage stores all S3 object chunks here. The share root is mounted directly.
-#    (REQUIRED if using Garage)
-nfs_garage_path: "/garage"
-
 # -- NFS export path for SeaweedFS volume data
 #    SeaweedFS volume server stores all S3 object data here.
 #    (REQUIRED if using SeaweedFS)
@@ -196,27 +191,6 @@ recyclarr_radarr_api_key: ""
 # -- Sonarr API key (found in Sonarr → Settings → General → API Key)
 #    (REQUIRED if using Recyclarr)
 recyclarr_sonarr_api_key: ""
-
-# ============================================================================
-# Garage S3 Configuration
-# ============================================================================
-
-# -- Garage RPC secret (secures inter-node RPC, required even for single-node)
-#    Generate with: openssl rand -hex 32
-#    (REQUIRED if using Garage)
-garage_rpc_secret: ""
-
-# -- Garage admin API token (used for bootstrap CLI commands)
-#    Generate with: openssl rand -base64 32
-#    (REQUIRED if using Garage)
-garage_admin_token: ""
-
-# -- Garage S3 access credentials
-#    Leave empty until you run: task storage:bootstrap-garage
-#    This task will create buckets, generate keys, and update these values automatically.
-#    (REQUIRED after bootstrap)
-garage_s3_access_key_id: ""
-garage_s3_secret_access_key: ""
 
 # ============================================================================
 # Volsync Backup Configuration
