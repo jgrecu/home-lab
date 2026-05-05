@@ -98,7 +98,7 @@ spec:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /etc/dnsmasq.d
-      # Conditional forwarding config: forward *.jgrecu.dev to k8s_gateway
+      # Conditional forwarding config: forward *.${SECRET_DOMAIN} to k8s_gateway
       conditional-forward:
         type: configMap
         name: pihole-dnsmasq-config
