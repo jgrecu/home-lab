@@ -11,7 +11,8 @@ spec:
   values:
     controllers:
       gatus:
-        strategy: RollingUpdate
+        # Recreate strategy required: RWO PVC cannot be attached to multiple pods
+        strategy: Recreate
         containers:
           app:
             image:
