@@ -10,7 +10,9 @@ resources:
   - ./namespace.yaml
   - ./media-pvc.yaml
   - ./kavita/ks.yaml
+  - ./kavita/backup-ks.yaml
   - ./jellyfin/ks.yaml
+  - ./jellyfin/backup-ks.yaml
   - ./immich/ks.yaml
   - ./seerr/ks.yaml
 
