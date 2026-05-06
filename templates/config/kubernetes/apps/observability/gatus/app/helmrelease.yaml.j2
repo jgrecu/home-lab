@@ -183,7 +183,7 @@ spec:
                 url: "http://woodpecker-server.woodpecker.svc.cluster.local:8000/healthz"
                 interval: 5m
                 conditions:
-                  - "[STATUS] == 200"
+                  - "[STATUS] == 204"
 
               - name: Kavita
                 group: Internal Services
