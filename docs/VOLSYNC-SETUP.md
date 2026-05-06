@@ -145,7 +145,7 @@ After running `task configure --yes`, manifests are generated in corresponding `
 - ✅ Restic password stored encrypted with SOPS/age
 - ✅ S3 credentials stored encrypted with SOPS/age  
 - ✅ Backups encrypted at rest with Restic
-- ✅ TLS for S3 communication to Garage
+- ✅ S3 communication to SeaweedFS over the in-cluster network (HTTP on `seaweedfs-filer.storage.svc.cluster.local:8333`)
 - ✅ Pods run as non-root (UID 65534)
 - ✅ Seccomp profile enabled
 - ✅ Capabilities dropped
@@ -153,7 +153,7 @@ After running `task configure --yes`, manifests are generated in corresponding `
 ## Next Steps
 
 1. **Deploy** - Follow deployment guide to install Volsync
-2. **Test** - Trigger manual backups and verify in Garage
+2. **Test** - Trigger manual backups and verify in SeaweedFS
 3. **Restore Test** - Practice restore monthly (see restore procedures)
 4. **Monitor** - Set up Prometheus alerts for failed/stale backups
 5. **Expand** - Add backup configs for additional PVCs as needed
@@ -177,7 +177,7 @@ See `docs/volsync-deployment-guide.md` for detailed troubleshooting.
 
 Quick fixes:
 - **Repository not found**: First backup initializes it
-- **Permission denied**: Re-run `task storage:bootstrap-garage`
+- **Permission denied**: Re-run `task storage:bootstrap-seaweedfs`
 - **Backup pending**: Check PVC exists and Longhorn snapshot class
 
 ## Resources

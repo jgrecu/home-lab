@@ -256,10 +256,10 @@ metadata:
   namespace: <namespace>
 type: Opaque
 stringData:
-  RESTIC_REPOSITORY: s3:https://garage.jgrecu.dev/<bucket-name>/<path>
+  RESTIC_REPOSITORY: s3:http://seaweedfs-filer.storage.svc.cluster.local:8333/<bucket-name>/<path>
   RESTIC_PASSWORD: <restic-password>
-  AWS_ACCESS_KEY_ID: <garage-access-key>
-  AWS_SECRET_ACCESS_KEY: <garage-secret-key>
+  AWS_ACCESS_KEY_ID: <seaweedfs-access-key>
+  AWS_SECRET_ACCESS_KEY: <seaweedfs-secret-key>
 EOF
 ```
 
@@ -270,17 +270,24 @@ EOF
 brew install restic  # macOS
 # or apt install restic / dnf install restic
 
-# Export credentials
-export RESTIC_REPOSITORY=s3:https://garage.jgrecu.dev/<bucket-name>/<path>
+# SeaweedFS is only exposed in-cluster, so port-forward the filer S3 endpoint
+# to localhost:8333 before running restic from your machine.
+# Leave this running in a separate terminal:
+kubectl port-forward -n storage svc/seaweedfs-filer 8333:8333
+
+# Export credentials (note: localhost endpoint matches the port-forward)
+export RESTIC_REPOSITORY=s3:http://localhost:8333/<bucket-name>/<path>
 export RESTIC_PASSWORD=<restic-password>
-export AWS_ACCESS_KEY_ID=<garage-access-key>
-export AWS_SECRET_ACCESS_KEY=<garage-secret-key>
+export AWS_ACCESS_KEY_ID=<seaweedfs-access-key>
+export AWS_SECRET_ACCESS_KEY=<seaweedfs-secret-key>
 
 # List snapshots
 restic snapshots
 
 # Note the snapshot ID you want to restore
 ```
+
+> **Tip:** Alternatively, run restic from inside the cluster (e.g. `kubectl run -it --rm restic --image=restic/restic --restart=Never -- ...`) using the in-cluster endpoint `http://seaweedfs-filer.storage.svc.cluster.local:8333`.
 
 #### Step 3: Create ReplicationDestination for Each PVC
 
@@ -504,7 +511,7 @@ kubectl describe replicationdestination <name> -n <namespace>
 # Common issues:
 # - Restic secret not found or incorrect credentials
 # - PVC already exists with data
-# - No S3 connectivity to Garage
+# - No S3 connectivity to SeaweedFS
 ```
 
 **Solution:**
@@ -514,7 +521,7 @@ kubectl get secret <restic-secret-name> -n <namespace>
 
 # Test S3 connectivity from a debug pod
 kubectl run -it --rm debug --image=curlimages/curl --restart=Never -- \
-  curl -I https://garage.jgrecu.dev
+  curl -I http://seaweedfs-filer.storage.svc.cluster.local:8333
 
 # Delete and recreate ReplicationDestination with correct settings
 ```
@@ -528,9 +535,12 @@ kubectl run -it --rm debug --image=curlimages/curl --restart=Never -- \
 # Check if repository path in secret is correct
 kubectl get secret <restic-secret-name> -n <namespace> -o jsonpath='{.data.RESTIC_REPOSITORY}' | base64 -d
 
-# Verify backups exist in Garage
-# Use Garage admin UI or AWS CLI
-aws s3 ls --endpoint-url https://garage.jgrecu.dev s3://<bucket-name>/<path>/
+# Verify backups exist in SeaweedFS
+# Use s3manager UI or AWS CLI
+# (If running aws CLI from your laptop, port-forward first:
+#  kubectl port-forward -n storage svc/seaweedfs-filer 8333:8333
+#  then use --endpoint-url http://localhost:8333)
+aws s3 ls --endpoint-url http://seaweedfs-filer.storage.svc.cluster.local:8333 s3://<bucket-name>/<path>/
 
 # If repository doesn't exist, you may have wrong bucket/path
 # Check the ReplicationSource that created the backups
@@ -579,9 +589,9 @@ kubectl exec -it <postgres-pod> -n <namespace> -- psql -U postgres -c "REINDEX D
 **If slower than expected:**
 
 ```bash
-# Check network throughput to Garage
+# Check network throughput to SeaweedFS
 kubectl run -it --rm speedtest --image=curlimages/curl --restart=Never -- \
-  curl -o /dev/null https://garage.jgrecu.dev/large-file.bin
+  curl -o /dev/null http://seaweedfs-filer.storage.svc.cluster.local:8333/large-file.bin
 
 # Check Longhorn volume performance
 kubectl get volumes -n longhorn-system
@@ -599,7 +609,10 @@ kubectl top pod -n volsync-system
 **Solution:**
 ```bash
 # List available snapshots with exact timestamps
-restic -r s3:https://garage.jgrecu.dev/<bucket>/<path> snapshots
+# (Run from inside the cluster, or port-forward first:
+#  kubectl port-forward -n storage svc/seaweedfs-filer 8333:8333
+#  and use s3:http://localhost:8333/<bucket>/<path>)
+restic -r s3:http://seaweedfs-filer.storage.svc.cluster.local:8333/<bucket>/<path> snapshots
 
 # Use the exact timestamp from snapshot list
 # Format: YYYY-MM-DDTHH:MM:SSZ
@@ -716,8 +729,11 @@ kubectl logs -n volsync-system -l control-plane=volsync --tail=50 | grep -i erro
 
 echo ""
 echo "S3 Bucket Usage:"
-# Requires aws CLI configured with Garage credentials
-aws s3 ls --endpoint-url https://garage.jgrecu.dev --recursive s3://volsync-backups/ --summarize | tail -2
+# Requires aws CLI configured with SeaweedFS credentials.
+# SeaweedFS is in-cluster only — port-forward before running locally:
+#   kubectl port-forward -n storage svc/seaweedfs-filer 8333:8333 &
+# then swap the endpoint to http://localhost:8333.
+aws s3 ls --endpoint-url http://seaweedfs-filer.storage.svc.cluster.local:8333 --recursive s3://volsync-backups/ --summarize | tail -2
 EOF
 
 chmod +x backup-health-check.sh
@@ -819,7 +835,7 @@ spec:
 - [Volsync Documentation](https://volsync.readthedocs.io/)
 - [Restic Documentation](https://restic.readthedocs.io/)
 - [Longhorn Backup & Restore](https://longhorn.io/docs/latest/snapshots-and-backups/)
-- [Garage S3 Documentation](https://garagehq.deuxfleurs.fr/documentation/)
+- [SeaweedFS Documentation](https://github.com/seaweedfs/seaweedfs/wiki)
 
 ---
 
