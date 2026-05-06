@@ -181,6 +181,36 @@ forgejo_admin_password: ""
 forgejo_runner_secret: ""
 
 # ============================================================================
+# Woodpecker CI Configuration
+# ============================================================================
+
+# -- Woodpecker CI admin username (must match Forgejo admin username)
+#    (REQUIRED for Woodpecker CI)
+woodpecker_admin_user: "admin"
+
+# -- Woodpecker CI OAuth client ID from Forgejo
+#    How to obtain:
+#    1. Log into Forgejo as admin
+#    2. Navigate to: Site Administration → Applications → Create New OAuth2 Application
+#    3. Name: Woodpecker CI
+#    4. Redirect URI: https://woodpecker.${cloudflare_domain}/authorize
+#    5. Confidential Client: Yes (enabled)
+#    6. Copy the Client ID and Client Secret
+#    (REQUIRED for Woodpecker CI)
+woodpecker_oauth_client_id: ""
+
+# -- Woodpecker CI OAuth client secret from Forgejo
+#    (REQUIRED for Woodpecker CI)
+#    NOTE: This will be encrypted with SOPS when you run 'task configure'
+woodpecker_oauth_client_secret: ""
+
+# -- Woodpecker CI agent secret for server-agent authentication
+#    Generate with: openssl rand -hex 32
+#    (REQUIRED for Woodpecker CI)
+#    NOTE: This will be encrypted with SOPS when you run 'task configure'
+woodpecker_agent_secret: ""
+
+# ============================================================================
 # Recyclarr Configuration (TRaSH Guides sync for Radarr/Sonarr)
 # ============================================================================
 
