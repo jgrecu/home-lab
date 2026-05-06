@@ -178,6 +178,13 @@ spec:
                 conditions:
                   - "[STATUS] == 200"
 
+              - name: Woodpecker CI
+                group: Internal Services
+                url: "http://woodpecker-server.woodpecker.svc.cluster.local:8000/healthz"
+                interval: 5m
+                conditions:
+                  - "[STATUS] == 200"
+
               - name: Kavita
                 group: Internal Services
                 url: "http://kavita.entertainment.svc.cluster.local:5000"

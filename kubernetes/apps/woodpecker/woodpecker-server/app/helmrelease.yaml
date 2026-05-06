@@ -43,6 +43,7 @@ spec:
               WOODPECKER_SERVER_ADDR: ":8000"
               WOODPECKER_GRPC_ADDR: ":9000"
               WOODPECKER_ADMIN: "jeremy"
+              WOODPECKER_PROMETHEUS_AUTH_TOKEN: "false"
               # Agent Authentication
               WOODPECKER_AGENT_SECRET:
                 valueFrom:
