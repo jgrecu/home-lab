@@ -9,5 +9,3 @@ resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
   - ./httproute.yaml
-  - ./servicemonitor.yaml
-  - ./dashboard.yaml
