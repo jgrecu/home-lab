@@ -23,7 +23,7 @@ spec:
       automountServiceAccountToken: true
     controllers:
       homepage:
-        strategy: RollingUpdate
+        strategy: Recreate
         containers:
           app:
             image:
