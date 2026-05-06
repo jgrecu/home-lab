@@ -4,9 +4,7 @@
     'config:recommended',
     'docker:enableMajor',
     'helpers:pinGitHubActionDigests',
-    ':automergeBranch',
     ':dependencyDashboard',
-    ':disableRateLimiting',
     ':semanticCommits',
   ],
   dependencyDashboard: true,
@@ -14,6 +12,9 @@
   schedule: [
     'every weekend',
   ],
+  minimumReleaseAge: '3 days',
+  osvVulnerabilityAlerts: true,
+  platformAutomerge: true,
   ignorePaths: [
     '**/*.sops.*',
     '**/templates/**',
@@ -74,19 +75,54 @@
       minimumGroupSize: 3,
     },
     {
-      description: 'Auto-merge GitHub Actions',
+      description: '*arr stack group (sonarr, radarr, prowlarr, bazarr, recyclarr)',
+      groupName: 'arr-stack',
+      matchDatasources: [
+        'docker',
+      ],
+      matchPackageNames: [
+        '/^lscr\\.io/linuxserver/(sonarr|radarr|prowlarr|bazarr)$/',
+        '/^ghcr\\.io/recyclarr/recyclarr$/',
+      ],
+      group: {
+        commitMessageTopic: '{{{groupName}}} group',
+      },
+    },
+    {
+      description: 'Database operators group (cloudnative-pg, dragonfly)',
+      groupName: 'database-operators',
+      matchDatasources: [
+        'docker',
+      ],
+      matchPackageNames: [
+        '/cloudnative-pg/charts/cloudnative-pg/',
+        '/dragonflydb/dragonfly-operator/',
+      ],
+      group: {
+        commitMessageTopic: '{{{groupName}}} group',
+      },
+    },
+    {
+      description: 'Auto-merge GitHub Actions digest updates (skip tests)',
       matchManagers: [
         'github-actions',
       ],
+      matchUpdateTypes: [
+        'digest',
+      ],
       automerge: true,
-      automergeType: 'branch',
+      ignoreTests: true,
+    },
+    {
+      description: 'Auto-merge GitHub Actions minor/patch (require tests)',
+      matchManagers: [
+        'github-actions',
+      ],
       matchUpdateTypes: [
         'minor',
         'patch',
-        'digest',
       ],
-      minimumReleaseAge: '3 days',
-      ignoreTests: true,
+      automerge: true,
     },
     {
       matchUpdateTypes: [
