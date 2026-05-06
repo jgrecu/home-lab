@@ -17,7 +17,8 @@
   platformAutomerge: true,
   ignorePaths: [
     '**/*.sops.*',
-    '**/templates/**',
+    'templates/overrides/**',
+    'templates/scripts/**',
   ],
   flux: {
     managerFilePatterns: [
