@@ -14,8 +14,8 @@ Documentation for the Talos Raspberry Pi 4 home lab cluster.
 ### Deploy Volsync Backups
 
 ```bash
-# 1. Bootstrap Garage S3 (creates volsync-backups bucket)
-task storage:bootstrap-garage
+# 1. Bootstrap SeaweedFS S3 (creates volsync-backups bucket)
+task storage:bootstrap-seaweedfs
 
 # 2. Add Volsync config to cluster.yaml
 # Edit cluster.yaml and add volsync.restic_password
@@ -115,4 +115,4 @@ SeaweedFS S3
 - [Longhorn Documentation](https://longhorn.io/docs/)
 - [Volsync Documentation](https://volsync.readthedocs.io/)
 - [Restic Documentation](https://restic.readthedocs.io/)
-- [Garage S3 Documentation](https://garagehq.deuxfleurs.fr/)
+- [SeaweedFS Documentation](https://github.com/seaweedfs/seaweedfs/wiki)
