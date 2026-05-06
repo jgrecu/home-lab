@@ -1,0 +1,39 @@
+---
+# CloudNativePG manages this PostgreSQL instance.
+# The operator automatically creates a secret named "woodpecker-postgres-app"
+# in this namespace containing: username, password, host, port, dbname, uri.
+# Woodpecker's HelmRelease reads the connection string directly from that secret.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: woodpecker-postgres
+spec:
+  # 2 instances = primary + 1 standby on a different node.
+  # CNPG streams WAL between them — this is the replication.
+  # longhorn-single ensures Longhorn does NOT add a second layer of
+  # replication on top. Each instance has 1 Longhorn replica = 2 total
+  # copies across 2 nodes. Failover is automatic if the primary node dies.
+  instances: 2
+  storage:
+    storageClass: longhorn-single
+    size: 5Gi
+  bootstrap:
+    initdb:
+      database: woodpecker
+      owner: woodpecker
+  # Continuous WAL archiving to SeaweedFS S3
+  # Provides point-in-time recovery with ~5 minute RPO
+  backup:
+    barmanObjectStore:
+      destinationPath: "s3://cnpg-backups/woodpecker-postgres/"
+      endpointURL: "http://seaweedfs-filer.storage.svc.cluster.local:8333"
+      s3Credentials:
+        accessKeyId:
+          name: cnpg-backup-secret
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: cnpg-backup-secret
+          key: ACCESS_SECRET_KEY
+      wal:
+        compression: gzip
+    retentionPolicy: "180d"

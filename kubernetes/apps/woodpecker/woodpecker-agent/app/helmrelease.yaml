@@ -1,0 +1,78 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app woodpecker-agent
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: woodpecker-agent
+  interval: 1h
+  values:
+    controllers:
+      woodpecker-agent:
+        replicas: 1  # Number of concurrent agent workers
+        strategy: Recreate
+        containers:
+          agent:
+            image:
+              repository: woodpeckerci/woodpecker-agent
+              tag: v3.0.0
+            env:
+              WOODPECKER_LOG_LEVEL: "debug"  # Enable debug logging
+              WOODPECKER_SERVER: "woodpecker-server.woodpecker.svc.cluster.local:9000"
+              WOODPECKER_AGENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: woodpecker-agent-secret
+                    key: agent-secret
+              WOODPECKER_BACKEND: "docker"
+              DOCKER_HOST: "tcp://localhost:2375"
+              WOODPECKER_BACKEND_DOCKER_ENABLE_IPV6: "false"
+              WOODPECKER_MAX_WORKFLOWS: "1"  # 1 concurrent job per agent
+            probes:
+              liveness:
+                enabled: false  # Agent crashes on Docker unavailability, liveness would kill it
+              readiness:
+                enabled: false  # Distroless image has no shell for probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+              runAsUser: 1000
+              runAsGroup: 1000
+              runAsNonRoot: true
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+          # Docker-in-Docker sidecar for running containerized jobs
+          dind:
+            image:
+              repository: docker
+              tag: 29-dind
+            env:
+              DOCKER_TLS_CERTDIR: ""  # Disable TLS for localhost communication
+            securityContext:
+              privileged: true
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+        pod:
+          restartPolicy: Always  # Keep restarting agent until Docker is ready
+          securityContext:
+            fsGroup: 1000
+          annotations:
+            secret.reloader.stakater.com/reload: *app
+    persistence:
+      # Docker storage for DinD — images, layers, build cache
+      docker-storage:
+        type: emptyDir
+        advancedMounts:
+          woodpecker-agent:
+            dind:
+              - path: /var/lib/docker

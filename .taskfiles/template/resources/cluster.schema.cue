@@ -60,6 +60,11 @@ import (
 	forgejo_admin_email?:           string
 	forgejo_admin_password?:        string
 	forgejo_runner_secret?:         string
+	// Woodpecker CI Configuration
+	woodpecker_admin_user?:         string
+	woodpecker_oauth_client_id?:    string
+	woodpecker_oauth_client_secret?: string
+	woodpecker_agent_secret?:       string
 	// Recyclarr Configuration
 	recyclarr_radarr_api_key?:      string
 	recyclarr_sonarr_api_key?:      string
