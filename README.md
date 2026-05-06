@@ -41,6 +41,7 @@ This homelab runs a collection of self-hosted applications organized by purpose:
 
 **🔧 System**
 - **Flux** - GitOps continuous delivery (CD - Continuous Delivery)
+- **Woodpecker CI** - Container-native continuous integration
 - **Tuppr** - Automated OS and Kubernetes upgrades
 - **Renovate** - Dependency update automation
 - **Reloader** - Auto-restart pods on config changes
