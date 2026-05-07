@@ -27,7 +27,7 @@ This homelab runs a collection of self-hosted applications organized by purpose:
 - **Kavita** - eBook and manga reader
 - **Seerr** - Media request management
 - **Sonarr / Radarr** - TV and movie automation
-- **Prowlarr / Jackett** - Indexer management
+- **Prowlarr** - Indexer management
 - **Bazarr** - Subtitle management
 - **Transmission** - Download client
 - **Autobrr** - Torrent automation
@@ -158,7 +158,7 @@ kubectl get pods -A
 
 ## 📖 Learn More
 
-- 📚 [Full Documentation](./docs/)
+- 📚 [Full Documentation](./docs/README.md)
 - 📈 [Automated Upgrades (Tuppr)](./docs/tuppr-upgrades.md)
 - 🔄 [Disaster Recovery](./docs/disaster-recovery.md)
 - 💾 [Volsync Backups](./docs/volsync-deployment-guide.md)
