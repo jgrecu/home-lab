@@ -22,9 +22,9 @@ spec:
       replicaAutoBalance: best-effort
       # Orphaned data cleanup
       orphanAutoDeletion: true
-      # S3 backup target — SeaweedFS runs at this internal ClusterIP address.
-      # Longhorn will archive volume snapshots to the longhorn-backups bucket.
-      # Leave empty until SeaweedFS bootstrap is complete (see storage/seaweedfs/ks.yaml).
+      # S3 backup target — SeaweedFS S3-compatible storage
+      # The AWS_ENDPOINTS in longhorn-backup-secret points to SeaweedFS filer
+      # Format: s3://bucket-name@region/ (region can be any value, endpoint overrides it)
       backupTarget: "s3://longhorn-backups@us-east-1/"
       # Secret in the storage namespace with AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
       # AWS_ENDPOINTS, and AWS_REGION. Created by storage/seaweedfs/app/longhorn-backup-secret.sops.yaml.
