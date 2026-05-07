@@ -109,17 +109,21 @@ spec:
       resources:
         requests:
           cpu: 15m
-          memory: 128Mi
-        limits:
           memory: 256Mi
+        limits:
+          memory: 512Mi
       livenessProbe:
         enabled: true
         initialDelaySeconds: 30
         periodSeconds: 30
+        timeoutSeconds: 30
+        failureThreshold: 5
       readinessProbe:
         enabled: true
         initialDelaySeconds: 15
         periodSeconds: 15
+        timeoutSeconds: 30
+        failureThreshold: 10
       # Default replication for filer entries
       defaultReplicaPlacement: "000"
 
