@@ -12,7 +12,7 @@ spec:
     # Resource limits for the operator
     resources:
       requests:
-        cpu: 10m
-        memory: 64Mi
+        cpu: 100m
+        memory: 512Mi
       limits:
-        memory: 128Mi
+        memory: 2Gi
