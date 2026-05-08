@@ -65,12 +65,37 @@ Metrics Verified:
 Result: PASS - Grafana ServiceMonitor configured and Prometheus successfully scraping metrics
 
 
-Immich: Checked for Prometheus metrics support
-  Result: Native support via Helm chart
-  Configuration: immich.metrics.enabled: true
-  Details: The Immich Helm chart (v0.11.1+) includes built-in ServiceMonitor
-           creation when metrics are enabled. The chart will automatically
-           create the necessary ServiceMonitor resources for Prometheus
-           Operator integration.
-  Status: Enabled in helmrelease.yaml.j2
-  Deployment: Will be created automatically by Flux on next reconciliation
+=== Immich Monitoring Validation (2026-05-08) ===
+
+Configuration:
+- Immich Helm chart version: 0.11.1
+- App version: 2.7.5
+- Node.js application with OpenTelemetry instrumentation
+
+Metrics Capability:
+- Native Prometheus metrics support via Helm chart
+- OpenTelemetry instrumentation for HTTP requests
+- Configuration: immich.metrics.enabled: true
+
+ServiceMonitor:
+- Name: immich-server
+- Namespace: entertainment
+- Created automatically by Helm chart
+- Endpoints:
+  * metrics-api (port 8081) - API server metrics
+  * metrics-ms - Microservice metrics
+- Selector: app.kubernetes.io/instance=immich, app.kubernetes.io/name=server
+
+Metrics Verified (port 8081):
+- target_info: Service metadata (name, version 2.7.5, Node.js 24.14.1)
+- http_server_duration: Request duration histograms by method/status/path
+- OpenTelemetry instrumentation (nestjs-otel)
+- HTTP metrics include /api/server/ping endpoint monitoring
+
+Service Configuration:
+- Main HTTP port: 2283
+- Metrics API port: 8081
+- Metrics MS port: (configured in service)
+
+Result: PASS - Immich metrics enabled via Helm chart, ServiceMonitor created,
+               metrics endpoint accessible and returning OpenTelemetry data
