@@ -86,10 +86,10 @@ spec:
               runAsNonRoot: true
             resources:
               requests:
-                cpu: 50m
+                cpu: 20m
                 memory: 256Mi
               limits:
-                memory: 512Mi
+                memory: 2Gi
         pod:
           securityContext:
             fsGroup: 1000

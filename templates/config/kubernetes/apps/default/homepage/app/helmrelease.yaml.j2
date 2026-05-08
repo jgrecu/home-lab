@@ -50,9 +50,10 @@ spec:
               capabilities: { drop: ["ALL"] }
             resources:
               requests:
-                cpu: 10m
-              limits:
+                cpu: 20m
                 memory: 256Mi
+              limits:
+                memory: 2Gi
     persistence:
       # Persistent storage for logs and other runtime data
       # Mount to /data instead of /app/config to avoid conflicts with ConfigMaps

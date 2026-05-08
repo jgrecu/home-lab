@@ -49,10 +49,10 @@ spec:
               runAsNonRoot: true
             resources:
               requests:
-                cpu: 50m
-                memory: 128Mi
+                cpu: 20m
+                memory: 256Mi
               limits:
-                memory: 512Mi
+                memory: 2Gi
         pod:
           automountServiceAccountToken: true
           restartPolicy: Always
