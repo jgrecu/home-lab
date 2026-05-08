@@ -60,6 +60,7 @@ import (
 	woodpecker_oauth_client_secret?: string
 	woodpecker_agent_secret?:       string
 	// Recyclarr Configuration
+	radarr_api_key?:                string
 	recyclarr_radarr_api_key?:      string
 	recyclarr_sonarr_api_key?:      string
 	// Volsync Backup Configuration

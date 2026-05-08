@@ -215,12 +215,13 @@ woodpecker_agent_secret: ""
 # ============================================================================
 
 # -- Radarr API key (found in Radarr → Settings → General → API Key)
-#    (REQUIRED if using Recyclarr)
-recyclarr_radarr_api_key: ""
+#    (REQUIRED if using Recyclarr or Exportarr metrics)
+radarr_api_key: "a3e72cc1caf74f6696f0e125ff5b6eaf"
+recyclarr_radarr_api_key: "a3e72cc1caf74f6696f0e125ff5b6eaf"
 
 # -- Sonarr API key (found in Sonarr → Settings → General → API Key)
 #    (REQUIRED if using Recyclarr)
-recyclarr_sonarr_api_key: ""
+recyclarr_sonarr_api_key: "9962d9f7dce342d182519cad90571b6a"
 
 # ============================================================================
 # Volsync Backup Configuration
