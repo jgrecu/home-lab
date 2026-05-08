@@ -163,6 +163,57 @@ kubectl get pods -A
 - 🔄 [Disaster Recovery](./docs/disaster-recovery.md)
 - 💾 [Volsync Backups](./docs/volsync-deployment-guide.md)
 
+## 🔧 Operational Commands
+
+### Cluster Status
+
+```bash
+# Overall cluster health
+task ops:status
+
+# Failed pods
+task ops:pod-errors
+
+# Monitoring coverage
+task ops:monitoring-status
+```
+
+### Application Management
+
+```bash
+# View application logs
+task ops:logs -- <app-name> [namespace]
+
+# Restart application
+task ops:restart -- <app-name> [namespace]
+
+# Describe resource
+task ops:describe -- <type> <name> [namespace]
+```
+
+### Storage Management
+
+```bash
+# Backup status
+task storage:backup-status
+
+# PVC usage
+task storage:pvc-usage
+
+# Longhorn status
+task storage:longhorn-status
+
+# Restore PVC from backup
+task storage:restore-pvc -- <namespace> <pvc-name> <capacity>
+```
+
+### Troubleshooting
+
+See comprehensive guides:
+- [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) - Common issues and solutions
+- [MAINTENANCE.md](docs/MAINTENANCE.md) - Regular maintenance procedures
+- [Disaster Recovery](docs/disaster-recovery.md) - Recovery procedures
+
 ---
 
 ## 📝 License
