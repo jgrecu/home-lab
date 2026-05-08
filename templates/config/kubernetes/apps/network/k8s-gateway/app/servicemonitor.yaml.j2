@@ -17,6 +17,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: k8s-gateway
+      app.kubernetes.io/service: k8s-gateway-metrics
   endpoints:
     - port: metrics
       interval: 30s
