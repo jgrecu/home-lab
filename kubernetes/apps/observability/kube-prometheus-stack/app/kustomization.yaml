@@ -8,3 +8,4 @@ resources:
   - ./kube-state-metrics-rbac.yaml
   - ./prometheus-httproute.yaml
   - ./alertmanager-httproute.yaml
+  - ./prometheusrules-infrastructure.yaml
