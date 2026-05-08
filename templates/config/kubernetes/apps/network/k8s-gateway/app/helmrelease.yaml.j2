@@ -25,4 +25,10 @@ spec:
       annotations:
         lbipam.cilium.io/ips: "#{ cluster_dns_gateway_addr }#"
       externalTrafficPolicy: Cluster
+    # Expose metrics port for Prometheus scraping
+    extraPorts:
+      - name: metrics
+        port: 9153
+        protocol: TCP
+        targetPort: metrics
     watchedResources: ["HTTPRoute", "Service"]
