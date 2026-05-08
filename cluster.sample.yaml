@@ -224,6 +224,10 @@ recyclarr_radarr_api_key: ""
 sonarr_api_key: ""
 recyclarr_sonarr_api_key: ""
 
+# -- Prowlarr API key (found in Prowlarr → Settings → General → API Key)
+#    (REQUIRED if using Exportarr metrics)
+prowlarr_api_key: ""
+
 # ============================================================================
 # Volsync Backup Configuration
 # ============================================================================

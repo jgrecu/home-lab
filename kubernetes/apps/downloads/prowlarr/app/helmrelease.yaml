@@ -48,6 +48,24 @@ spec:
                 memory: 128Mi
               limits:
                 memory: 512Mi
+          exportarr:
+            image:
+              repository: ghcr.io/onedr0p/exportarr
+              tag: v2.0.1
+            args:
+              - prowlarr
+            env:
+              PORT: "9707"
+              URL: "http://localhost:9696"
+              APIKEY: "d170418952af4ca88bd606cdf570bc13"
+              ENABLE_ADDITIONAL_METRICS: "true"
+              PROWLARR_BACKFILL: "true"  # Enable historical data
+            resources:
+              requests:
+                cpu: 20m  # Higher for Prowlarr
+                memory: 128Mi
+              limits:
+                memory: 256Mi
 
     persistence:
       config:
@@ -63,6 +81,8 @@ spec:
         ports:
           http:
             port: *port
+          metrics:
+            port: 9707
 
     route:
       app:
