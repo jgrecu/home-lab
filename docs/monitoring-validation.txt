@@ -64,3 +64,13 @@ Metrics Verified:
 
 Result: PASS - Grafana ServiceMonitor configured and Prometheus successfully scraping metrics
 
+
+Immich: Checked for Prometheus metrics support
+  Result: Native support via Helm chart
+  Configuration: immich.metrics.enabled: true
+  Details: The Immich Helm chart (v0.11.1+) includes built-in ServiceMonitor
+           creation when metrics are enabled. The chart will automatically
+           create the necessary ServiceMonitor resources for Prometheus
+           Operator integration.
+  Status: Enabled in helmrelease.yaml.j2
+  Deployment: Will be created automatically by Flux on next reconciliation
