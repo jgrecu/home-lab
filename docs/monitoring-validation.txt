@@ -1,0 +1,24 @@
+# Monitoring Validation Results
+
+## external-dns (cloudflare-dns) - VALIDATED ✓
+
+**Date:** 2026-05-08
+**Status:** Already configured and working
+
+### ServiceMonitor Configuration
+- **Name:** cloudflare-dns
+- **Namespace:** network
+- **Labels:** app.kubernetes.io/name: external-dns
+- **Metrics Endpoint:** /metrics on port http
+- **Selector:** app.kubernetes.io/instance: cloudflare-dns
+
+### Prometheus Scraping Status
+- **Job Name:** cloudflare-dns
+- **Target Instance:** 10.42.0.171:7979
+- **Health Status:** UP ✓
+- **Scrape URL:** http://10.42.0.171:7979/metrics
+
+### Validation Result
+external-dns (cloudflare-dns) monitoring is fully configured and operational. ServiceMonitor exists with correct selectors and Prometheus is successfully scraping metrics. No changes required.
+
+---
