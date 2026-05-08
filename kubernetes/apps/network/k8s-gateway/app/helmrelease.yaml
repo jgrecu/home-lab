@@ -12,6 +12,13 @@ spec:
     fullnameOverride: k8s-gateway
     domain: "${SECRET_DOMAIN}"
     ttl: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
     service:
       type: LoadBalancer
       port: 53
