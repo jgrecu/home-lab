@@ -99,3 +99,62 @@ Service Configuration:
 
 Result: PASS - Immich metrics enabled via Helm chart, ServiceMonitor created,
                metrics endpoint accessible and returning OpenTelemetry data
+
+
+=== Nextcloud Monitoring Evaluation (2026-05-08) ===
+
+Configuration:
+- Nextcloud version: 33.0.3-apache
+- Deployment: Helm-based (custom, not official chart)
+- Type: PHP application (Apache + Nextcloud)
+
+Native Metrics Support:
+- NO native Prometheus metrics endpoint
+- PHP applications typically don't expose /metrics endpoint
+- No built-in metrics in Nextcloud core
+
+Monitoring Options Evaluated:
+
+1. **Serverinfo App (Nextcloud built-in)**
+   - Provides system information via OCS API
+   - Endpoint: /ocs/v2.php/apps/serverinfo/api/v1/info
+   - Format: XML/JSON (NOT Prometheus format)
+   - Requires authentication (admin user or API token)
+   - NOT suitable for direct Prometheus scraping
+
+2. **External Prometheus Exporter (xperimental/nextcloud-exporter)**
+   - GitHub: https://github.com/xperimental/nextcloud-exporter
+   - Stars: 278
+   - Description: Standalone sidecar that scrapes Nextcloud serverinfo API
+   - Converts serverinfo data to Prometheus format
+   - Requires:
+     * Deploy as sidecar container alongside Nextcloud
+     * Configure auth token (Nextcloud 22+) or admin credentials
+     * Set up token: `occ config:app:set serverinfo token --value "$TOKEN"`
+     * Expose metrics port (default: 9205)
+     * Create ServiceMonitor pointing to exporter
+
+   Example Metrics Provided:
+   - nextcloud_active_users_total (daily, hourly, 5min)
+   - nextcloud_files_total
+   - nextcloud_database_size_bytes
+   - nextcloud_php_memory_limit_bytes
+   - nextcloud_system_mem_total_bytes
+   - nextcloud_shares_* (user, group, link, mail, etc.)
+   - nextcloud_apps_installed_total
+   - nextcloud_apps_updates_available_total
+
+Recommendation:
+- Nextcloud requires CUSTOM SETUP (Phase 3 scope)
+- Implementation approach:
+  1. Add sidecar container (xperimental/nextcloud-exporter) to HelmRelease
+  2. Generate and configure serverinfo token via init script or manual setup
+  3. Create ServiceMonitor to scrape exporter (port 9205)
+  4. Add Grafana dashboard for Nextcloud metrics
+
+Result: NOT NATIVELY SUPPORTED - Requires external exporter deployment
+        Deferred to Phase 3: Custom Monitoring Integrations
+
+Current Status: Nextcloud accessible via basic HTTP health checks (/status.php)
+                but no Prometheus metrics available without additional setup.
+
