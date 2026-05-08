@@ -47,9 +47,10 @@ spec:
               runAsGroup: 1000
             resources:
               requests:
-                cpu: 50m
+                cpu: 20m
+                memory: 256Mi
               limits:
-                memory: 512Mi
+                memory: 2Gi
           # Docker-in-Docker sidecar for running containerized jobs
           dind:
             image:

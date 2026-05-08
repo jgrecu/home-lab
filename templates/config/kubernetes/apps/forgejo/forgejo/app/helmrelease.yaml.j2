@@ -80,3 +80,11 @@ spec:
     # Route managed separately via httproute.yaml
     route:
       enabled: false
+
+    # Container resources
+    resources:
+      requests:
+        cpu: 20m
+        memory: 256Mi
+      limits:
+        memory: 2Gi
