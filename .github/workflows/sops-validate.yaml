@@ -1,0 +1,47 @@
+---
+name: SOPS Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.sops.yaml"
+      - ".github/workflows/sops-validate.yaml"
+  pull_request:
+    paths:
+      - "**/*.sops.yaml"
+
+jobs:
+  validate:
+    name: Validate SOPS secrets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SOPS
+        uses: nhedger/setup-sops@v2
+
+      - name: Find SOPS files
+        id: find-sops
+        run: |
+          find . -name "*.sops.yaml" -type f | grep -v "^\./.sops.yaml$" > /tmp/sops-files.txt
+          echo "Found $(wc -l < /tmp/sops-files.txt) SOPS files"
+
+      - name: Validate SOPS encryption
+        run: |
+          while IFS= read -r file; do
+            echo "Checking $file"
+            # Verify file is encrypted (contains sops metadata)
+            if ! grep -q "sops:" "$file"; then
+              echo "ERROR: $file is not encrypted with SOPS"
+              exit 1
+            fi
+            # Verify age encryption is present
+            if ! grep -q "age:" "$file"; then
+              echo "ERROR: $file does not have age encryption"
+              exit 1
+            fi
+            echo "✓ $file is properly encrypted"
+          done < /tmp/sops-files.txt
+          echo "All SOPS files validated successfully"
