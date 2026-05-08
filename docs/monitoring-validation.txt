@@ -1,61 +1,37 @@
-# Monitoring Validation Results
+# Monitoring Validation Log
 
-## metrics-server Monitoring - VALIDATED ✓
+## Spegel Monitoring (Task 12 - Phase 2: Observability Foundation)
 
 **Date:** 2026-05-08
-**Status:** Already configured and working correctly
+
+**Status:** ✅ VALIDATED - Already Configured
 
 ### ServiceMonitor Configuration
-- **Name:** metrics-server
+- **Name:** spegel
 - **Namespace:** kube-system
-- **Scrape Interval:** 1m
-- **Scrape Timeout:** 10s
-- **Port:** https (10250)
-- **Scheme:** HTTPS with insecureSkipVerify: true
-- **Path:** /metrics
+- **Selector:** app.kubernetes.io/component=metrics, app.kubernetes.io/instance=spegel, app.kubernetes.io/name=spegel
+- **Scrape Interval:** 60s
+- **Scrape Timeout:** 30s
+- **Port:** metrics
 
-### Prometheus Scraping Status
-- **Target State:** UP (healthy)
-- **Job Label:** metrics-server
-- **Scrape URL:** https://10.42.0.1:10250/metrics
-- **Last Scrape:** Recent (within last minute)
-- **Errors:** None
+### Prometheus Scraping
+- **Scrape Pool:** serviceMonitor/kube-system/spegel/0
+- **Targets Found:** 2 (matching node count)
+- **Health Status:** ALL UP
+- **Target Details:**
+  - Pod: spegel-gtzxv (instance: 10.42.0.241:9090) - UP
+  - Pod: spegel-4c4lm (instance: 10.42.1.200:9090) - UP
 
-### Metrics Verification
-- `up{job="metrics-server"}` = 1 (service is up)
-- `process_cpu_seconds_total{job="metrics-server"}` - Present
-- Additional process metrics available (memory, goroutines, etc.)
-
-### Deployment Information
-- Managed by Helm (metrics-server chart v3.13.0)
-- App version: 0.8.0
-- ServiceMonitor automatically created by Helm chart
-- No manual configuration required
+### Cluster Context
+- **Total Nodes:** 2
+- **Spegel Pods:** 2 (DaemonSet running on all nodes)
+- **Coverage:** 100%
 
 ### Conclusion
-metrics-server monitoring is fully operational. The ServiceMonitor was deployed automatically via the Helm chart and Prometheus is successfully scraping metrics via HTTPS on port 10250.
+Spegel monitoring is fully operational:
+- ServiceMonitor exists and is properly configured via Helm chart
+- Prometheus is successfully scraping all Spegel instances
+- All targets are in UP state
+- Complete node coverage confirmed
 
-## Reloader Monitoring Validation (Task 11)
-
-**Date:** 2026-05-08
-
-**Status:** PASSED - Already configured and working
-
-**PodMonitor Configuration:**
-- Name: reloader
-- Namespace: kube-system
-- Selector: app=reloader, release=reloader
-- Metrics Path: /metrics
-- Port: http (9090)
-- Job Label: reloader
-
-**Prometheus Scraping Status:**
-- Active Target: kube-system/reloader
-- Pod: reloader-5445f87f46-c6sdn
-- Health: UP
-- Scrape URL: http://10.42.0.32:9090/metrics
-- Last Scrape: 2026-05-08T15:29:41Z
-
-**Conclusion:**
-Reloader monitoring is properly configured with a PodMonitor and Prometheus is successfully scraping metrics. No changes required.
-
+No action required.
