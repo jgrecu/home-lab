@@ -9,3 +9,4 @@ resources:
   - ./servicemonitor.yaml
   - ./dashboard-flux-control-plane.yaml
   - ./dashboard-longhorn.yaml
+  - ./dashboard-arr-stack.yaml
