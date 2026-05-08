@@ -75,3 +75,20 @@ spec:
     resultsCache:
       enabled: false
       replicas: 0
+
+    # Enable monitoring, metrics, and observability for Loki
+    monitoring:
+      # Enable Prometheus ServiceMonitor for metrics scraping
+      serviceMonitor:
+        enabled: true
+        interval: 30s
+      # Enable PrometheusRule recording rules for monitoring dashboards
+      rules:
+        enabled: true
+        alerting: true
+
+    # Enable self-monitoring to track Loki's own logs and metrics
+    selfMonitoring:
+      enabled: true
+      tenant:
+        name: "self-monitoring"
