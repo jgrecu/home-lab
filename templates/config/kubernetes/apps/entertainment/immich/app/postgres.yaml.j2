@@ -13,6 +13,12 @@ spec:
   # 2 instances = primary + 1 standby. CNPG handles replication.
   # longhorn-single avoids double replication — see forgejo postgres.yaml.
   instances: 2
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1Gi
+    limits:
+      memory: 4Gi
   storage:
     storageClass: longhorn-single
     size: 10Gi

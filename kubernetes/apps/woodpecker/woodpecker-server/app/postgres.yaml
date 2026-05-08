@@ -14,6 +14,12 @@ spec:
   # replication on top. Each instance has 1 Longhorn replica = 2 total
   # copies across 2 nodes. Failover is automatic if the primary node dies.
   instances: 2
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1Gi
+    limits:
+      memory: 4Gi
   storage:
     storageClass: longhorn-single
     size: 5Gi
