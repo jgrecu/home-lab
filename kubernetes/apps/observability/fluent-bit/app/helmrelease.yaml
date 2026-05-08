@@ -17,6 +17,11 @@ spec:
     # logs from /var/log/containers and shipping them to Loki.
     kind: DaemonSet
 
+    # Enable Prometheus metrics scraping
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+
     config:
       # Read container logs written by the container runtime (containerd uses CRI format)
       inputs: |
