@@ -1,0 +1,83 @@
+---
+# PrometheusRule for infrastructure monitoring alerts
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: infrastructure-alerts
+  namespace: observability
+  labels:
+    prometheus: kube-prometheus-stack
+    role: alert-rules
+spec:
+  groups:
+    - name: storage
+      interval: 1m
+      rules:
+        - alert: LonghornVolumeHighUsage
+          expr: |
+            (longhorn_volume_actual_size_bytes / longhorn_volume_capacity_bytes) > 0.85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Longhorn volume {{ $labels.volume }} is {{ $value | humanizePercentage }} full"
+            description: "Volume {{ $labels.volume }} has exceeded 85% capacity"
+
+        - alert: LonghornNodeStorageLow
+          expr: |
+            (longhorn_node_storage_usage_bytes / longhorn_node_storage_capacity_bytes) > 0.90
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Longhorn node {{ $labels.node }} storage is {{ $value | humanizePercentage }} full"
+            description: "Node {{ $labels.node }} storage has exceeded 90% capacity"
+
+    - name: certificates
+      interval: 1m
+      rules:
+        - alert: CertificateExpiringIn7Days
+          expr: |
+            (certmanager_certificate_expiration_timestamp_seconds - time()) < (7 * 24 * 3600)
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Certificate {{ $labels.name }} expires in less than 7 days"
+            description: "Certificate {{ $labels.name }} in namespace {{ $labels.namespace }} expires on {{ $value | humanizeTimestamp }}"
+
+        - alert: CertificateNotReady
+          expr: |
+            certmanager_certificate_ready_status == 0
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Certificate {{ $labels.name }} is not ready"
+            description: "Certificate {{ $labels.name }} in namespace {{ $labels.namespace }} has been in not-ready state for 10 minutes"
+
+    - name: flux
+      interval: 1m
+      rules:
+        - alert: FluxReconciliationFailure
+          expr: |
+            increase(gotk_reconcile_condition{type="Ready",status="False"}[5m]) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Flux {{ $labels.kind }} {{ $labels.name }} reconciliation failing"
+            description: "{{ $labels.kind }}/{{ $labels.name }} in namespace {{ $labels.namespace }} has been failing reconciliation for 10 minutes"
+
+    - name: backup
+      interval: 5m
+      rules:
+        - alert: VolsyncBackupFailure
+          expr: |
+            volsync_volume_out_of_sync > 0
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Volsync backup for {{ $labels.obj_name }} is out of sync"
+            description: "Backup for {{ $labels.obj_name }} in namespace {{ $labels.obj_namespace }} has been out of sync for 1 hour"
