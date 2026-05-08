@@ -47,9 +47,18 @@ spec:
     service:
       ui:
         type: ClusterIP
-    # Resource limits — conservative for the hardware
-    resources:
-      requests:
-        cpu: 25m
-      limits:
-        memory: 512Mi
+    # Resource limits — Tier 3 storage infrastructure
+    longhornManager:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 512Mi
+    longhornDriver:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
