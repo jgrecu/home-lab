@@ -45,9 +45,10 @@ spec:
                   periodSeconds: 30
             resources:
               requests:
-                cpu: 10m
+                cpu: 20m
+                memory: 128Mi
               limits:
-                memory: 64Mi
+                memory: 1Gi
         pod:
           # Need host PID namespace to access SMART data on host block devices
           hostPID: true

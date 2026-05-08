@@ -45,9 +45,10 @@ spec:
               readOnlyRootFilesystem: true
             resources:
               requests:
-                cpu: 5m
+                cpu: 20m
+                memory: 128Mi
               limits:
-                memory: 64Mi
+                memory: 1Gi
 
     configMaps:
       config:
