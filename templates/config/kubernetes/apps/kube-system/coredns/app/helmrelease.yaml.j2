@@ -19,6 +19,13 @@ spec:
       name: kube-dns
       clusterIP: "#{ cluster_svc_cidr | nthhost(10) }#"
     replicaCount: 2
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
     servers:
       - zones:
           - zone: .
