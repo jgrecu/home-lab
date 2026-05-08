@@ -7,3 +7,4 @@ resources:
   - ./helmrelease.yaml
   - ./httproute.yaml
   - ./dashboard-flux-control-plane.yaml
+  - ./dashboard-longhorn.yaml
