@@ -49,9 +49,10 @@ spec:
         ruleSelectorNilUsesHelmValues: false
         resources:
           requests:
-            cpu: 100m
-          limits:
+            cpu: 500m
             memory: 2Gi
+          limits:
+            memory: 8Gi
 
     # node-exporter runs as a DaemonSet on every node and exposes hardware
     # metrics: CPU, memory, disk I/O, network, filesystem usage.

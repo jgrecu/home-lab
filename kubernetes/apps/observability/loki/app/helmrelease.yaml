@@ -54,10 +54,10 @@ spec:
         size: 10Gi
       resources:
         requests:
-          cpu: 50m
-          memory: 512Mi
-        limits:
+          cpu: 250m
           memory: 1Gi
+        limits:
+          memory: 4Gi
 
     # Disable the components that only make sense in scalable/HA mode
     read:
