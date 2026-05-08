@@ -34,3 +34,28 @@
 
 ### Conclusion
 metrics-server monitoring is fully operational. The ServiceMonitor was deployed automatically via the Helm chart and Prometheus is successfully scraping metrics via HTTPS on port 10250.
+
+## Reloader Monitoring Validation (Task 11)
+
+**Date:** 2026-05-08
+
+**Status:** PASSED - Already configured and working
+
+**PodMonitor Configuration:**
+- Name: reloader
+- Namespace: kube-system
+- Selector: app=reloader, release=reloader
+- Metrics Path: /metrics
+- Port: http (9090)
+- Job Label: reloader
+
+**Prometheus Scraping Status:**
+- Active Target: kube-system/reloader
+- Pod: reloader-5445f87f46-c6sdn
+- Health: UP
+- Scrape URL: http://10.42.0.32:9090/metrics
+- Last Scrape: 2026-05-08T15:29:41Z
+
+**Conclusion:**
+Reloader monitoring is properly configured with a PodMonitor and Prometheus is successfully scraping metrics. No changes required.
+
