@@ -21,10 +21,6 @@ spec:
     controller:
       replicaCount: 1
 
-      # Disable group snapshots - CRD not installed
-      args:
-        enableVolumeGroupSnapshots: false
-
       resources:
         requests:
           cpu: 50m
