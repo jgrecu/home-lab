@@ -57,6 +57,8 @@ spec:
             web:
               port: 8080
 
+            metrics: true
+
             storage:
               type: sqlite
               path: /data/gatus.db
