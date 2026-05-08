@@ -64,6 +64,7 @@ import (
 	recyclarr_radarr_api_key?:      string
 	sonarr_api_key?:                string
 	recyclarr_sonarr_api_key?:      string
+	prowlarr_api_key?:              string
 	// Volsync Backup Configuration
 	volsync_restic_password?:       string
 	volsync_s3_access_key?:         string
