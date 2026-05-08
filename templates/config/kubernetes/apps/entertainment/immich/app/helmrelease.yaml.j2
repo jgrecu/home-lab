@@ -49,6 +49,9 @@ spec:
         enabled: false
 
     immich:
+      # Enable Prometheus metrics collection
+      metrics:
+        enabled: true
       persistence:
         # Photo library on NFS — originals, thumbnails, encoded videos.
         # All stored on your NAS: large files belong there, not on cluster SSDs.
