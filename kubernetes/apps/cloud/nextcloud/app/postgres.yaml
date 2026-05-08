@@ -12,6 +12,12 @@ spec:
   # longhorn-single: Longhorn stores 1 replica per instance.
   # CNPG replication handles HA — no need for Longhorn to duplicate.
   instances: 2
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1Gi
+    limits:
+      memory: 4Gi
   storage:
     storageClass: longhorn-single
     size: 10Gi
