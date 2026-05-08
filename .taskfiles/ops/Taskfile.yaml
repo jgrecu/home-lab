@@ -113,3 +113,36 @@ tasks:
       - test -f {{.KUBECONFIG}}
       - sh: test -n "{{index .CLI_ARGS 1}}"
         msg: "Usage: task ops:describe -- <type> <name> [namespace]"
+
+  monitoring-status:
+    desc: Verify Prometheus monitoring coverage and health
+    cmd: |
+      echo "=== ServiceMonitors & PodMonitors ==="
+      kubectl get servicemonitors,podmonitors -A | wc -l
+      echo ""
+      echo "=== Prometheus Targets Health ==="
+      kubectl port-forward -n observability svc/kube-prometheus-stack-prometheus 9090:9090 >/dev/null 2>&1 &
+      PF_PID=$!
+      sleep 5
+      if curl -s http://localhost:9090/api/v1/targets >/dev/null 2>&1; then
+        curl -s http://localhost:9090/api/v1/targets | jq -r '
+          .data.activeTargets |
+          group_by(.health) |
+          map({health: .[0].health, count: length}) |
+          .[] |
+          "\(.health): \(.count)"
+        '
+      else
+        echo "Unable to connect to Prometheus (port-forward may have failed)"
+      fi
+      kill $PF_PID 2>/dev/null || true
+      echo ""
+      echo "=== Alerting Rules Loaded ==="
+      kubectl get prometheusrules -A | wc -l
+      echo ""
+      echo "=== Gatus Health Checks ==="
+      GATUS_STATUS=$(kubectl get pods -n observability -l app.kubernetes.io/name=gatus -o jsonpath='{.items[0].status.phase}' 2>/dev/null || echo "Not Found")
+      echo "$GATUS_STATUS"
+    preconditions:
+      - test -f {{.KUBECONFIG}}
+      - which jq curl
