@@ -35,3 +35,32 @@ Spegel monitoring is fully operational:
 - Complete node coverage confirmed
 
 No action required.
+=== Grafana Self-Monitoring Validation (2026-05-08) ===
+
+Configuration:
+- Grafana deployed standalone (not via kube-prometheus-stack)
+- Grafana Helm chart version: 10.5.15
+- App version: 12.3.1
+
+ServiceMonitor:
+- Created: /templates/config/kubernetes/apps/observability/grafana/app/servicemonitor.yaml.j2
+- Namespace: observability
+- Port: service (port 80 -> targetPort 3000)
+- Path: /metrics
+- Interval: 30s
+- Selector: app.kubernetes.io/name=grafana
+
+Prometheus Scraping Status:
+- Target Job: grafana
+- Health: up
+- Instance: 10.42.0.7:3000
+- Last Scrape: 2026-05-08T16:02:03.782690887Z
+- Scrape URL: http://10.42.0.7:3000/metrics
+
+Metrics Verified:
+- grafana_build_info: version 12.3.1, branch release-12.3.1, edition oss
+- go_* metrics: Go runtime metrics (cgo calls, GC, CPU, etc.)
+- All standard Grafana metrics available
+
+Result: PASS - Grafana ServiceMonitor configured and Prometheus successfully scraping metrics
+
