@@ -1,0 +1,28 @@
+---
+name: Shellcheck
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/**/*.sh"
+      - ".github/workflows/shellcheck.yaml"
+  pull_request:
+    paths:
+      - "scripts/**/*.sh"
+      - ".github/workflows/shellcheck.yaml"
+
+jobs:
+  shellcheck:
+    name: Run shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run shellcheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './scripts'
+          severity: warning
+          ignore_paths: node_modules
