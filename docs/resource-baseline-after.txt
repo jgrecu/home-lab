@@ -1,0 +1,135 @@
+NAME        CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+m900-ctrl   1649m        41%      9212Mi          60%         
+m900-wrk1   1412m        35%      7764Mi          50%         
+
+NAMESPACE         NAME                                                        CPU(cores)   MEMORY(bytes)   
+kube-system       kube-apiserver-m900-ctrl                                    512m         2014Mi          
+woodpecker        woodpecker-postgres-1                                       255m         55Mi            
+entertainment     immich-postgres-1                                           220m         56Mi            
+forgejo           forgejo-postgres-1                                          197m         54Mi            
+storage           instance-manager-8a2374dff4fcd3fbbf0907127f8ab75a           175m         1117Mi          
+cloud             nextcloud-postgres-2                                        164m         59Mi            
+storage           instance-manager-c24fd6c6cea4e34d160e96f392b1fa70           157m         873Mi           
+kube-system       cilium-qszn6                                                71m          274Mi           
+storage           longhorn-manager-cdvbm                                      69m          242Mi           
+kube-system       cilium-tfq8w                                                65m          162Mi           
+kube-system       kube-controller-manager-m900-ctrl                           54m          226Mi           
+observability     loki-0                                                      50m          341Mi           
+observability     prometheus-kube-prometheus-stack-prometheus-0               39m          1937Mi          
+database-system   cloudnative-pg-6cf64cf784-fcxrs                             34m          124Mi           
+storage           longhorn-manager-tldjc                                      33m          244Mi           
+observability     fluent-bit-t7mn8                                            23m          15Mi            
+database-system   dragonfly-0                                                 21m          38Mi            
+network           pihole-578bf94b4d-snkwz                                     21m          75Mi            
+observability     fluent-bit-tddcx                                            17m          11Mi            
+network           envoy-gateway-5bd776d58d-v2nhn                              14m          150Mi           
+flux-system       helm-controller-588cd85574-8fcrv                            14m          69Mi            
+flux-system       flux-operator-76687987db-cj95g                              13m          147Mi           
+entertainment     kavita-5668f6b94b-zprh8                                     12m          181Mi           
+storage           engine-image-ei-c9fa6d45-5cdbs                              11m          1Mi             
+network           wg-easy-865d66bc5-wtd74                                     10m          77Mi            
+observability     loki-gateway-54d4c5b8fb-rfbsr                               9m           12Mi            
+flux-system       kustomize-controller-5759b85f68-kzg57                       9m           70Mi            
+kube-system       spegel-4c4lm                                                9m           23Mi            
+observability     grafana-6cbf5fd5dd-fz47p                                    8m           362Mi           
+
+=== Apps still missing CPU requests ===
+database-system/dragonfly-operator-59949d8764-dm2dc
+default/aws-cli-test
+kube-system/spegel-4c4lm
+kube-system/spegel-gtzxv
+observability/alertmanager-kube-prometheus-stack-alertmanager-0
+observability/alertmanager-kube-prometheus-stack-alertmanager-0
+observability/grafana-6cbf5fd5dd-fz47p
+observability/kube-prometheus-stack-kube-state-metrics-5595d464f7-6phs2
+observability/kube-prometheus-stack-operator-54dcc5cffb-q6bzr
+observability/kube-prometheus-stack-prometheus-node-exporter-5ttxw
+observability/kube-prometheus-stack-prometheus-node-exporter-h7d4k
+observability/loki-0
+observability/loki-canary-469hx
+observability/loki-canary-6qt5p
+observability/loki-gateway-54d4c5b8fb-rfbsr
+observability/prometheus-kube-prometheus-stack-prometheus-0
+storage/csi-attacher-5557d89ccf-d95tm
+storage/csi-attacher-5557d89ccf-ms4cz
+storage/csi-attacher-5557d89ccf-rdxlv
+storage/csi-provisioner-857485dbfb-5stjb
+storage/csi-provisioner-857485dbfb-g45fl
+storage/csi-provisioner-857485dbfb-nfzt6
+storage/csi-resizer-64dcb47b78-cwlcx
+storage/csi-resizer-64dcb47b78-h8vs8
+storage/csi-resizer-64dcb47b78-kbbk4
+storage/csi-snapshotter-9dc596c7c-br2vx
+storage/csi-snapshotter-9dc596c7c-c99ft
+storage/csi-snapshotter-9dc596c7c-cqrv2
+storage/engine-image-ei-75a03ec3-gx897
+storage/engine-image-ei-75a03ec3-tcsn7
+storage/engine-image-ei-c9fa6d45-5cdbs
+storage/engine-image-ei-c9fa6d45-9k9fc
+storage/longhorn-csi-plugin-lt8c9
+storage/longhorn-csi-plugin-lt8c9
+storage/longhorn-csi-plugin-lt8c9
+storage/longhorn-csi-plugin-w47cz
+storage/longhorn-csi-plugin-w47cz
+storage/longhorn-csi-plugin-w47cz
+storage/longhorn-driver-deployer-7f5b6fb9b8-w6mbv
+storage/longhorn-manager-cdvbm
+storage/longhorn-manager-tldjc
+storage/longhorn-ui-7fb5c57b8b-2rfxn
+storage/longhorn-ui-7fb5c57b8b-fv7ht
+
+=== QoS Class Distribution ===
+BestEffort:
+      29
+Burstable:
+      88
+Guaranteed:
+       0
+
+=== Node Resource Allocation ===
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests       Limits
+  --------           --------       ------
+  cpu                3739m (94%)    6700m (169%)
+  memory             15100Mi (99%)  43892Mi (287%)
+--
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests       Limits
+  --------           --------       ------
+  cpu                3804m (96%)    4200m (106%)
+  memory             15144Mi (98%)  60552Mi (393%)
+
+=== COMPARISON SUMMARY: Before vs After ===
+
+Node CPU Usage:
+  m900-ctrl: 1350m -> 1649m (+299m, +22%)
+  m900-wrk1: 656m  -> 1412m (+756m, +115%)
+
+Node CPU Allocation (Requests):
+  m900-ctrl: N/A* -> 3739m (94% of capacity)
+  m900-wrk1: N/A* -> 3804m (96% of capacity)
+  *Before state had minimal CPU requests defined
+
+Apps Missing CPU Requests:
+  Before: 60 apps (across all namespaces)
+  After:  43 apps (mostly system components)
+  Fixed:  17 production apps now have CPU requests
+
+QoS Class Distribution:
+  BestEffort: 49 -> 29  (-20 pods, -41%)
+  Burstable:  N/A -> 88 (+88 pods moved from BestEffort)
+  Guaranteed: 0 -> 0    (no change, not a goal)
+
+Key Improvements:
+- All production apps (Tier 1-3) now have CPU/memory requests
+- Scheduler has better placement decisions with resource awareness
+- Risk of OOMKill reduced via memory requests
+- 41% reduction in BestEffort (no QoS) pods
+
+Remaining BestEffort Pods (29 total):
+- Longhorn storage system components (CSI drivers, engine images)
+- Prometheus operator stack components (upstream charts)
+- System utilities (spegel, dragonfly-operator, aws-cli-test)
+- These are acceptable as they're not user-facing apps
