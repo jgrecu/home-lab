@@ -18,21 +18,24 @@ spec:
   upgrade:
     crds: CreateReplace
   values:
-    replicaCount: 1
+    controller:
+      replicaCount: 1
 
-    # Disable group snapshots - CRD not installed
-    args:
-      enableVolumeGroupSnapshots: false
+      # Disable group snapshots - CRD not installed
+      args:
+        enableVolumeGroupSnapshots: false
 
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-      limits:
-        cpu: 200m
-        memory: 128Mi
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 200m
+          memory: 128Mi
 
     webhook:
+      replicaCount: 1
+
       resources:
         requests:
           cpu: 50m
