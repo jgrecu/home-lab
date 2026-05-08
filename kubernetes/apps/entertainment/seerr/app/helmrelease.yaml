@@ -38,9 +38,10 @@ spec:
               allowPrivilegeEscalation: true
             resources:
               requests:
-                cpu: 10m
+                cpu: 15m
+                memory: 256Mi
               limits:
-                memory: 512Mi
+                memory: 2Gi
 
     persistence:
       # Seerr config + SQLite database — stores request history,

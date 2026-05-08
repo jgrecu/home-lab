@@ -38,8 +38,9 @@ spec:
             resources:
               requests:
                 cpu: 15m
+                memory: 256Mi
               limits:
-                memory: 1Gi
+                memory: 2Gi
     persistence:
       # Kavita config + SQLite database — kept locally on Longhorn
       config:
