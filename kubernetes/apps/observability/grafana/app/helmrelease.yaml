@@ -92,11 +92,7 @@ spec:
         #   gnetId: 16714
         #   revision: 1
         #   datasource: Prometheus
-        # Longhorn storage
-        longhorn:
-          gnetId: 16888
-          revision: 9
-          datasource: Prometheus
+        # Longhorn storage - loaded via ConfigMap (see dashboard-longhorn.yaml)
         # Cilium networking
         cilium-operator:
           gnetId: 16611
