@@ -106,7 +106,7 @@ data:
           "type": "text"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "The total number of volumes in the Longhorn storage system",
           "fieldConfig": {
             "defaults": {
@@ -160,7 +160,7 @@ data:
           "type": "stat"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Healthy volumes are volumes that are attaching to a node and have the number of healthy replicas equals to the expected number of replicas.",
           "fieldConfig": {
             "defaults": {
@@ -222,7 +222,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Note that Longhorn volume actual size is not the size of the filesystem inside a Longhorn volume.  See more at : https://longhorn.io/docs/1.0.2/volumes-and-nodes/volume-size/#volume-actual-size",
           "fieldConfig": {
             "defaults": {
@@ -273,7 +273,7 @@ data:
           ],
           "thresholds": [
             {
-              "$$hashKey": "object:649",
+              "$$$$hashKey": "object:649",
               "colorMode": "critical",
               "fill": true,
               "line": true,
@@ -301,7 +301,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:476",
+              "$$$$hashKey": "object:476",
               "format": "percent",
               "label": null,
               "logBase": 1,
@@ -310,7 +310,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:477",
+              "$$$$hashKey": "object:477",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -325,7 +325,7 @@ data:
           }
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Degraded volumes are volumes that have the number of healthy replicas smaller than the expected number of replicas. e.g. User creates a volume with 2 replicas but 1 replicas is failed.",
           "fieldConfig": {
             "defaults": {
@@ -383,7 +383,7 @@ data:
           "type": "stat"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Fault volumes are volumes that doesn't have any healthy replica.",
           "fieldConfig": {
             "defaults": {
@@ -441,7 +441,7 @@ data:
           "type": "stat"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "The capacity of each Longhorn volume",
           "fieldConfig": {
             "defaults": {
@@ -548,7 +548,7 @@ data:
           "type": "table"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Attached volumes are volumes that are currently attaching to a node",
           "fieldConfig": {
             "defaults": {
@@ -606,7 +606,7 @@ data:
           "type": "stat"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Detached volumes are volumes that aren't currently attaching to a node",
           "fieldConfig": {
             "defaults": {
@@ -690,7 +690,7 @@ data:
           "type": "text"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "The total number of nodes in the Longhorn storage system",
           "fieldConfig": {
             "defaults": {
@@ -744,7 +744,7 @@ data:
           "type": "stat"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Disabled nodes are nodes that are disabled by the user.  When users disable a node, Longhorn will not use the node's storage for replica scheduling. Note that Longhorn can still attach a volume to disabled nodes because the actual data of the volume could be on a different node.",
           "fieldConfig": {
             "defaults": {
@@ -806,7 +806,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -875,7 +875,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:530",
+              "$$$$hashKey": "object:530",
               "format": "percent",
               "label": null,
               "logBase": 1,
@@ -884,7 +884,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:531",
+              "$$$$hashKey": "object:531",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -899,7 +899,7 @@ data:
           }
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Schedulable nodes are nodes that Longhorn can use their storage for replica scheduling.",
           "fieldConfig": {
             "defaults": {
@@ -957,7 +957,7 @@ data:
           "type": "stat"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Failed Nodes are nodes that Longhorn cannot attach volumes to and cannot schedule replicas onto. e.g: when the nodes went down.",
           "fieldConfig": {
             "defaults": {
@@ -1015,7 +1015,7 @@ data:
           "type": "stat"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1103,7 +1103,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "decimals": 0,
           "fieldConfig": {
             "defaults": {
@@ -1170,7 +1170,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:422",
+              "$$$$hashKey": "object:422",
               "decimals": 0,
               "format": "short",
               "label": null,
@@ -1180,7 +1180,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:423",
+              "$$$$hashKey": "object:423",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -1225,7 +1225,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "The capacity of each Longhorn volume",
           "fieldConfig": {
             "defaults": {
@@ -1294,7 +1294,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:530",
+              "$$$$hashKey": "object:530",
               "format": "percent",
               "label": null,
               "logBase": 1,
@@ -1303,7 +1303,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:531",
+              "$$$$hashKey": "object:531",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -1318,7 +1318,7 @@ data:
           }
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1434,7 +1434,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1484,7 +1484,7 @@ data:
           ],
           "thresholds": [
             {
-              "$$hashKey": "object:1092",
+              "$$$$hashKey": "object:1092",
               "colorMode": "critical",
               "fill": true,
               "line": true,
@@ -1512,7 +1512,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:865",
+              "$$$$hashKey": "object:865",
               "decimals": 0,
               "format": "percent",
               "label": null,
@@ -1522,7 +1522,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:866",
+              "$$$$hashKey": "object:866",
               "format": "none",
               "label": null,
               "logBase": 1,
@@ -1541,7 +1541,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1591,7 +1591,7 @@ data:
           ],
           "thresholds": [
             {
-              "$$hashKey": "object:1092",
+              "$$$$hashKey": "object:1092",
               "colorMode": "critical",
               "fill": true,
               "line": true,
@@ -1619,7 +1619,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:865",
+              "$$$$hashKey": "object:865",
               "decimals": 0,
               "format": "percent",
               "label": null,
@@ -1629,7 +1629,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:866",
+              "$$$$hashKey": "object:866",
               "format": "none",
               "label": null,
               "logBase": 1,
@@ -1648,7 +1648,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "decimals": 0,
           "description": "Instance managers are pods that contains the engine and replica processes of Longhorn volumes. See more at https://longhorn.io/docs/1.0.2/concepts/#11-the-longhorn-manager-and-the-longhorn-engine ",
           "fieldConfig": {
@@ -1717,7 +1717,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:865",
+              "$$$$hashKey": "object:865",
               "decimals": 0,
               "format": "milicpu",
               "label": null,
@@ -1727,7 +1727,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:866",
+              "$$$$hashKey": "object:866",
               "format": "none",
               "label": null,
               "logBase": 1,
@@ -1746,7 +1746,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Instance managers are pods that contains the engine and replica processes of Longhorn volumes. See more at https://longhorn.io/docs/1.0.2/concepts/#11-the-longhorn-manager-and-the-longhorn-engine ",
           "fieldConfig": {
             "defaults": {
@@ -1796,7 +1796,7 @@ data:
           ],
           "thresholds": [
             {
-              "$$hashKey": "object:1092",
+              "$$$$hashKey": "object:1092",
               "colorMode": "critical",
               "fill": true,
               "line": true,
@@ -1824,7 +1824,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:865",
+              "$$$$hashKey": "object:865",
               "decimals": 0,
               "format": "percent",
               "label": null,
@@ -1834,7 +1834,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:866",
+              "$$$$hashKey": "object:866",
               "format": "none",
               "label": null,
               "logBase": 1,
@@ -1853,7 +1853,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Instance managers are pods that contains the engine and replica processes of Longhorn volumes. See more at https://longhorn.io/docs/1.0.2/concepts/#11-the-longhorn-manager-and-the-longhorn-engine ",
           "fieldConfig": {
             "defaults": {
@@ -1921,7 +1921,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:865",
+              "$$$$hashKey": "object:865",
               "format": "bytes",
               "label": null,
               "logBase": 1,
@@ -1930,7 +1930,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:866",
+              "$$$$hashKey": "object:866",
               "format": "none",
               "label": null,
               "logBase": 1,
@@ -1949,7 +1949,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "decimals": 0,
           "description": "Longhorn manager pods manage the control plane of the Longhorn system. e.g. Volume scheduling, attaching, detaching, backup, etc,..",
           "fieldConfig": {
@@ -2017,7 +2017,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:1500",
+              "$$$$hashKey": "object:1500",
               "decimals": 0,
               "format": "milicpu",
               "label": null,
@@ -2027,7 +2027,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:1501",
+              "$$$$hashKey": "object:1501",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -2046,7 +2046,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "decimals": null,
           "description": "Longhorn manager pods manage the control plane of the Longhorn system. e.g. Volume scheduling, attaching, detaching, backup, etc,..",
           "fieldConfig": {
@@ -2114,7 +2114,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:1500",
+              "$$$$hashKey": "object:1500",
               "decimals": null,
               "format": "bytes",
               "label": null,
@@ -2124,7 +2124,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:1501",
+              "$$$$hashKey": "object:1501",
               "format": "short",
               "label": null,
               "logBase": 1,

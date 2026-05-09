@@ -88,7 +88,7 @@ data:
           "collapsed": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "gridPos": {
             "h": 1,
@@ -104,7 +104,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -161,11 +161,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "avg(sum by (instance, cpu) (rate(node_cpu_seconds_total{mode!~\"idle|iowait|steal\", cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])))",
+              "expr": "avg(sum by (instance, cpu) (rate(node_cpu_seconds_total{mode!~\"idle|iowait|steal\", cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])))",
               "interval": "",
               "legendFormat": "Real Linux",
               "range": true,
@@ -174,11 +174,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "avg(sum by (core) (rate(windows_cpu_time_total{mode!=\"idle\", cluster=\"$cluster\"}[$__rate_interval])))",
+              "expr": "avg(sum by (core) (rate(windows_cpu_time_total{mode!=\"idle\", cluster=\"$$cluster\"}[$$__rate_interval])))",
               "hide": false,
               "interval": "",
               "legendFormat": "Real Windows",
@@ -188,10 +188,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(kube_pod_container_resource_requests{resource=\"cpu\", cluster=\"$cluster\"}) / sum(machine_cpu_cores{cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_container_resource_requests{resource=\"cpu\", cluster=\"$$cluster\"}) / sum(machine_cpu_cores{cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Requests",
               "range": true,
@@ -200,10 +200,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(kube_pod_container_resource_limits{resource=\"cpu\", cluster=\"$cluster\"}) / sum(machine_cpu_cores{cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_container_resource_limits{resource=\"cpu\", cluster=\"$$cluster\"}) / sum(machine_cpu_cores{cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Limits",
               "range": true,
@@ -251,7 +251,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -310,11 +310,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(node_memory_MemTotal_bytes{cluster=\"$cluster\", job=\"$job\"} - node_memory_MemAvailable_bytes{cluster=\"$cluster\", job=\"$job\"}) / sum(node_memory_MemTotal_bytes{cluster=\"$cluster\", job=\"$job\"})",
+              "expr": "sum(node_memory_MemTotal_bytes{cluster=\"$$cluster\", job=\"$$job\"} - node_memory_MemAvailable_bytes{cluster=\"$$cluster\", job=\"$$job\"}) / sum(node_memory_MemTotal_bytes{cluster=\"$$cluster\", job=\"$$job\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Real Linux",
@@ -324,11 +324,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(windows_memory_available_bytes{cluster=\"$cluster\"} + windows_memory_cache_bytes{cluster=\"$cluster\"}) / sum(windows_os_visible_memory_bytes{cluster=\"$cluster\"})",
+              "expr": "sum(windows_memory_available_bytes{cluster=\"$$cluster\"} + windows_memory_cache_bytes{cluster=\"$$cluster\"}) / sum(windows_os_visible_memory_bytes{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Real Windows",
               "range": true,
@@ -337,10 +337,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(kube_pod_container_resource_requests{resource=\"memory\", cluster=\"$cluster\"}) / sum(machine_memory_bytes{cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_container_resource_requests{resource=\"memory\", cluster=\"$$cluster\"}) / sum(machine_memory_bytes{cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Requests",
               "range": true,
@@ -349,10 +349,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(kube_pod_container_resource_limits{resource=\"memory\", cluster=\"$cluster\"}) / sum(machine_memory_bytes{cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_container_resource_limits{resource=\"memory\", cluster=\"$$cluster\"}) / sum(machine_memory_bytes{cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Limits",
               "range": true,
@@ -401,7 +401,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -448,11 +448,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "count(count by (node) (kube_node_info{cluster=\"$cluster\"}))",
+              "expr": "count(count by (node) (kube_node_info{cluster=\"$$cluster\"}))",
               "interval": "",
               "legendFormat": "",
               "range": true,
@@ -465,7 +465,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -552,10 +552,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(kube_namespace_labels{cluster=\"$cluster\"})",
+              "expr": "sum(kube_namespace_labels{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Namespaces",
               "refId": "A"
@@ -563,9 +563,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_pod_container_status_running{cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_container_status_running{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Running Containers",
               "refId": "B"
@@ -573,9 +573,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_pod_status_phase{phase=\"Running\", cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_status_phase{phase=\"Running\", cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Running Pods",
               "refId": "O"
@@ -583,9 +583,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_service_info{cluster=\"$cluster\"})",
+              "expr": "sum(kube_service_info{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Services",
               "refId": "C"
@@ -593,9 +593,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_endpoint_info{cluster=\"$cluster\"})",
+              "expr": "sum(kube_endpoint_info{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Endpoints",
               "refId": "D"
@@ -603,9 +603,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_ingress_info{cluster=\"$cluster\"})",
+              "expr": "sum(kube_ingress_info{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Ingresses",
               "refId": "E"
@@ -613,9 +613,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_deployment_labels{cluster=\"$cluster\"})",
+              "expr": "sum(kube_deployment_labels{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Deployments",
               "refId": "F"
@@ -623,9 +623,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_statefulset_labels{cluster=\"$cluster\"})",
+              "expr": "sum(kube_statefulset_labels{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Statefulsets",
               "refId": "G"
@@ -633,9 +633,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_daemonset_labels{cluster=\"$cluster\"})",
+              "expr": "sum(kube_daemonset_labels{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Daemonsets",
               "refId": "H"
@@ -643,9 +643,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_persistentvolumeclaim_info{cluster=\"$cluster\"})",
+              "expr": "sum(kube_persistentvolumeclaim_info{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Persistent Volume Claims",
               "refId": "I"
@@ -653,9 +653,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_hpa_labels{cluster=\"$cluster\"})",
+              "expr": "sum(kube_hpa_labels{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Horizontal Pod Autoscalers",
               "refId": "J"
@@ -663,9 +663,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_configmap_info{cluster=\"$cluster\"})",
+              "expr": "sum(kube_configmap_info{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Configmaps",
               "refId": "K"
@@ -673,9 +673,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_secret_info{cluster=\"$cluster\"})",
+              "expr": "sum(kube_secret_info{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Secrets",
               "refId": "L"
@@ -683,9 +683,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_networkpolicy_labels{cluster=\"$cluster\"})",
+              "expr": "sum(kube_networkpolicy_labels{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "Network Policies",
               "refId": "M"
@@ -693,10 +693,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "count(count by (node) (kube_node_info{cluster=\"$cluster\"}))",
+              "expr": "count(count by (node) (kube_node_info{cluster=\"$$cluster\"}))",
               "hide": false,
               "interval": "",
               "legendFormat": "Nodes",
@@ -709,7 +709,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -756,9 +756,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "count(kube_namespace_created{cluster=\"$cluster\"})",
+              "expr": "count(kube_namespace_created{cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -770,7 +770,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -818,11 +818,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(node_cpu_seconds_total{mode!~\"idle|iowait|steal\", cluster=\"$cluster\", job=\"$job\"}[$__rate_interval]))",
+              "expr": "sum(rate(node_cpu_seconds_total{mode!~\"idle|iowait|steal\", cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval]))",
               "interval": "",
               "legendFormat": "Real Linux",
               "range": true,
@@ -831,11 +831,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(windows_cpu_time_total{mode!=\"idle\", cluster=\"$cluster\"}[$__rate_interval]))",
+              "expr": "sum(rate(windows_cpu_time_total{mode!=\"idle\", cluster=\"$$cluster\"}[$$__rate_interval]))",
               "hide": false,
               "interval": "",
               "legendFormat": "Real Windows",
@@ -845,10 +845,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(kube_pod_container_resource_requests{resource=\"cpu\", cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_container_resource_requests{resource=\"cpu\", cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Requests",
               "range": true,
@@ -857,10 +857,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(kube_pod_container_resource_limits{resource=\"cpu\", cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_container_resource_limits{resource=\"cpu\", cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Limits",
               "range": true,
@@ -869,10 +869,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(machine_cpu_cores{cluster=\"$cluster\"})",
+              "expr": "sum(machine_cpu_cores{cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Total",
               "range": true,
@@ -925,7 +925,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -973,11 +973,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(node_memory_MemTotal_bytes{cluster=\"$cluster\", job=\"$job\"} - node_memory_MemAvailable_bytes{cluster=\"$cluster\", job=\"$job\"})",
+              "expr": "sum(node_memory_MemTotal_bytes{cluster=\"$$cluster\", job=\"$$job\"} - node_memory_MemAvailable_bytes{cluster=\"$$cluster\", job=\"$$job\"})",
               "interval": "",
               "legendFormat": "Real Linux",
               "range": true,
@@ -986,11 +986,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(windows_os_visible_memory_bytes{cluster=\"$cluster\"} - windows_memory_available_bytes{cluster=\"$cluster\"} - windows_memory_cache_bytes{cluster=\"$cluster\"})",
+              "expr": "sum(windows_os_visible_memory_bytes{cluster=\"$$cluster\"} - windows_memory_available_bytes{cluster=\"$$cluster\"} - windows_memory_cache_bytes{cluster=\"$$cluster\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Real Windows",
@@ -1000,10 +1000,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(kube_pod_container_resource_requests{resource=\"memory\", cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_container_resource_requests{resource=\"memory\", cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Requests",
               "range": true,
@@ -1012,10 +1012,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(kube_pod_container_resource_limits{resource=\"memory\", cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_container_resource_limits{resource=\"memory\", cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Limits",
               "range": true,
@@ -1024,10 +1024,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(machine_memory_bytes{cluster=\"$cluster\"})",
+              "expr": "sum(machine_memory_bytes{cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Total",
               "range": true,
@@ -1077,7 +1077,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1124,9 +1124,9 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
-              "expr": "sum(kube_pod_status_phase{phase=\"Running\", cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_status_phase{phase=\"Running\", cluster=\"$$cluster\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -1139,7 +1139,7 @@ data:
           "collapsed": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "gridPos": {
             "h": 1,
@@ -1155,7 +1155,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1245,12 +1245,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "avg(sum by (instance, cpu) (rate(node_cpu_seconds_total{mode!~\"idle|iowait|steal\", cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])))",
-              "interval": "$resolution",
+              "expr": "avg(sum by (instance, cpu) (rate(node_cpu_seconds_total{mode!~\"idle|iowait|steal\", cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])))",
+              "interval": "$$resolution",
               "legendFormat": "Linux",
               "range": true,
               "refId": "Linux"
@@ -1258,13 +1258,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "1 - avg(rate(windows_cpu_time_total{cluster=\"$cluster\",mode=\"idle\"}[$__rate_interval]))",
+              "expr": "1 - avg(rate(windows_cpu_time_total{cluster=\"$$cluster\",mode=\"idle\"}[$$__rate_interval]))",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Windows",
               "range": true,
               "refId": "Windows"
@@ -1289,7 +1289,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1379,12 +1379,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(node_memory_MemTotal_bytes{cluster=\"$cluster\", job=\"$job\"} - node_memory_MemAvailable_bytes{cluster=\"$cluster\", job=\"$job\"}) / sum(node_memory_MemTotal_bytes{cluster=\"$cluster\", job=\"$job\"})",
-              "interval": "$resolution",
+              "expr": "sum(node_memory_MemTotal_bytes{cluster=\"$$cluster\", job=\"$$job\"} - node_memory_MemAvailable_bytes{cluster=\"$$cluster\", job=\"$$job\"}) / sum(node_memory_MemTotal_bytes{cluster=\"$$cluster\", job=\"$$job\"})",
+              "interval": "$$resolution",
               "legendFormat": "Linux",
               "range": true,
               "refId": "Linux"
@@ -1392,13 +1392,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(windows_os_visible_memory_bytes{cluster=\"$cluster\"} - windows_memory_available_bytes{cluster=\"$cluster\"}) / sum(windows_os_visible_memory_bytes{cluster=\"$cluster\"})",
+              "expr": "sum(windows_os_visible_memory_bytes{cluster=\"$$cluster\"} - windows_memory_available_bytes{cluster=\"$$cluster\"}) / sum(windows_os_visible_memory_bytes{cluster=\"$$cluster\"})",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Windows",
               "range": true,
               "refId": "Windows"
@@ -1423,7 +1423,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1514,14 +1514,14 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(container_cpu_usage_seconds_total{image!=\"\", cluster=\"$cluster\"}[$__rate_interval])) by (namespace)\n+ on (namespace)\n(sum(rate(windows_container_cpu_usage_seconds_total{container_id!=\"\", cluster=\"$cluster\"}[$__rate_interval]) * on (container_id) group_left (container, pod, namespace) max by ( container, container_id, pod, namespace) (kube_pod_container_info{container_id!=\"\", cluster=\"$cluster\"}) OR kube_namespace_created{cluster=\"$cluster\"} * 0) by (namespace))",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{image!=\"\", cluster=\"$$cluster\"}[$$__rate_interval])) by (namespace)\n+ on (namespace)\n(sum(rate(windows_container_cpu_usage_seconds_total{container_id!=\"\", cluster=\"$$cluster\"}[$$__rate_interval]) * on (container_id) group_left (container, pod, namespace) max by ( container, container_id, pod, namespace) (kube_pod_container_info{container_id!=\"\", cluster=\"$$cluster\"}) OR kube_namespace_created{cluster=\"$$cluster\"} * 0) by (namespace))",
               "format": "time_series",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "{{ namespace }}",
               "range": true,
               "refId": "A"
@@ -1533,7 +1533,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1620,12 +1620,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(container_memory_working_set_bytes{image!=\"\", cluster=\"$cluster\"}) by (namespace)\n+ on (namespace)\n(sum(windows_container_memory_usage_commit_bytes{container_id!=\"\", cluster=\"$cluster\"} * on (container_id) group_left (container, pod, namespace) max by ( container, container_id, pod, namespace) (kube_pod_container_info{container_id!=\"\", cluster=\"$cluster\"}) OR kube_namespace_created{cluster=\"$cluster\"} * 0) by (namespace))",
-              "interval": "$resolution",
+              "expr": "sum(container_memory_working_set_bytes{image!=\"\", cluster=\"$$cluster\"}) by (namespace)\n+ on (namespace)\n(sum(windows_container_memory_usage_commit_bytes{container_id!=\"\", cluster=\"$$cluster\"} * on (container_id) group_left (container, pod, namespace) max by ( container, container_id, pod, namespace) (kube_pod_container_info{container_id!=\"\", cluster=\"$$cluster\"}) OR kube_namespace_created{cluster=\"$$cluster\"} * 0) by (namespace))",
+              "interval": "$$resolution",
               "legendFormat": "{{ namespace }}",
               "range": true,
               "refId": "A"
@@ -1637,7 +1637,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1725,12 +1725,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "avg(sum by (instance, cpu) (rate(node_cpu_seconds_total{mode!~\"idle|iowait|steal\", cluster=\"$cluster\", job=\"$job\"}[$__rate_interval]))) by (instance)",
-              "interval": "$resolution",
+              "expr": "avg(sum by (instance, cpu) (rate(node_cpu_seconds_total{mode!~\"idle|iowait|steal\", cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval]))) by (instance)",
+              "interval": "$$resolution",
               "legendFormat": "{{ node }}",
               "range": true,
               "refId": "Linux"
@@ -1738,13 +1738,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "avg(sum by (instance,core) (rate(windows_cpu_time_total{mode!=\"idle\", cluster=\"$cluster\"}[$__rate_interval]))) by (instance)",
+              "expr": "avg(sum by (instance,core) (rate(windows_cpu_time_total{mode!=\"idle\", cluster=\"$$cluster\"}[$$__rate_interval]))) by (instance)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "{{ node }}",
               "range": true,
               "refId": "Windows"
@@ -1756,7 +1756,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1843,13 +1843,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(node_memory_MemTotal_bytes{cluster=\"$cluster\", job=\"$job\"} - node_memory_MemAvailable_bytes{cluster=\"$cluster\", job=\"$job\"}) by (instance)",
+              "expr": "sum(node_memory_MemTotal_bytes{cluster=\"$$cluster\", job=\"$$job\"} - node_memory_MemAvailable_bytes{cluster=\"$$cluster\", job=\"$$job\"}) by (instance)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "{{ instance }}",
               "range": true,
               "refId": "Linux"
@@ -1857,13 +1857,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(windows_os_visible_memory_bytes{cluster=\"$cluster\"} - windows_memory_available_bytes{cluster=\"$cluster\"}) by (instance)",
+              "expr": "sum(windows_os_visible_memory_bytes{cluster=\"$$cluster\"} - windows_memory_available_bytes{cluster=\"$$cluster\"}) by (instance)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "{{ instance }}",
               "range": true,
               "refId": "Windows"
@@ -1875,7 +1875,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "description": "No data is generally a good thing here.",
           "fieldConfig": {
@@ -1967,12 +1967,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(container_cpu_cfs_throttled_seconds_total{image!=\"\", cluster=\"$cluster\"}[$__rate_interval])) by (namespace) > 0",
-              "interval": "$resolution",
+              "expr": "sum(rate(container_cpu_cfs_throttled_seconds_total{image!=\"\", cluster=\"$$cluster\"}[$$__rate_interval])) by (namespace) > 0",
+              "interval": "$$resolution",
               "legendFormat": "{{ namespace }}",
               "range": true,
               "refId": "A"
@@ -1984,7 +1984,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "description": "No data is generally a good thing here.",
           "fieldConfig": {
@@ -2076,12 +2076,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(node_cpu_core_throttles_total{cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])) by (instance)",
-              "interval": "$resolution",
+              "expr": "sum(rate(node_cpu_core_throttles_total{cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])) by (instance)",
+              "interval": "$$resolution",
               "legendFormat": "{{ instance }}",
               "range": true,
               "refId": "A"
@@ -2106,7 +2106,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2193,11 +2193,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(kube_pod_status_qos_class{cluster=\"$cluster\"}) by (qos_class)",
+              "expr": "sum(kube_pod_status_qos_class{cluster=\"$$cluster\"}) by (qos_class)",
               "interval": "",
               "legendFormat": "{{ qos_class }} pods",
               "range": true,
@@ -2206,10 +2206,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(kube_pod_info{cluster=\"$cluster\"})",
+              "expr": "sum(kube_pod_info{cluster=\"$$cluster\"})",
               "hide": false,
               "legendFormat": "Total pods",
               "range": true,
@@ -2222,7 +2222,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2309,11 +2309,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(kube_pod_status_reason{cluster=\"$cluster\"}) by (reason)",
+              "expr": "sum(kube_pod_status_reason{cluster=\"$$cluster\"}) by (reason)",
               "interval": "",
               "legendFormat": "{{ reason }}",
               "range": true,
@@ -2326,7 +2326,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "description": "No data is generally a good thing here.",
           "fieldConfig": {
@@ -2414,11 +2414,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(increase(container_oom_events_total{cluster=\"$cluster\"}[$__rate_interval])) by (namespace) > 0",
+              "expr": "sum(increase(container_oom_events_total{cluster=\"$$cluster\"}[$$__rate_interval])) by (namespace) > 0",
               "interval": "",
               "legendFormat": "{{ namespace }}",
               "range": true,
@@ -2431,7 +2431,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "description": "No data is generally a good thing here.",
           "fieldConfig": {
@@ -2519,11 +2519,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(increase(kube_pod_container_status_restarts_total{cluster=\"$cluster\"}[$__rate_interval])) by (namespace) > 0",
+              "expr": "sum(increase(kube_pod_container_status_restarts_total{cluster=\"$$cluster\"}[$$__rate_interval])) by (namespace) > 0",
               "interval": "",
               "legendFormat": "{{ namespace }}",
               "range": true,
@@ -2537,7 +2537,7 @@ data:
           "collapsed": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "gridPos": {
             "h": 1,
@@ -2553,7 +2553,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "description": "Dropped noisy virtual devices for readability.",
           "fieldConfig": {
@@ -2635,12 +2635,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(node_network_receive_bytes_total{device!~\"(veth|azv|lxc).*\", cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])) by (device)",
-              "interval": "$resolution",
+              "expr": "sum(rate(node_network_receive_bytes_total{device!~\"(veth|azv|lxc).*\", cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])) by (device)",
+              "interval": "$$resolution",
               "legendFormat": "Received : {{ device }}",
               "range": true,
               "refId": "Linux Received"
@@ -2648,12 +2648,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "- sum(rate(node_network_transmit_bytes_total{device!~\"(veth|azv|lxc).*\", cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])) by (device)",
-              "interval": "$resolution",
+              "expr": "- sum(rate(node_network_transmit_bytes_total{device!~\"(veth|azv|lxc).*\", cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])) by (device)",
+              "interval": "$$resolution",
               "legendFormat": "Transmitted : {{ device }}",
               "range": true,
               "refId": "Linux Transmitted"
@@ -2661,13 +2661,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(windows_net_bytes_received_total{cluster=\"$cluster\"}[$__rate_interval])) by (nic)",
+              "expr": "sum(rate(windows_net_bytes_received_total{cluster=\"$$cluster\"}[$$__rate_interval])) by (nic)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Received : {{ nic }}",
               "range": true,
               "refId": "Windows Received"
@@ -2675,13 +2675,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "- sum(rate(windows_net_bytes_sent_total{cluster=\"$cluster\"}[$__rate_interval])) by (nic)",
+              "expr": "- sum(rate(windows_net_bytes_sent_total{cluster=\"$$cluster\"}[$$__rate_interval])) by (nic)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Transmitted : {{ device }}",
               "range": true,
               "refId": "Windows Transmitted"
@@ -2693,7 +2693,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2774,12 +2774,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(node_network_receive_drop_total{cluster=\"$cluster\", job=\"$job\"}[$__rate_interval]))",
-              "interval": "$resolution",
+              "expr": "sum(rate(node_network_receive_drop_total{cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval]))",
+              "interval": "$$resolution",
               "legendFormat": "Linux Packets dropped (receive)",
               "range": true,
               "refId": "Linux Packets dropped (receive)"
@@ -2787,12 +2787,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "- sum(rate(node_network_transmit_drop_total{cluster=\"$cluster\", job=\"$job\"}[$__rate_interval]))",
-              "interval": "$resolution",
+              "expr": "- sum(rate(node_network_transmit_drop_total{cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval]))",
+              "interval": "$$resolution",
               "legendFormat": "Linux Packets dropped (transmit)",
               "range": true,
               "refId": "Linux Packets dropped (transmit)"
@@ -2800,13 +2800,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(windows_net_packets_received_discarded_total{cluster=\"$cluster\"}[$__rate_interval]))",
+              "expr": "sum(rate(windows_net_packets_received_discarded_total{cluster=\"$$cluster\"}[$$__rate_interval]))",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Windows Packets dropped (receive)",
               "range": true,
               "refId": "Windows Packets dropped (receive)"
@@ -2814,13 +2814,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "- sum(rate(windows_net_packets_outbound_discarded_total{cluster=\"$cluster\"}[$__rate_interval]))",
+              "expr": "- sum(rate(windows_net_packets_outbound_discarded_total{cluster=\"$$cluster\"}[$$__rate_interval]))",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Windows Packets dropped (transmit)",
               "range": true,
               "refId": "Windows Packets dropped (transmit)"
@@ -2877,7 +2877,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2958,12 +2958,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(container_network_receive_bytes_total{cluster=\"$cluster\"}[$__rate_interval])) by (namespace)\n+ on (namespace)\n(sum(rate(windows_container_network_receive_bytes_total{container_id!=\"\", cluster=\"$cluster\"}[$__rate_interval]) * on (container_id) group_left (container, pod, namespace) max by ( container, container_id, pod, namespace) (kube_pod_container_info{container_id!=\"\", cluster=\"$cluster\"}) OR kube_namespace_created{cluster=\"$cluster\"} * 0) by (namespace))",
-              "interval": "$resolution",
+              "expr": "sum(rate(container_network_receive_bytes_total{cluster=\"$$cluster\"}[$$__rate_interval])) by (namespace)\n+ on (namespace)\n(sum(rate(windows_container_network_receive_bytes_total{container_id!=\"\", cluster=\"$$cluster\"}[$$__rate_interval]) * on (container_id) group_left (container, pod, namespace) max by ( container, container_id, pod, namespace) (kube_pod_container_info{container_id!=\"\", cluster=\"$$cluster\"}) OR kube_namespace_created{cluster=\"$$cluster\"} * 0) by (namespace))",
+              "interval": "$$resolution",
               "legendFormat": "Received : {{ namespace }}",
               "range": true,
               "refId": "A"
@@ -2971,12 +2971,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "- (sum(rate(container_network_transmit_bytes_total{cluster=\"$cluster\"}[$__rate_interval])) by (namespace)\n+ on (namespace)\n(sum(rate(windows_container_network_transmit_bytes_total{container_id!=\"\", cluster=\"$cluster\"}[$__rate_interval]) * on (container_id) group_left (container, pod, namespace) max by ( container, container_id, pod, namespace) (kube_pod_container_info{container_id!=\"\", cluster=\"$cluster\"}) OR kube_namespace_created{cluster=\"$cluster\"} * 0) by (namespace)))",
+              "expr": "- (sum(rate(container_network_transmit_bytes_total{cluster=\"$$cluster\"}[$$__rate_interval])) by (namespace)\n+ on (namespace)\n(sum(rate(windows_container_network_transmit_bytes_total{container_id!=\"\", cluster=\"$$cluster\"}[$$__rate_interval]) * on (container_id) group_left (container, pod, namespace) max by ( container, container_id, pod, namespace) (kube_pod_container_info{container_id!=\"\", cluster=\"$$cluster\"}) OR kube_namespace_created{cluster=\"$$cluster\"} * 0) by (namespace)))",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Transmitted : {{ namespace }}",
               "range": true,
               "refId": "B"
@@ -2988,7 +2988,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -3069,12 +3069,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(node_network_receive_bytes_total{cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])) by (instance)",
-              "interval": "$resolution",
+              "expr": "sum(rate(node_network_receive_bytes_total{cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])) by (instance)",
+              "interval": "$$resolution",
               "legendFormat": "Received bytes in {{ instance }}",
               "range": true,
               "refId": "Linux Received bytes"
@@ -3082,12 +3082,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "- sum(rate(node_network_transmit_bytes_total{cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])) by (instance)",
+              "expr": "- sum(rate(node_network_transmit_bytes_total{cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])) by (instance)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Transmitted bytes in {{ instance }}",
               "range": true,
               "refId": "Linux Transmitted bytes"
@@ -3095,13 +3095,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(windows_net_bytes_received_total{cluster=\"$cluster\"}[$__rate_interval])) by (instance)",
+              "expr": "sum(rate(windows_net_bytes_received_total{cluster=\"$$cluster\"}[$$__rate_interval])) by (instance)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Received bytes in {{ instance }}",
               "range": true,
               "refId": "Windows Received bytes"
@@ -3109,12 +3109,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "- sum(rate(windows_net_bytes_sent_total{cluster=\"$cluster\"}[$__rate_interval])) by (instance)",
+              "expr": "- sum(rate(windows_net_bytes_sent_total{cluster=\"$$cluster\"}[$$__rate_interval])) by (instance)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Transmitted bytes in {{ instance }}",
               "range": true,
               "refId": "Windows Transmitted bytes"
@@ -3126,7 +3126,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "description": "Dropped noisy virtual devices for readability.",
           "fieldConfig": {
@@ -3208,12 +3208,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(node_network_receive_bytes_total{device!~\"(veth|azv|lxc|lo).*\", cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])) by (instance)",
-              "interval": "$resolution",
+              "expr": "sum(rate(node_network_receive_bytes_total{device!~\"(veth|azv|lxc|lo).*\", cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])) by (instance)",
+              "interval": "$$resolution",
               "legendFormat": "Received bytes in {{ instance }}",
               "range": true,
               "refId": "A"
@@ -3221,12 +3221,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "- sum(rate(node_network_transmit_bytes_total{device!~\"(veth|azv|lxc|lo).*\", cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])) by (instance)",
+              "expr": "- sum(rate(node_network_transmit_bytes_total{device!~\"(veth|azv|lxc|lo).*\", cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])) by (instance)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Transmitted bytes in {{ instance }}",
               "range": true,
               "refId": "B"
@@ -3234,13 +3234,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(windows_net_bytes_received_total{nic!~\".*Virtual.*\",cluster=\"$cluster\"}[$__rate_interval])) by (instance)",
+              "expr": "sum(rate(windows_net_bytes_received_total{nic!~\".*Virtual.*\",cluster=\"$$cluster\"}[$$__rate_interval])) by (instance)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Received bytes in {{ instance }}",
               "range": true,
               "refId": "C"
@@ -3248,13 +3248,13 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "- sum(rate(windows_net_bytes_sent_total{nic!~\".*Virtual.*\",cluster=\"$cluster\"}[$__rate_interval])) by (instance)",
+              "expr": "- sum(rate(windows_net_bytes_sent_total{nic!~\".*Virtual.*\",cluster=\"$$cluster\"}[$$__rate_interval])) by (instance)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Transmitted bytes in {{ instance }}",
               "range": true,
               "refId": "D"
@@ -3266,7 +3266,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "description": "Dropped noisy virtual devices for readability.",
           "fieldConfig": {
@@ -3348,12 +3348,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(node_network_receive_bytes_total{device=\"lo\", cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])) by (instance)",
-              "interval": "$resolution",
+              "expr": "sum(rate(node_network_receive_bytes_total{device=\"lo\", cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])) by (instance)",
+              "interval": "$$resolution",
               "legendFormat": "Received bytes in {{ instance }}",
               "range": true,
               "refId": "A"
@@ -3361,12 +3361,12 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "editorMode": "code",
-              "expr": "- sum(rate(node_network_transmit_bytes_total{device=\"lo\", cluster=\"$cluster\", job=\"$job\"}[$__rate_interval])) by (instance)",
+              "expr": "- sum(rate(node_network_transmit_bytes_total{device=\"lo\", cluster=\"$$cluster\", job=\"$$job\"}[$$__rate_interval])) by (instance)",
               "hide": false,
-              "interval": "$resolution",
+              "interval": "$$resolution",
               "legendFormat": "Transmitted bytes in {{ instance }}",
               "range": true,
               "refId": "B"
@@ -3406,7 +3406,7 @@ data:
             "current": {},
             "datasource": {
               "type": "prometheus",
-              "uid": "${datasource}"
+              "uid": "$${datasource}"
             },
             "definition": "label_values(kube_node_info,cluster)",
             "hide": 0,
@@ -3480,9 +3480,9 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "${datasource}"
+              "uid": "$${datasource}"
             },
-            "definition": "label_values(node_cpu_seconds_total{cluster=\"$cluster\"},job)",
+            "definition": "label_values(node_cpu_seconds_total{cluster=\"$$cluster\"},job)",
             "hide": 0,
             "includeAll": false,
             "multi": true,
@@ -3490,7 +3490,7 @@ data:
             "options": [],
             "query": {
               "qryType": 1,
-              "query": "label_values(node_cpu_seconds_total{cluster=\"$cluster\"},job)",
+              "query": "label_values(node_cpu_seconds_total{cluster=\"$$cluster\"},job)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
             },
             "refresh": 1,
