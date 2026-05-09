@@ -16,8 +16,8 @@ spec:
     defaultSettings:
       # Where Longhorn stores replica data on each node's disk
       defaultDataPath: /var/lib/longhorn
-      # Keep 2 replicas across your 3 nodes — survives 1 node failure
-      defaultReplicaCount: 2
+      # Keep 3 replicas across your 3 nodes — survives 2 node failures
+      defaultReplicaCount: 3
       # Automatically rebalance replicas when a node comes back online
       replicaAutoBalance: best-effort
       # Orphaned data cleanup
@@ -33,7 +33,7 @@ spec:
       # Make Longhorn the default StorageClass for the cluster.
       # Any PVC without an explicit storageClassName will use Longhorn.
       defaultClass: true
-      defaultClassReplicaCount: 2
+      defaultClassReplicaCount: 3
     metrics:
       # Enable Prometheus metrics for Grafana dashboards
       serviceMonitor:
