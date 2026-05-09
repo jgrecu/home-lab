@@ -14,16 +14,21 @@ tasks:
       - Recent events (last 10)
     cmd: |
       echo "=== Flux Status ==="
-      flux get kustomizations -A | grep -v "True.*Applied"
+      FLUX_ISSUES=$(flux get kustomizations -A | grep -v "True.*Applied" | grep -v "NAME.*REVISION" || true)
+      if [ -z "$FLUX_ISSUES" ]; then
+        echo "All kustomizations healthy (Applied & Ready)"
+      else
+        echo "$FLUX_ISSUES"
+      fi
       echo ""
       echo "=== Failed/CrashLooping Pods ==="
-      kubectl get pods -A | grep -v "Running\|Completed" | grep -v "NAME"
+      kubectl get pods -A | grep -v "Running\|Completed" | grep -v "NAME" || echo "All pods running or completed"
       echo ""
       echo "=== PVC Usage ==="
       kubectl get pvc -A -o json | jq -r '.items[] | "\(.metadata.namespace)/\(.metadata.name): \(.status.capacity.storage)"'
       echo ""
       echo "=== Recent Warning Events ==="
-      kubectl get events -A --sort-by='.lastTimestamp' | grep -i "warning\|error" | tail -10
+      kubectl get events -A --sort-by='.lastTimestamp' | grep -i "warning\|error" | tail -10 || echo "No recent warnings or errors"
     preconditions:
       - test -f {{.KUBECONFIG}}
       - which flux kubectl jq
@@ -59,10 +64,10 @@ tasks:
     desc: Show pods with errors or in CrashLoopBackOff
     cmd: |
       echo "=== Pods Not Running ==="
-      kubectl get pods -A | grep -v "Running\|Completed" | grep -v "NAME"
+      kubectl get pods -A | grep -v "Running\|Completed" | grep -v "NAME" || echo "All pods running or completed"
       echo ""
       echo "=== Recent Pod Events ==="
-      kubectl get events -A --sort-by='.lastTimestamp' --field-selector type=Warning | tail -20
+      kubectl get events -A --sort-by='.lastTimestamp' --field-selector type=Warning | tail -20 || echo "No recent warning events"
     preconditions:
       - test -f {{.KUBECONFIG}}
 
