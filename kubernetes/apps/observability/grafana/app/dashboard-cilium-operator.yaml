@@ -77,7 +77,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -126,7 +126,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_errors_warnings_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, level) * 60",
+              "expr": "sum(rate(cilium_errors_warnings_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, level) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{level}}",
@@ -181,7 +181,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -235,21 +235,21 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(irate(cilium_process_cpu_seconds_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod) * 100",
+              "expr": "min(irate(cilium_process_cpu_seconds_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod) * 100",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "min",
               "refId": "A"
             },
             {
-              "expr": "avg(irate(cilium_process_cpu_seconds_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod) * 100",
+              "expr": "avg(irate(cilium_process_cpu_seconds_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod) * 100",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "avg",
               "refId": "B"
             },
             {
-              "expr": "max(irate(cilium_process_cpu_seconds_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod) * 100",
+              "expr": "max(irate(cilium_process_cpu_seconds_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod) * 100",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max",
@@ -321,7 +321,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -375,21 +375,21 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(cilium_process_virtual_memory_bytes{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "min(cilium_process_virtual_memory_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Min Virtual Memory",
               "refId": "A"
             },
             {
-              "expr": "avg(cilium_process_virtual_memory_bytes{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "avg(cilium_process_virtual_memory_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Average Virtual Memory",
               "refId": "B"
             },
             {
-              "expr": "max(cilium_process_virtual_memory_bytes{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "max(cilium_process_virtual_memory_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Max Virtual Memory",
@@ -444,7 +444,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -490,7 +490,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(cilium_process_resident_memory_bytes{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "avg(cilium_process_resident_memory_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -498,7 +498,7 @@ data:
               "refId": "C"
             },
             {
-              "expr": "max(cilium_process_resident_memory_bytes{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "max(cilium_process_resident_memory_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -506,7 +506,7 @@ data:
               "refId": "D"
             },
             {
-              "expr": "min(cilium_process_resident_memory_bytes{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "min(cilium_process_resident_memory_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "MIN_resident_memory_bytes_min",
@@ -561,7 +561,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -610,28 +610,28 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(cilium_process_open_fds{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "sum(cilium_process_open_fds{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "all nodes",
               "refId": "A"
             },
             {
-              "expr": "min(cilium_process_open_fds{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "min(cilium_process_open_fds{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "min/node",
               "refId": "B"
             },
             {
-              "expr": "avg(cilium_process_open_fds{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "avg(cilium_process_open_fds{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "avg/node",
               "refId": "C"
             },
             {
-              "expr": "max(cilium_process_open_fds{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "max(cilium_process_open_fds{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max/node",
@@ -686,7 +686,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "BPF memory usage in the entire system including components not managed by Cilium.",
           "fieldConfig": {
             "defaults": {
@@ -733,7 +733,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(cilium_bpf_maps_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$pod\"} + cilium_bpf_progs_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "avg(cilium_bpf_maps_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"} + cilium_bpf_progs_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -742,7 +742,7 @@ data:
               "refId": "C"
             },
             {
-              "expr": "max(cilium_bpf_maps_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$pod\"} + cilium_bpf_progs_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "max(cilium_bpf_maps_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"} + cilium_bpf_progs_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -751,7 +751,7 @@ data:
               "refId": "D"
             },
             {
-              "expr": "min(cilium_bpf_maps_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$pod\"} + cilium_bpf_progs_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$pod\"})",
+              "expr": "min(cilium_bpf_maps_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"} + cilium_bpf_progs_virtual_memory_max_bytes{k8s_app=\"cilium\", pod=~\"$$pod\"})",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -781,7 +781,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:136",
+              "$$$$hashKey": "object:136",
               "format": "bytes",
               "label": null,
               "logBase": 1,
@@ -790,7 +790,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:137",
+              "$$$$hashKey": "object:137",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -809,7 +809,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "description": "Fill percentage of BPF maps, tagged by map name",
           "fieldConfig": {
             "defaults": {
@@ -852,7 +852,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "cilium_bpf_map_pressure{k8s_app=\"cilium\", pod=~\"$pod\"}",
+              "expr": "cilium_bpf_map_pressure{k8s_app=\"cilium\", pod=~\"$$pod\"}",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -878,7 +878,7 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:230",
+              "$$$$hashKey": "object:230",
               "format": "percentunit",
               "label": null,
               "logBase": 1,
@@ -887,7 +887,7 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:231",
+              "$$$$hashKey": "object:231",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -920,7 +920,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -968,7 +968,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_agent_api_process_time_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])/rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, method, path)",
+              "expr": "avg(rate(cilium_agent_api_process_time_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])/rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, method, path)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{method}} {{path}}",
@@ -1021,7 +1021,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1069,7 +1069,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(rate(cilium_agent_api_process_time_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])/rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, method, path)",
+              "expr": "max(rate(cilium_agent_api_process_time_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])/rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, method, path)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{method}} {{path}}",
@@ -1122,7 +1122,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1170,7 +1170,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, method, path)",
+              "expr": "avg(rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, method, path)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{method}} {{path}} ",
@@ -1223,7 +1223,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1271,7 +1271,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, method, path)",
+              "expr": "max(rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, method, path)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{method}} {{path}} ",
@@ -1324,7 +1324,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1372,7 +1372,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, method, path, return_code)",
+              "expr": "avg(rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, method, path, return_code)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{return_code}} ({{method}} {{path}} )",
@@ -1425,7 +1425,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1473,7 +1473,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, method, path, return_code)",
+              "expr": "sum(rate(cilium_agent_api_process_time_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, method, path, return_code)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{return_code}} ({{method}} {{path}} )",
@@ -1561,7 +1561,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1609,7 +1609,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_bpf_syscall_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, operation)",
+              "expr": "avg(rate(cilium_bpf_syscall_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, operation)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{operation}}",
@@ -1662,7 +1662,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "decimals": 2,
           "fieldConfig": {
             "defaults": {
@@ -1711,7 +1711,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(rate(cilium_bpf_syscall_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, operation)",
+              "expr": "max(rate(cilium_bpf_syscall_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, operation)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{operation}}",
@@ -1765,7 +1765,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1813,7 +1813,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_bpf_syscall_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])/ rate(cilium_bpf_syscall_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, operation)",
+              "expr": "avg(rate(cilium_bpf_syscall_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])/ rate(cilium_bpf_syscall_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, operation)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{operation}}",
@@ -1866,7 +1866,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1912,7 +1912,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(rate(cilium_bpf_syscall_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])/ rate(cilium_bpf_syscall_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, operation)",
+              "expr": "max(rate(cilium_bpf_syscall_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])/ rate(cilium_bpf_syscall_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, operation)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{operation}}",
@@ -1965,7 +1965,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2013,7 +2013,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "topk(5, avg(rate(cilium_bpf_map_ops_total{k8s_app=\"cilium\", pod=~\"$pod\"}[5m])) by (pod, map_name, operation))",
+              "expr": "topk(5, avg(rate(cilium_bpf_map_ops_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[5m])) by (pod, map_name, operation))",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{map_name}} {{operation}}",
@@ -2066,7 +2066,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2114,7 +2114,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "topk(5, max(rate(cilium_bpf_map_ops_total{k8s_app=\"cilium\", pod=~\"$pod\"}[5m])) by (pod, map_name, operation))",
+              "expr": "topk(5, max(rate(cilium_bpf_map_ops_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[5m])) by (pod, map_name, operation))",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{map_name}} {{operation}}",
@@ -2167,7 +2167,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2215,7 +2215,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_bpf_map_ops_total{k8s_app=\"cilium\",outcome=\"fail\", pod=~\"$pod\"}[5m])) by (pod, map_name, operation)",
+              "expr": "sum(rate(cilium_bpf_map_ops_total{k8s_app=\"cilium\",outcome=\"fail\", pod=~\"$$pod\"}[5m])) by (pod, map_name, operation)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{map_name}} {{operation}}",
@@ -2289,7 +2289,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "decimals": 2,
           "fieldConfig": {
             "defaults": {
@@ -2338,7 +2338,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(kvstore_operations_total{pod=~\"$pod\"}[1m])) by (pod, scope, action)",
+              "expr": "sum(rate(kvstore_operations_total{pod=~\"$$pod\"}[1m])) by (pod, scope, action)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{scope}} {{action}}",
@@ -2392,7 +2392,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "decimals": 2,
           "fieldConfig": {
             "defaults": {
@@ -2441,7 +2441,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(rate(kvstore_operations_total{pod=~\"$pod\"}[1m])) by (pod, scope, action)",
+              "expr": "max(rate(kvstore_operations_total{pod=~\"$$pod\"}[1m])) by (pod, scope, action)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{scope}} {{action}}",
@@ -2495,7 +2495,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2543,7 +2543,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "topk(5, avg(rate(cilium_kvstore_operations_duration_seconds_sum{pod=~\"$pod\"}[1m])) by (pod, action, scope) / avg(rate(cilium_kvstore_operations_duration_seconds_count{pod=~\"$pod\"}[1m])) by (pod, action, scope))",
+              "expr": "topk(5, avg(rate(cilium_kvstore_operations_duration_seconds_sum{pod=~\"$$pod\"}[1m])) by (pod, action, scope) / avg(rate(cilium_kvstore_operations_duration_seconds_count{pod=~\"$$pod\"}[1m])) by (pod, action, scope))",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} {{scope}}",
@@ -2596,7 +2596,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2644,7 +2644,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "topk(5, max(rate(cilium_kvstore_operations_duration_seconds_sum{pod=~\"$pod\"}[1m])) by (pod, action, scope) / avg(rate(cilium_kvstore_operations_duration_seconds_count{pod=~\"$pod\"}[1m])) by (pod, action, scope))",
+              "expr": "topk(5, max(rate(cilium_kvstore_operations_duration_seconds_sum{pod=~\"$$pod\"}[1m])) by (pod, action, scope) / avg(rate(cilium_kvstore_operations_duration_seconds_count{pod=~\"$$pod\"}[1m])) by (pod, action, scope))",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} {{scope}}",
@@ -2697,7 +2697,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2743,7 +2743,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_kvstore_events_queue_seconds_count{pod=~\"$pod\"}[1m])) by (pod, scope, action)",
+              "expr": "avg(rate(cilium_kvstore_events_queue_seconds_count{pod=~\"$$pod\"}[1m])) by (pod, scope, action)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} {{scope}}",
@@ -2817,7 +2817,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2861,7 +2861,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_forward_count_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, direction)",
+              "expr": "sum(rate(cilium_forward_count_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, direction)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{direction}}",
@@ -2914,7 +2914,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2963,7 +2963,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_forward_bytes_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, direction) * 8",
+              "expr": "sum(rate(cilium_forward_bytes_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, direction) * 8",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{direction}}",
@@ -3034,7 +3034,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3100,7 +3100,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "min(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -3108,28 +3108,28 @@ data:
               "refId": "A"
             },
             {
-              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "avg",
               "refId": "B"
             },
             {
-              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max",
               "refId": "C"
             },
             {
-              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv4\", protocol=\"TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv4\", protocol=\"TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "deleted",
               "refId": "D"
             },
             {
-              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv4\", protocol=\"TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv4\", protocol=\"TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "deleted max",
@@ -3200,7 +3200,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3266,7 +3266,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "min(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -3274,28 +3274,28 @@ data:
               "refId": "A"
             },
             {
-              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "avg",
               "refId": "B"
             },
             {
-              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max",
               "refId": "C"
             },
             {
-              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv6\", protocol=\"TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv6\", protocol=\"TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "deleted",
               "refId": "D"
             },
             {
-              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv6\", protocol=\"TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv6\", protocol=\"TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "deleted max",
@@ -3366,7 +3366,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3432,7 +3432,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"non-TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "min(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"non-TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -3440,28 +3440,28 @@ data:
               "refId": "A"
             },
             {
-              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"non-TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"non-TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "avg",
               "refId": "B"
             },
             {
-              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"non-TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv4\", protocol=\"non-TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max",
               "refId": "C"
             },
             {
-              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv4\", protocol=\"non-TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv4\", protocol=\"non-TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "deleted",
               "refId": "D"
             },
             {
-              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv4\", protocol=\"non-TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv4\", protocol=\"non-TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "deleted max",
@@ -3532,7 +3532,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3598,7 +3598,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"non-TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "min(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"non-TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -3606,28 +3606,28 @@ data:
               "refId": "A"
             },
             {
-              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"non-TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"non-TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "avg",
               "refId": "B"
             },
             {
-              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"non-TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"alive\", family=\"ipv6\", protocol=\"non-TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max",
               "refId": "C"
             },
             {
-              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv6\", protocol=\"non-TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "avg(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv6\", protocol=\"non-TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "deleted",
               "refId": "D"
             },
             {
-              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv6\", protocol=\"non-TCP\", pod=~\"$pod\"}) by (family,status)",
+              "expr": "max(cilium_datapath_conntrack_gc_entries{k8s_app=\"cilium\", status=\"deleted\", family=\"ipv6\", protocol=\"non-TCP\", pod=~\"$$pod\"}) by (family,status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "deleted max",
@@ -3683,7 +3683,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "decimals": null,
           "fieldConfig": {
             "defaults": {
@@ -3734,7 +3734,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(cilium_ip_addresses{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod, family)\n",
+              "expr": "sum(cilium_ip_addresses{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod, family)\n",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{family}}",
@@ -3790,7 +3790,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3834,7 +3834,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(cilium_datapath_conntrack_dump_resets_total{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod, area, family, name)",
+              "expr": "sum(cilium_datapath_conntrack_dump_resets_total{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod, area, family, name)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{name}} {{area}} {{family}}",
@@ -3887,7 +3887,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3931,7 +3931,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_services_events_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, action)",
+              "expr": "avg(rate(cilium_services_events_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, action)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}}",
@@ -3984,7 +3984,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4037,14 +4037,14 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(cilium_unreachable_nodes{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "sum(cilium_unreachable_nodes{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "unreachable nodes",
               "refId": "A"
             },
             {
-              "expr": "sum(cilium_unreachable_health_endpoints{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "sum(cilium_unreachable_health_endpoints{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "unreachable health endpoints",
@@ -4097,7 +4097,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4141,7 +4141,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_drop_count_total{direction=\"EGRESS\", k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (reason)",
+              "expr": "sum(rate(cilium_drop_count_total{direction=\"EGRESS\", k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (reason)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{reason}}",
@@ -4197,7 +4197,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4267,7 +4267,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_nodes_all_events_received_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, event_type, source) * 60",
+              "expr": "avg(rate(cilium_nodes_all_events_received_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, event_type, source) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{eventType}} {{source}}",
@@ -4320,7 +4320,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4364,7 +4364,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_drop_bytes_total{direction=\"EGRESS\", k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (reason) * 8",
+              "expr": "sum(rate(cilium_drop_bytes_total{direction=\"EGRESS\", k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (reason) * 8",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{reason}}",
@@ -4420,7 +4420,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4476,21 +4476,21 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(cilium_nodes_all_num{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "avg(cilium_nodes_all_num{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Average Nodes",
               "refId": "A"
             },
             {
-              "expr": "min(cilium_nodes_all_num{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "min(cilium_nodes_all_num{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Min Nodes",
               "refId": "B"
             },
             {
-              "expr": "max(cilium_nodes_all_num{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "max(cilium_nodes_all_num{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Max Nodes",
@@ -4568,7 +4568,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4621,21 +4621,21 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_policy_l7_denied_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m]))",
+              "expr": "sum(rate(cilium_policy_l7_denied_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m]))",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "denied",
               "refId": "A"
             },
             {
-              "expr": "sum(rate(cilium_policy_l7_forwarded_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m]))",
+              "expr": "sum(rate(cilium_policy_l7_forwarded_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m]))",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "forwarded",
               "refId": "B"
             },
             {
-              "expr": "sum(rate(cilium_policy_l7_received_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m]))",
+              "expr": "sum(rate(cilium_policy_l7_received_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m]))",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "received",
@@ -4688,7 +4688,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4732,7 +4732,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_drop_count_total{direction=\"INGRESS\", k8s_app=\"cilium\", pod=~\"$pod\"}[5m])) by (reason)",
+              "expr": "sum(rate(cilium_drop_count_total{direction=\"INGRESS\", k8s_app=\"cilium\", pod=~\"$$pod\"}[5m])) by (reason)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{reason}}",
@@ -4790,7 +4790,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4853,7 +4853,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_proxy_upstream_reply_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope) / sum(rate(cilium_proxy_upstream_reply_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope)",
+              "expr": "avg(rate(cilium_proxy_upstream_reply_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope) / sum(rate(cilium_proxy_upstream_reply_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -4861,7 +4861,7 @@ data:
               "refId": "A"
             },
             {
-              "expr": "avg(cilium_policy_l7_parse_errors_total{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "avg(cilium_policy_l7_parse_errors_total{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "parse errors",
@@ -4914,7 +4914,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4958,7 +4958,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_drop_bytes_total{direction=\"INGRESS\", k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (reason) * 8",
+              "expr": "sum(rate(cilium_drop_bytes_total{direction=\"INGRESS\", k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (reason) * 8",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{reason}}",
@@ -5016,7 +5016,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5081,21 +5081,21 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(rate(cilium_triggers_policy_update_call_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope) / sum(rate(cilium_triggers_policy_update_call_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope)",
+              "expr": "min(rate(cilium_triggers_policy_update_call_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope) / sum(rate(cilium_triggers_policy_update_call_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "min",
               "refId": "A"
             },
             {
-              "expr": "avg(rate(cilium_triggers_policy_update_call_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope) / sum(rate(cilium_triggers_policy_update_call_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope)",
+              "expr": "avg(rate(cilium_triggers_policy_update_call_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope) / sum(rate(cilium_triggers_policy_update_call_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "avg",
               "refId": "B"
             },
             {
-              "expr": "max(rate(cilium_triggers_policy_update_call_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope) / sum(rate(cilium_triggers_policy_update_call_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope)",
+              "expr": "max(rate(cilium_triggers_policy_update_call_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope) / sum(rate(cilium_triggers_policy_update_call_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max",
@@ -5152,7 +5152,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5203,14 +5203,14 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(rate(cilium_proxy_upstream_reply_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope) / sum(rate(cilium_proxy_upstream_reply_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope)",
+              "expr": "max(rate(cilium_proxy_upstream_reply_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope) / sum(rate(cilium_proxy_upstream_reply_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Max {{scope}}",
               "refId": "B"
             },
             {
-              "expr": "max(rate(cilium_policy_l7_parse_errors_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod)",
+              "expr": "max(rate(cilium_policy_l7_parse_errors_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "parse errors",
@@ -5268,7 +5268,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5315,7 +5315,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(cilium_policy_endpoint_enforcement_status{k8s_app=\"cilium\", pod=~\"$pod\"}) by (enforcement)",
+              "expr": "sum(cilium_policy_endpoint_enforcement_status{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (enforcement)",
               "format": "time_series",
               "hide": false,
               "instant": true,
@@ -5377,7 +5377,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5431,21 +5431,21 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(cilium_proxy_redirects{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "min(cilium_proxy_redirects{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "min",
               "refId": "A"
             },
             {
-              "expr": "avg(cilium_proxy_redirects{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "avg(cilium_proxy_redirects{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "avg",
               "refId": "B"
             },
             {
-              "expr": "max(cilium_proxy_redirects{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "max(cilium_proxy_redirects{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max",
@@ -5505,7 +5505,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5563,28 +5563,28 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(rate(cilium_triggers_policy_update_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod) * 60",
+              "expr": "min(rate(cilium_triggers_policy_update_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "min trigger",
               "refId": "A"
             },
             {
-              "expr": "avg(rate(cilium_triggers_policy_update_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod) * 60",
+              "expr": "avg(rate(cilium_triggers_policy_update_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "average trigger",
               "refId": "B"
             },
             {
-              "expr": "max(rate(cilium_triggers_policy_update_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod) * 60",
+              "expr": "max(rate(cilium_triggers_policy_update_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max trigger",
               "refId": "C"
             },
             {
-              "expr": "max(rate(cilium_triggers_policy_update_folds{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod) * 60",
+              "expr": "max(rate(cilium_triggers_policy_update_folds{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "folds",
@@ -5641,7 +5641,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5705,28 +5705,28 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(cilium_policy{k8s_app=\"cilium\", pod=~\"$pod\"}) by(pod)",
+              "expr": "min(cilium_policy{k8s_app=\"cilium\", pod=~\"$$pod\"}) by(pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "min",
               "refId": "A"
             },
             {
-              "expr": "avg(cilium_policy{k8s_app=\"cilium\", pod=~\"$pod\"}) by(pod)",
+              "expr": "avg(cilium_policy{k8s_app=\"cilium\", pod=~\"$$pod\"}) by(pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "avg",
               "refId": "B"
             },
             {
-              "expr": "max(cilium_policy{k8s_app=\"cilium\", pod=~\"$pod\"}) by(pod)",
+              "expr": "max(cilium_policy{k8s_app=\"cilium\", pod=~\"$$pod\"}) by(pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max",
               "refId": "C"
             },
             {
-              "expr": "sum(cilium_policy_import_errors_total{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "sum(cilium_policy_import_errors_total{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "policy import errors",
@@ -5783,7 +5783,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5834,7 +5834,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_proxy_upstream_reply_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, scope)",
+              "expr": "avg(rate(cilium_proxy_upstream_reply_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, scope)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{scope}}",
@@ -5891,7 +5891,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5945,21 +5945,21 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "min(cilium_policy_max_revision{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "min(cilium_policy_max_revision{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "min",
               "refId": "A"
             },
             {
-              "expr": "avg(cilium_policy_max_revision{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "avg(cilium_policy_max_revision{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "avg",
               "refId": "B"
             },
             {
-              "expr": "max(cilium_policy_max_revision{k8s_app=\"cilium\", pod=~\"$pod\"}) by (pod)",
+              "expr": "max(cilium_policy_max_revision{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "max",
@@ -6033,7 +6033,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "decimals": null,
           "fieldConfig": {
             "defaults": {
@@ -6080,7 +6080,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(histogram_quantile(0.90, rate(cilium_endpoint_regeneration_time_stats_seconds_bucket{k8s_app=\"cilium\", scope!=\"total\", pod=~\"$pod\"}[5m]))) by (scope)",
+              "expr": "avg(histogram_quantile(0.90, rate(cilium_endpoint_regeneration_time_stats_seconds_bucket{k8s_app=\"cilium\", scope!=\"total\", pod=~\"$$pod\"}[5m]))) by (scope)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{scope}}",
@@ -6133,7 +6133,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "decimals": null,
           "fieldConfig": {
             "defaults": {
@@ -6180,7 +6180,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(histogram_quantile(0.99, rate(cilium_endpoint_regeneration_time_stats_seconds_bucket{k8s_app=\"cilium\", scope!=\"total\", pod=~\"$pod\"}[5m]))) by (scope)",
+              "expr": "avg(histogram_quantile(0.99, rate(cilium_endpoint_regeneration_time_stats_seconds_bucket{k8s_app=\"cilium\", scope!=\"total\", pod=~\"$$pod\"}[5m]))) by (scope)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{scope}}",
@@ -6238,7 +6238,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6290,7 +6290,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_endpoint_regenerations_total{k8s_app=\"cilium\", pod=~\"$pod\"}[30s])) by(outcome)",
+              "expr": "sum(rate(cilium_endpoint_regenerations_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[30s])) by(outcome)",
               "format": "time_series",
               "instant": false,
               "intervalFactor": 1,
@@ -6348,7 +6348,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6393,7 +6393,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(cilium_endpoint_state{k8s_app=\"cilium\", pod=~\"$pod\"}) by (endpoint_state)",
+              "expr": "sum(cilium_endpoint_state{k8s_app=\"cilium\", pod=~\"$$pod\"}) by (endpoint_state)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{endpoint_state}}",
@@ -6471,7 +6471,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6525,14 +6525,14 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_controllers_runs_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod)",
+              "expr": "sum(rate(cilium_controllers_runs_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Runs",
               "refId": "A"
             },
             {
-              "expr": "sum(cilium_controllers_failing{k8s_app=\"cilium\", pod=~\"$pod\"}) by(pod)",
+              "expr": "sum(cilium_controllers_failing{k8s_app=\"cilium\", pod=~\"$$pod\"}) by(pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Failed",
@@ -6592,7 +6592,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6650,7 +6650,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_controllers_runs_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, status) / sum(rate(cilium_controllers_runs_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, status)",
+              "expr": "sum(rate(cilium_controllers_runs_duration_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, status) / sum(rate(cilium_controllers_runs_duration_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, status)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{status}}",
@@ -6724,7 +6724,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6772,7 +6772,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_k8s_client_api_latency_time_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])/rate(cilium_k8s_client_api_latency_time_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, method, path)",
+              "expr": "avg(rate(cilium_k8s_client_api_latency_time_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])/rate(cilium_k8s_client_api_latency_time_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, method, path)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{method}} {{path}}",
@@ -6825,7 +6825,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6873,7 +6873,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(rate(cilium_k8s_client_api_latency_time_seconds_sum{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])/rate(cilium_k8s_client_api_latency_time_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, method, path)",
+              "expr": "max(rate(cilium_k8s_client_api_latency_time_seconds_sum{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])/rate(cilium_k8s_client_api_latency_time_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, method, path)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{method}} {{path}}",
@@ -6926,7 +6926,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6974,7 +6974,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_k8s_client_api_latency_time_seconds_count{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, method, path)",
+              "expr": "sum(rate(cilium_k8s_client_api_latency_time_seconds_count{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, method, path)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{method}} {{path}}",
@@ -7027,7 +7027,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7075,7 +7075,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_k8s_client_api_calls_total{k8s_app=\"cilium\", pod=~\"$pod\"}[1m])) by (pod, method, return_code)",
+              "expr": "sum(rate(cilium_k8s_client_api_calls_total{k8s_app=\"cilium\", pod=~\"$$pod\"}[1m])) by (pod, method, return_code)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{method}} {{return_code}}",
@@ -7128,7 +7128,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7175,7 +7175,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_kubernetes_events_received_total{k8s_app=\"cilium\", equal=\"true\", valid=\"true\", pod=~\"$pod\"}[5m])) by (pod, scope, action)",
+              "expr": "sum(rate(cilium_kubernetes_events_received_total{k8s_app=\"cilium\", equal=\"true\", valid=\"true\", pod=~\"$$pod\"}[5m])) by (pod, scope, action)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} {{scope}}",
@@ -7228,7 +7228,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7274,7 +7274,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_kubernetes_events_received_total{k8s_app=\"cilium\", equal=\"true\", valid=\"false\", pod=~\"$pod\"}[5m])) by (pod, scope, action)",
+              "expr": "sum(rate(cilium_kubernetes_events_received_total{k8s_app=\"cilium\", equal=\"true\", valid=\"false\", pod=~\"$$pod\"}[5m])) by (pod, scope, action)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} {{scope}}",
@@ -7327,7 +7327,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7373,7 +7373,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_kubernetes_events_received_total{k8s_app=\"cilium\", equal=\"false\", valid=\"true\", pod=~\"$pod\"}[5m])) by (pod, scope, action, valid)",
+              "expr": "sum(rate(cilium_kubernetes_events_received_total{k8s_app=\"cilium\", equal=\"false\", valid=\"true\", pod=~\"$$pod\"}[5m])) by (pod, scope, action, valid)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} {{scope}}",
@@ -7426,7 +7426,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7472,7 +7472,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(cilium_kubernetes_events_received_total{k8s_app=\"cilium\", equal=\"false\", valid=\"false\", pod=~\"$pod\"}[5m])) by (pod, scope, action)",
+              "expr": "sum(rate(cilium_kubernetes_events_received_total{k8s_app=\"cilium\", equal=\"false\", valid=\"false\", pod=~\"$$pod\"}[5m])) by (pod, scope, action)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} {{scope}}",
@@ -7525,7 +7525,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7571,7 +7571,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"CiliumNetworkPolicy\", pod=~\"$pod\"}[1m])) by (pod, action) * 60",
+              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"CiliumNetworkPolicy\", pod=~\"$$pod\"}[1m])) by (pod, action) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} avg",
@@ -7628,7 +7628,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7674,7 +7674,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"NetworkPolicy\", pod=~\"$pod\"}[1m])) by (pod, action) * 60",
+              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"NetworkPolicy\", pod=~\"$$pod\"}[1m])) by (pod, action) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} avg",
@@ -7731,7 +7731,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7777,7 +7777,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"Pod\", pod=~\"$pod\"}[1m])) by (pod, action) * 60",
+              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"Pod\", pod=~\"$$pod\"}[1m])) by (pod, action) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} avg",
@@ -7834,7 +7834,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7880,7 +7880,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"Node\", pod=~\"$pod\"}[1m])) by (pod, action) * 60",
+              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"Node\", pod=~\"$$pod\"}[1m])) by (pod, action) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}} avg",
@@ -7933,7 +7933,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7979,7 +7979,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"Service\", pod=~\"$pod\"}[1m])) by (pod, action) * 60",
+              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"Service\", pod=~\"$$pod\"}[1m])) by (pod, action) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}}",
@@ -8032,7 +8032,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8078,7 +8078,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"Endpoint\", pod=~\"$pod\"}[1m])) by (pod, action) * 60",
+              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"Endpoint\", pod=~\"$$pod\"}[1m])) by (pod, action) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}}",
@@ -8131,7 +8131,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "$${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8177,7 +8177,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"Namespace\", pod=~\"$pod\"}[1m])) by (pod, action) * 60",
+              "expr": "avg(rate(cilium_kubernetes_events_total{k8s_app=\"cilium\", scope=\"Namespace\", pod=~\"$$pod\"}[1m])) by (pod, action) * 60",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{action}}",
@@ -8235,7 +8235,7 @@ data:
           {
             "allValue": "cilium.*",
             "current": {},
-            "datasource": "${DS_PROMETHEUS}",
+            "datasource": "$${DS_PROMETHEUS}",
             "definition": "label_values(cilium_version, pod)",
             "hide": 0,
             "includeAll": true,

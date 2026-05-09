@@ -81,7 +81,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -140,10 +140,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "up{job=\"apiserver\", cluster=~\"$cluster\"}",
+              "expr": "up{job=\"apiserver\", cluster=~\"$$cluster\"}",
               "interval": "",
               "legendFormat": "{{ instance }}",
               "refId": "A"
@@ -155,7 +155,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -226,10 +226,10 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "apiserver_requested_deprecated_apis{cluster=~\"$cluster\"}",
+              "expr": "apiserver_requested_deprecated_apis{cluster=~\"$$cluster\"}",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -319,7 +319,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -398,11 +398,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "sum by (code) (rate(apiserver_request_total{cluster=~\"$cluster\"}[$__rate_interval]))",
-              "interval": "$resolution",
+              "expr": "sum by (code) (rate(apiserver_request_total{cluster=~\"$$cluster\"}[$$__rate_interval]))",
+              "interval": "$$resolution",
               "legendFormat": "{{ code }}",
               "refId": "A"
             }
@@ -413,7 +413,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -492,11 +492,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "sum by (verb) (rate(apiserver_request_total{cluster=~\"$cluster\"}[$__rate_interval]))",
-              "interval": "$resolution",
+              "expr": "sum by (verb) (rate(apiserver_request_total{cluster=~\"$$cluster\"}[$$__rate_interval]))",
+              "interval": "$$resolution",
               "legendFormat": "{{ verb}}",
               "refId": "A"
             }
@@ -507,7 +507,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -586,11 +586,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(apiserver_request_duration_seconds_sum{job=\"apiserver\", cluster=~\"$cluster\"}[$__rate_interval])) by (instance)\n/\nsum(rate(apiserver_request_duration_seconds_count{job=\"apiserver\", cluster=~\"$cluster\"}[$__rate_interval])) by (instance)",
-              "interval": "$resolution",
+              "expr": "sum(rate(apiserver_request_duration_seconds_sum{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])) by (instance)\n/\nsum(rate(apiserver_request_duration_seconds_count{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])) by (instance)",
+              "interval": "$$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -601,7 +601,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -680,11 +680,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(apiserver_request_duration_seconds_sum{job=\"apiserver\", cluster=~\"$cluster\"}[$__rate_interval])) by (verb)\n/\nsum(rate(apiserver_request_duration_seconds_count{job=\"apiserver\", cluster=~\"$cluster\"}[$__rate_interval])) by (verb)",
-              "interval": "$resolution",
+              "expr": "sum(rate(apiserver_request_duration_seconds_sum{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])) by (verb)\n/\nsum(rate(apiserver_request_duration_seconds_count{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])) by (verb)",
+              "interval": "$$resolution",
               "legendFormat": "{{ verb }}",
               "refId": "A"
             }
@@ -695,7 +695,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -774,11 +774,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "sum by(instance) (rate(apiserver_request_total{code=~\"5..\", job=\"apiserver\", cluster=~\"$cluster\"}[$__rate_interval]))\n / sum by(instance) (rate(apiserver_request_total{job=\"apiserver\", cluster=~\"$cluster\"}[$__rate_interval]))",
-              "interval": "$resolution",
+              "expr": "sum by(instance) (rate(apiserver_request_total{code=~\"5..\", job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval]))\n / sum by(instance) (rate(apiserver_request_total{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval]))",
+              "interval": "$$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -789,7 +789,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -868,11 +868,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "sum by(verb) (rate(apiserver_request_total{code=~\"5..\",job=\"apiserver\", cluster=~\"$cluster\"}[$__rate_interval]))\n / sum by(verb) (rate(apiserver_request_total{job=\"apiserver\", cluster=~\"$cluster\"}[$__rate_interval]))",
-              "interval": "$resolution",
+              "expr": "sum by(verb) (rate(apiserver_request_total{code=~\"5..\",job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval]))\n / sum by(verb) (rate(apiserver_request_total{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval]))",
+              "interval": "$$resolution",
               "legendFormat": "{{ verb }}",
               "refId": "A"
             }
@@ -883,7 +883,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -962,11 +962,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(apiserver_request_total{cluster=~\"$cluster\"}[$__rate_interval])) by (instance)",
-              "interval": "$resolution",
+              "expr": "sum(rate(apiserver_request_total{cluster=~\"$$cluster\"}[$$__rate_interval])) by (instance)",
+              "interval": "$$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -977,7 +977,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1056,11 +1056,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(workqueue_depth{job=\"apiserver\", cluster=~\"$cluster\"}[$__rate_interval])) by (instance)",
-              "interval": "$resolution",
+              "expr": "sum(rate(workqueue_depth{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])) by (instance)",
+              "interval": "$$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -1071,7 +1071,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1151,11 +1151,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "rate(process_cpu_seconds_total{job=\"apiserver\", cluster=~\"$cluster\"}[$__rate_interval])",
-              "interval": "$resolution",
+              "expr": "rate(process_cpu_seconds_total{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])",
+              "interval": "$$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -1166,7 +1166,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1245,11 +1245,11 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "$${datasource}"
               },
               "exemplar": true,
-              "expr": "process_resident_memory_bytes{job=\"apiserver\", cluster=~\"$cluster\"}",
-              "interval": "$resolution",
+              "expr": "process_resident_memory_bytes{job=\"apiserver\", cluster=~\"$$cluster\"}",
+              "interval": "$$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -1295,7 +1295,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "${datasource}"
+              "uid": "$${datasource}"
             },
             "definition": "label_values(kube_node_info,cluster)",
             "hide": 0,
