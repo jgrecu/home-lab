@@ -1,3 +1,4 @@
 kubernetes-m900-ctrl.yaml
 kubernetes-m900-wrk1.yaml
 talosconfig
+kubernetes-m920x-wrk2.yaml
