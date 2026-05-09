@@ -13,4 +13,6 @@ resources:
   - ./metrics-server/ks.yaml
   - ./reloader/ks.yaml
   - ./snapshot-controller/ks.yaml
+  - ./vpa/sources-ks.yaml
+  - ./vpa-ks.yaml
   - ./spegel/ks.yaml
