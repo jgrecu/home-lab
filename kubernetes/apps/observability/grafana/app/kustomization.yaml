@@ -7,6 +7,18 @@ resources:
   - ./helmrelease.yaml
   - ./httproute.yaml
   - ./servicemonitor.yaml
+  # Infrastructure dashboards
+  - ./dashboard-cert-manager.yaml
+  - ./dashboard-cilium-agent.yaml
+  - ./dashboard-cilium-operator.yaml
+  - ./dashboard-flux-cluster.yaml
   - ./dashboard-flux-control-plane.yaml
+  - ./dashboard-kubernetes-api-server.yaml
+  - ./dashboard-kubernetes-cluster.yaml
+  - ./dashboard-kubernetes-views-global.yaml
+  - ./dashboard-kubernetes-views-namespaces.yaml
+  - ./dashboard-kubernetes-views-pods.yaml
   - ./dashboard-longhorn.yaml
+  - ./dashboard-node-exporter.yaml
+  # Application dashboards
   - ./dashboard-arr-stack.yaml
