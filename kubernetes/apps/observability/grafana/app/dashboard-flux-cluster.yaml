@@ -52,7 +52,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": null
           },
           "description": "",
           "fieldConfig": {
@@ -104,7 +104,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": null
               },
               "editorMode": "code",
               "exemplar": false,
@@ -122,7 +122,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": null
           },
           "description": "",
           "fieldConfig": {
@@ -170,7 +170,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": null
               },
               "editorMode": "code",
               "exemplar": false,
@@ -188,7 +188,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": null
           },
           "description": "",
           "fieldConfig": {
@@ -240,7 +240,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": null
               },
               "editorMode": "code",
               "exemplar": false,
@@ -258,7 +258,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": null
           },
           "description": "",
           "fieldConfig": {
@@ -306,7 +306,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": null
               },
               "editorMode": "code",
               "exemplar": false,
@@ -464,7 +464,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": null
           },
           "description": "",
           "fieldConfig": {
@@ -552,7 +552,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": null
               },
               "editorMode": "code",
               "exemplar": true,
@@ -640,7 +640,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": null
           },
           "description": "",
           "fieldConfig": {
@@ -750,7 +750,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": null
               },
               "editorMode": "code",
               "exemplar": true,
@@ -838,7 +838,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": null
           },
           "description": "",
           "fieldConfig": {
@@ -913,7 +913,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": null
               },
               "editorMode": "code",
               "exemplar": true,
@@ -1295,7 +1295,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "prometheus"
+              "uid": null
             },
             "definition": "label_values(gotk_resource_info, exported_namespace)",
             "hide": 0,
@@ -1329,7 +1329,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "prometheus"
+              "uid": null
             },
             "definition": "label_values(gotk_resource_info,exported_namespace)",
             "hide": 0,
