@@ -29,7 +29,7 @@ jobs:
       - name: Setup mise
         uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         with:
-          install_args: "python@3.14.4 makejinja@2.8.2 pytest@8.3.5"
+          install_args: "python@3.14.4 pipx:makejinja@2.8.2 pipx:pytest@8.3.5"
 
       - name: Run pytest
         run: uv run --with pytest pytest tests/
@@ -44,7 +44,7 @@ jobs:
       - name: Setup mise
         uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         with:
-          install_args: "bats-core/bats@1.11.1"
+          install_args: "aqua:bats-core/bats-core@1.11.1"
 
       - name: Run bats tests
         run: bats tests/
