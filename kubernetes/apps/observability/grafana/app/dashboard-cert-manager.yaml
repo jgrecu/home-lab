@@ -81,7 +81,7 @@ data:
         },
         {
           "columns": [],
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fontSize": "100%",
           "gridPos": {
             "h": 8,
@@ -161,7 +161,7 @@ data:
           "cacheTimeout": null,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -253,7 +253,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -357,7 +357,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -447,7 +447,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "#d44a3a"
           ],
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -527,7 +527,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -613,7 +613,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -699,7 +699,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -785,7 +785,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -871,7 +871,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -957,7 +957,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -1043,7 +1043,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -1129,7 +1129,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$$Datasource",
+          "datasource": "$Datasource",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -1239,7 +1239,7 @@ data:
           {
             "allValue": ".*",
             "current": {},
-            "datasource": "$$Datasource",
+            "datasource": "$Datasource",
             "definition": "label_values(exported_namespace)",
             "hide": 0,
             "includeAll": true,
@@ -1261,7 +1261,7 @@ data:
           {
             "allValue": ".*",
             "current": {},
-            "datasource": "$$Datasource",
+            "datasource": "$Datasource",
             "definition": "label_values(certmanager_certificate_expiration_timestamp_seconds{exported_namespace=~\"$$Namespace\"},name) ",
             "hide": 0,
             "includeAll": true,
