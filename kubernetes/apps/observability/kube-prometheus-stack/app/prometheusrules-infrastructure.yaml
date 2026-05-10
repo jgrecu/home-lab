@@ -48,13 +48,13 @@ spec:
 
         - alert: CertificateNotReady
           expr: |
-            certmanager_certificate_ready_status == 0
+            certmanager_certificate_ready_status{exported_namespace!=""} == 0
           for: 10m
           labels:
             severity: critical
           annotations:
             summary: "Certificate {{ $labels.name }} is not ready"
-            description: "Certificate {{ $labels.name }} in namespace {{ $labels.namespace }} has been in not-ready state for 10 minutes"
+            description: "Certificate {{ $labels.name }} in namespace {{ $labels.exported_namespace }} has been in not-ready state for 10 minutes"
 
     - name: flux
       interval: 1m
