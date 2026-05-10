@@ -54,6 +54,10 @@ spec:
           limits:
             memory: 8Gi
 
+    # Disable kube-proxy monitoring (Talos uses Cilium as kube-proxy replacement)
+    kubeProxy:
+      enabled: false
+
     # node-exporter runs as a DaemonSet on every node and exposes hardware
     # metrics: CPU, memory, disk I/O, network, filesystem usage.
     nodeExporter:
