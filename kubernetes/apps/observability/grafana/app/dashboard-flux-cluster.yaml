@@ -1295,7 +1295,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "$$DS_PROMETHEUS"
+              "uid": "prometheus"
             },
             "definition": "label_values(gotk_resource_info, exported_namespace)",
             "hide": 0,
@@ -1329,7 +1329,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "$$DS_PROMETHEUS"
+              "uid": "prometheus"
             },
             "definition": "label_values(gotk_resource_info,exported_namespace)",
             "hide": 0,

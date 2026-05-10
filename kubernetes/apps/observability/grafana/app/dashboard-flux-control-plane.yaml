@@ -1185,7 +1185,7 @@ data:
             "current": {},
             "datasource": {
               "type": "prometheus",
-              "uid": "$$DS_PROMETHEUS"
+              "uid": "prometheus"
             },
             "definition": "label_values(gotk_reconcile_condition, exported_namespace)",
             "hide": 0,
