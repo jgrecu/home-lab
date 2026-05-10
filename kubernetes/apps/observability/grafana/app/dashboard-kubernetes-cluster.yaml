@@ -12,16 +12,6 @@ metadata:
 data:
   kubernetes-cluster.json: |-
     {
-      "__inputs": [
-        {
-          "name": "DS_PROMETHEUS",
-          "label": "prometheus",
-          "description": "",
-          "type": "datasource",
-          "pluginId": "prometheus",
-          "pluginName": "Prometheus"
-        }
-      ],
       "__requires": [
         {
           "type": "grafana",
@@ -75,7 +65,7 @@ data:
             "rgba(248, 112, 0, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "format": "none",
           "gauge": {
             "maxValue": 3000,
@@ -127,17 +117,17 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(nginx_connections_total{type=\"active\"})",
+              "expr": "sum(kube_pod_status_phase{phase=\"Running\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "",
-              "metric": "node_memory_MemTotal",
+              "metric": "kube_pod_status_phase",
               "refId": "A",
               "step": 40
             }
           ],
-          "thresholds": "2000,2500",
-          "title": "Current Connections",
+          "thresholds": "200,300",
+          "title": "Running Pods",
           "type": "singlestat",
           "valueFontSize": "120%",
           "valueMaps": [
@@ -158,7 +148,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "decimals": 2,
           "format": "percentunit",
           "gauge": {
@@ -241,7 +231,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "description": "",
           "format": "percentunit",
           "gauge": {
@@ -323,7 +313,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "format": "percentunit",
           "gauge": {
             "maxValue": 1,
@@ -406,7 +396,7 @@ data:
             "rgba(248, 112, 0, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "format": "s",
           "gauge": {
             "maxValue": 10,
@@ -458,19 +448,19 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "avg(irate(http_request_duration_seconds_count{status=\"200\", method=\"GET\"}[10m]))",
+              "expr": "count(kube_node_info)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "",
-              "metric": "node_memory_MemTotal",
+              "metric": "kube_node_info",
               "refId": "A",
               "step": 40
             }
           ],
           "thresholds": "2,5",
-          "title": "Request Time",
+          "title": "Nodes",
           "type": "singlestat",
-          "valueFontSize": "80%",
+          "valueFontSize": "120%",
           "valueMaps": [
             {
               "op": "=",
@@ -489,7 +479,7 @@ data:
             "rgba(248, 112, 0, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "description": "",
           "format": "none",
           "gauge": {
@@ -575,7 +565,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -664,7 +654,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fill": 3,
           "gridPos": {
             "h": 8,
@@ -708,10 +698,10 @@ data:
               "step": 10
             },
             {
-              "expr": "kubelet_running_pod_count{kubernetes_io_role =~ \".*node.*\"}",
+              "expr": "kubelet_active_pods",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ instance }}",
+              "legendFormat": "{{ node }}",
               "refId": "B",
               "step": 10
             }
@@ -761,7 +751,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fill": 1,
           "gridPos": {
             "h": 6,
@@ -847,7 +837,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fill": 1,
           "gridPos": {
             "h": 6,
@@ -934,7 +924,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -1021,7 +1011,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -1109,7 +1099,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -1196,7 +1186,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -1230,10 +1220,10 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "topk(5,sum(container_memory_usage_bytes{image!=\"\"}) by (pod_name))",
+              "expr": "topk(5, sum(container_memory_usage_bytes{pod!=\"\",id=~\"/kubepods/.*\"}) by (pod, namespace))",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{pod_name}}",
+              "legendFormat": "{{pod}} ({{namespace}})",
               "refId": "A",
               "step": 10
             }
@@ -1283,7 +1273,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -1318,11 +1308,11 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "topk(5, sum(rate(container_cpu_usage_seconds_total{image!=\"\",name=~\"^k8s_.*\",container_name!=\"POD\"}[2m])) by (pod_name, container_name))",
+              "expr": "topk(5, sum(rate(container_cpu_usage_seconds_total{pod!=\"\",id=~\"/kubepods/.*\"}[2m])) by (pod, namespace))",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
-              "legendFormat": "{{ container_name }} in {{ pod_name }}",
+              "legendFormat": "{{ pod }} ({{ namespace }})",
               "metric": "container_cpu_usage_seconds_total",
               "refId": "A",
               "step": 4
@@ -1374,7 +1364,27 @@ data:
       "style": "dark",
       "tags": [],
       "templating": {
-        "list": []
+        "list": [
+          {
+            "current": {
+              "selected": false,
+              "text": "default",
+              "value": "default"
+            },
+            "hide": 0,
+            "includeAll": false,
+            "label": "Datasource",
+            "multi": false,
+            "name": "datasource",
+            "options": [],
+            "query": "prometheus",
+            "queryValue": "",
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "type": "datasource"
+          }
+        ]
       },
       "time": {
         "from": "now-30m",

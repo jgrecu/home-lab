@@ -12,16 +12,6 @@ metadata:
 data:
   cilium-operator.json: |-
     {
-      "__inputs": [
-        {
-          "name": "DS_PROMETHEUS",
-          "label": "prometheus",
-          "description": "",
-          "type": "datasource",
-          "pluginId": "prometheus",
-          "pluginName": "Prometheus"
-        }
-      ],
       "__requires": [
         {
           "type": "grafana",
@@ -77,7 +67,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -181,7 +171,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -321,7 +311,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -444,7 +434,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -561,7 +551,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -686,7 +676,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "description": "BPF memory usage in the entire system including components not managed by Cilium.",
           "fieldConfig": {
             "defaults": {
@@ -809,7 +799,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "description": "Fill percentage of BPF maps, tagged by map name",
           "fieldConfig": {
             "defaults": {
@@ -920,7 +910,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1021,7 +1011,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1122,7 +1112,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1223,7 +1213,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1324,7 +1314,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1425,7 +1415,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1561,7 +1551,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1662,7 +1652,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "decimals": 2,
           "fieldConfig": {
             "defaults": {
@@ -1765,7 +1755,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1866,7 +1856,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1965,7 +1955,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2066,7 +2056,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2167,7 +2157,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2289,7 +2279,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "decimals": 2,
           "fieldConfig": {
             "defaults": {
@@ -2392,7 +2382,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "decimals": 2,
           "fieldConfig": {
             "defaults": {
@@ -2495,7 +2485,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2596,7 +2586,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2697,7 +2687,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2817,7 +2807,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2914,7 +2904,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3034,7 +3024,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3200,7 +3190,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3366,7 +3356,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3532,7 +3522,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3683,7 +3673,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "decimals": null,
           "fieldConfig": {
             "defaults": {
@@ -3790,7 +3780,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3887,7 +3877,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3984,7 +3974,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4097,7 +4087,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4197,7 +4187,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4320,7 +4310,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4420,7 +4410,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4568,7 +4558,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4688,7 +4678,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4790,7 +4780,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4914,7 +4904,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5016,7 +5006,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5152,7 +5142,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5268,7 +5258,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5377,7 +5367,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5505,7 +5495,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5641,7 +5631,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5783,7 +5773,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5891,7 +5881,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6033,7 +6023,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "decimals": null,
           "fieldConfig": {
             "defaults": {
@@ -6133,7 +6123,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "decimals": null,
           "fieldConfig": {
             "defaults": {
@@ -6238,7 +6228,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6348,7 +6338,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6471,7 +6461,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6592,7 +6582,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6724,7 +6714,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6825,7 +6815,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6926,7 +6916,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7027,7 +7017,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7128,7 +7118,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7228,7 +7218,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7327,7 +7317,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7426,7 +7416,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7525,7 +7515,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7628,7 +7618,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7731,7 +7721,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7834,7 +7824,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7933,7 +7923,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8032,7 +8022,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8131,7 +8121,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$${datasource}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8233,9 +8223,28 @@ data:
       "templating": {
         "list": [
           {
+            "current": {
+              "selected": false,
+              "text": "default",
+              "value": "default"
+            },
+            "hide": 0,
+            "includeAll": false,
+            "label": "Datasource",
+            "multi": false,
+            "name": "datasource",
+            "options": [],
+            "query": "prometheus",
+            "queryValue": "",
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "type": "datasource"
+          },
+          {
             "allValue": "cilium.*",
             "current": {},
-            "datasource": "$${DS_PROMETHEUS}",
+            "datasource": "$${datasource}",
             "definition": "label_values(cilium_version, pod)",
             "hide": 0,
             "includeAll": true,

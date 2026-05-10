@@ -11,15 +11,6 @@ metadata:
 data:
   arr-stack.json: |-
     {
-      "__inputs": [
-        {
-          "name": "DS_PROMETHEUS",
-          "label": "Prometheus",
-          "description": "",
-          "type": "datasource",
-          "pluginId": "prometheus"
-        }
-      ],
       "__requires": [
         {
           "type": "grafana",
@@ -92,7 +83,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Radarr application health status",
           "fieldConfig": {
@@ -157,7 +148,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "up{job=\"radarr\"}",
               "refId": "A"
@@ -169,7 +160,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Sonarr application health status",
           "fieldConfig": {
@@ -234,7 +225,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "up{job=\"sonarr\"}",
               "refId": "A"
@@ -246,7 +237,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Bazarr application health status",
           "fieldConfig": {
@@ -311,7 +302,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "up{job=\"bazarr\"}",
               "refId": "A"
@@ -323,7 +314,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Prowlarr application health status",
           "fieldConfig": {
@@ -388,7 +379,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "up{job=\"prowlarr\"}",
               "refId": "A"
@@ -413,7 +404,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Current number of items in Radarr queue",
           "fieldConfig": {
@@ -470,7 +461,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "radarr_queue_total",
               "refId": "A"
@@ -482,7 +473,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Current number of items in Sonarr queue",
           "fieldConfig": {
@@ -539,7 +530,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sonarr_queue_total",
               "refId": "A"
@@ -551,7 +542,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Current number of items in Bazarr queue",
           "fieldConfig": {
@@ -608,7 +599,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "bazarr_episode_queue_total + bazarr_movie_queue_total",
               "refId": "A"
@@ -620,7 +611,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Queue size over time for all arr applications",
           "fieldConfig": {
@@ -692,7 +683,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "radarr_queue_total",
               "legendFormat": "Radarr",
@@ -701,7 +692,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sonarr_queue_total",
               "legendFormat": "Sonarr",
@@ -710,7 +701,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "bazarr_episode_queue_total + bazarr_movie_queue_total",
               "legendFormat": "Bazarr",
@@ -736,7 +727,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Total number of movies in Radarr library",
           "fieldConfig": {
@@ -781,7 +772,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "radarr_movie_total",
               "refId": "A"
@@ -793,7 +784,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Number of monitored movies in Radarr",
           "fieldConfig": {
@@ -838,7 +829,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "radarr_movie_monitored_total",
               "refId": "A"
@@ -850,7 +841,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Total number of series in Sonarr library",
           "fieldConfig": {
@@ -895,7 +886,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sonarr_series_total",
               "refId": "A"
@@ -907,7 +898,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Total number of episodes across all series",
           "fieldConfig": {
@@ -952,7 +943,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sonarr_episode_total",
               "refId": "A"
@@ -964,7 +955,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Number of monitored episodes",
           "fieldConfig": {
@@ -1009,7 +1000,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sonarr_episode_monitored_total",
               "refId": "A"
@@ -1021,7 +1012,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Number of active Prowlarr indexers",
           "fieldConfig": {
@@ -1066,7 +1057,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "prowlarr_indexer_total",
               "refId": "A"
@@ -1091,7 +1082,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Disk space usage for media libraries",
           "fieldConfig": {
@@ -1163,7 +1154,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "radarr_movie_filesize_bytes",
               "legendFormat": "Radarr Movies",
@@ -1172,7 +1163,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sonarr_series_filesize_bytes",
               "legendFormat": "Sonarr Series",
@@ -1185,7 +1176,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Quality profile distribution for monitored content",
           "fieldConfig": {
@@ -1234,7 +1225,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "sum by (quality_profile) (radarr_movie_quality_info{monitored=\"true\"})",
               "legendFormat": "{{quality_profile}}",
@@ -1260,7 +1251,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "description": "Prowlarr indexer statistics including query counts and failures",
           "fieldConfig": {
@@ -1369,7 +1360,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "prowlarr_indexer_queries_total",
               "format": "table",
@@ -1379,7 +1370,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "$${DS_PROMETHEUS}"
+                "uid": "prometheus"
               },
               "expr": "prowlarr_indexer_grabs_total",
               "format": "table",
