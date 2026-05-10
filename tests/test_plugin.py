@@ -9,10 +9,10 @@ from templates.scripts.plugin import basename, nthhost
 
 class TestBasename:
     def test_removes_j2_extension(self):
-        assert basename("talos/talconfig.yaml.j2") == "talos/talconfig.yaml"
+        assert basename("talos/talconfig.yaml.j2") == "talconfig.yaml"
 
     def test_handles_path_without_j2(self):
-        assert basename("some/file.yaml") == "some/file"
+        assert basename("some/file.yaml") == "file"
 
     def test_handles_filename_only(self):
         assert basename("config.yaml.j2") == "config.yaml"
@@ -29,7 +29,7 @@ class TestNthhost:
         assert nthhost("192.168.1.0/24", 255) == "192.168.1.255"
 
     def test_large_subnet(self):
-        assert nthhost("10.0.0.0/8", 256) == "10.0.0.256"
+        assert nthhost("10.0.0.0/8", 256) == "10.0.1.0"
 
     def test_non_strict_parsing(self):
         assert nthhost("10.0.0.1/24", 0) == "10.0.0.0"
