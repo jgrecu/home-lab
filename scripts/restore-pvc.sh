@@ -2,7 +2,7 @@
 # restore-pvc.sh - Restore a PVC from Volsync backup
 # Usage: ./restore-pvc.sh <namespace> <pvc-name> <capacity>
 
-set -euo pipefail
+set -Eeuo pipefail
 
 NAMESPACE=${1:-}
 PVC_NAME=${2:-}

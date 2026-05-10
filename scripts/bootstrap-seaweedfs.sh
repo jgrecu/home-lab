@@ -134,39 +134,9 @@ function configure_s3_auth() {
 
     log info "Configuring S3 authentication"
 
-    # Create s3 config with credentials
-    # SeaweedFS uses a JSON config file for S3 IAM-style authentication
-    local s3_config
-    s3_config=$(cat <<EOF
-{
-  "identities": [
-    {
-      "name": "home-lab",
-      "credentials": [
-        {
-          "accessKey": "${access_key_id}",
-          "secretKey": "${secret_access_key}"
-        }
-      ],
-      "actions": [
-        "Admin",
-        "Read",
-        "Write",
-        "List",
-        "Tagging"
-      ]
-    }
-  ]
-}
-EOF
-)
-
-    # Write config to filer
+    # Configure S3 auth via weed shell
     kubectl exec -n storage "${filer_pod}" -- \
-        sh -c "cat > /tmp/s3_config.json << 'EOFCONFIG'
-${s3_config}
-EOFCONFIG
-weed shell -master seaweedfs-master:9333 <<EOF
+        sh -c "weed shell -master seaweedfs-master:9333 <<EOF
 s3.configure -apply -user home-lab -access_key ${access_key_id} -secret_key ${secret_access_key} -actions Read,Write,List,Tagging,Admin
 EOF" 2>/dev/null || true
 

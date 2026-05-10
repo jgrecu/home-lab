@@ -21,7 +21,7 @@ def nthhost(value: str, query: int) -> str:
             return str(network[query])
     except ValueError:
         pass
-    return False
+    raise ValueError(f"Invalid nthhost call: value='{value}', query={query}")
 
 
 # Return the age public or private key from age.key

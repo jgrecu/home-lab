@@ -97,11 +97,11 @@ cloudflare_token: "your-cloudflare-api-token-here"
 
 # -- The Load balancer IP for the external gateway
 #    (REQUIRED) / (NOTE: Choose an unused IP in node_cidr)
-cloudflare_gateway_addr: "192.168.1.58"
+cloudflare_gateway_addr: "192.168.1.61"
 
 # -- The load balancer mode for cilium.
 #    (OPTIONAL) / (DEFAULT: "dsr") / (NOTE: accepted values are 'dsr' or 'snat') / (REF: https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/)
-cilium_loadbalancer_mode: "snat"
+cilium_loadbalancer_mode: "dsr"
 
 # -- The IP address of the BGP router, to keep things simple, node network will be used for BGP peering.
 # (OPTIONAL) / (e.g. "192.168.1.1") / (REF: https://docs.cilium.io/en/latest/network/bgp-control-plane/bgp-control-plane/)
