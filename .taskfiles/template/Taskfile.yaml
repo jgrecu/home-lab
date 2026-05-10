@@ -91,10 +91,14 @@ tasks:
     cmds:
       - for: { var: SECRET_FILES }
         cmd: |
-          if [ $(sops filestatus "{{.ITEM}}" | jq ".encrypted") == "false" ]; then
-              sops --encrypt --in-place "{{.ITEM}}"
+          if [ $({{.SOPS_CMD}} filestatus "{{.ITEM}}" | {{.JQ_CMD}} ".encrypted") == "false" ]; then
+              {{.SOPS_CMD}} --encrypt --in-place "{{.ITEM}}"
           fi
     vars:
+      SOPS_CMD:
+        sh: which sops
+      JQ_CMD:
+        sh: which jq
       SECRET_FILES:
         sh: find "{{.BOOTSTRAP_DIR}}" "{{.KUBERNETES_DIR}}" "{{.TALOS_DIR}}" -type f -name "*.sops.*" -print
     preconditions:
