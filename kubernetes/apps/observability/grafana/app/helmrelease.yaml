@@ -50,6 +50,8 @@ spec:
         enabled: false
 
     # Dashboard provider configuration
+    # Note: The sidecar container automatically creates "sidecarProvider" for /tmp/dashboards,
+    # so we only need to define the "default" provider here to avoid duplicates.
     dashboardProviders:
       dashboardproviders.yaml:
         apiVersion: 1
@@ -62,14 +64,6 @@ spec:
             editable: true
             options:
               path: /var/lib/grafana/dashboards/default
-          - name: sidecar
-            orgId: 1
-            folder: ""
-            type: file
-            disableDeletion: false
-            editable: true
-            options:
-              path: /tmp/dashboards
 
     # All dashboards are now managed via ConfigMaps (see dashboard-*.yaml files)
     # This ensures version control, reproducibility, and consistency with GitOps
