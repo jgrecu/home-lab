@@ -158,3 +158,12 @@ Result: NOT NATIVELY SUPPORTED - Requires external exporter deployment
 Current Status: Nextcloud accessible via basic HTTP health checks (/status.php)
                 but no Prometheus metrics available without additional setup.
 
+---
+
+## Expected Output
+
+Validation should confirm:
+- All monitoring targets are healthy and scraped
+- Metrics are being collected successfully
+- Dashboards display data correctly
+- Alerts are configured and firing appropriately

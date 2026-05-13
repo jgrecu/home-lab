@@ -47,3 +47,13 @@ volsync-system    volsync                                          ServiceMonito
 === Phase 2 Baseline ===
 Total monitors deployed:
       44
+---
+
+## Baseline Data Format
+
+This baseline captures cluster state at a point in time for comparison.
+Output includes:
+- Resource usage metrics (CPU, memory, disk)
+- Pod counts and distribution
+- Service health status
+- Performance indicators

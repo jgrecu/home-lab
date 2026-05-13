@@ -43,3 +43,12 @@ Cilium Helm chart and are correctly configured. Prometheus is successfully
 scraping metrics from all Cilium components.
 
 No action required - monitoring infrastructure already in place.
+---
+
+## Expected Output
+
+Validation should confirm:
+- All monitoring targets are healthy and scraped
+- Metrics are being collected successfully
+- Dashboards display data correctly
+- Alerts are configured and firing appropriately

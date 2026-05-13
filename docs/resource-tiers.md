@@ -83,3 +83,14 @@ podAntiAffinity:
 - envoy-internal: m900-ctrl + m920x-wrk2
 
 This ensures ingress availability if any single node fails.
+
+---
+
+## Usage
+
+This document serves as a reference for resource allocation decisions. When adding new applications:
+
+1. Determine tier based on criticality and resource needs
+2. Apply appropriate requests/limits from the tier guidelines
+3. For multi-replica apps, consider scheduling policies (topology spread, anti-affinity)
+4. Verify pod placement with `kubectl get pods -A -o wide`

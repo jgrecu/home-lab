@@ -193,3 +193,23 @@ Quick fixes:
 **Status**: ✅ Ready for deployment
 **Date**: 2026-04-16
 **Version**: 1.0
+
+---
+
+## Verification
+
+After setup, verify Volsync is working:
+
+```bash
+# Check ReplicationSources are created
+kubectl get replicationsource -A
+
+# Verify backups are running
+kubectl get replicationsource -A -o jsonpath='{range .items[*]}{.metadata.namespace}{"\t"}{.metadata.name}{"\t"}{.status.lastSyncTime}{"\n"}{end}'
+# Expected: Recent lastSyncTime for all sources
+
+# Check S3 bucket has backups
+kubectl -n storage exec -it deployment/seaweedfs-filer -- weed shell
+> s3.bucket.list
+# Expected: volsync-backups bucket exists with data
+```

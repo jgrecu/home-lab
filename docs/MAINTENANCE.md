@@ -415,3 +415,32 @@ kubectl port-forward -n observability svc/kube-prometheus-stack-prometheus 9090:
 - Talos documentation: https://www.talos.dev/
 - Flux documentation: https://fluxcd.io/docs/
 - Kubernetes documentation: https://kubernetes.io/docs/
+
+---
+
+## Expected Outcomes
+
+After performing maintenance procedures, verify:
+
+**System Health**:
+```bash
+kubectl get nodes
+# Expected: All nodes Ready
+
+kubectl get pods -A --field-selector=status.phase!=Running
+# Expected: Empty (no failing pods)
+```
+
+**Flux Status**:
+```bash
+flux get kustomizations -A
+# Expected: All showing "Applied" status
+```
+
+**Services Available**:
+```bash
+# Test key services respond
+curl -f https://homepage.yourdomain.com
+curl -f https://grafana.yourdomain.com
+# Expected: HTTP 200 OK
+```

@@ -1288,3 +1288,37 @@ talosctl -n <node-ip> logs <service>
 5. Letting Flux reconcile
 
 Direct cluster edits are temporary and will be overwritten!
+
+---
+
+## Verification After Fixes
+
+After applying any troubleshooting fix, verify the resolution:
+
+### Expected Outcomes
+- **Pods**: All pods should reach `Running` or `Completed` status
+  ```bash
+  kubectl get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded
+  # Expected: No results (empty)
+  ```
+
+- **Flux**: All kustomizations should show `True` and `Applied`
+  ```bash
+  flux get kustomizations -A | grep -v "True.*Applied"
+  # Expected: No results (empty)
+  ```
+
+- **Cluster Health**: Nodes should be `Ready`, no recent warnings
+  ```bash
+  kubectl get nodes
+  # Expected: All nodes STATUS = Ready
+  
+  kubectl get events -A --field-selector type=Warning --since=10m
+  # Expected: No new warnings related to the fixed issue
+  ```
+
+- **Service Availability**: Test the affected service
+  ```bash
+  curl -f https://<service-url>/health
+  # Expected: HTTP 200 OK
+  ```

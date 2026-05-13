@@ -839,6 +839,49 @@ spec:
 
 ---
 
+## Verification After Restore
+
+After completing any restore procedure, verify success:
+
+### Expected Outcomes
+
+**PVC Status**:
+```bash
+kubectl -n <namespace> get pvc <pvc-name>
+# Expected: STATUS = Bound, no events showing errors
+```
+
+**Pod Health**:
+```bash
+kubectl -n <namespace> get pods
+# Expected: All pods Running, READY column shows all containers ready (e.g., 1/1)
+```
+
+**Data Integrity**:
+```bash
+# Check restored data exists
+kubectl -n <namespace> exec -it <pod-name> -- ls -lh /data/
+# Expected: Files present with reasonable timestamps
+
+# For databases, verify connection
+kubectl -n <namespace> exec -it <db-pod> -- <db-check-command>
+# Expected: Database accessible, tables present
+```
+
+**Service Availability**:
+```bash
+curl -f https://<service-url>/
+# Expected: HTTP 200 OK, service responds normally
+```
+
+**Volsync Status**:
+```bash
+kubectl -n <namespace> get replicationdestination
+# Expected: Last sync time recent, no errors
+```
+
+---
+
 ## Document Maintenance
 
 **Last Updated**: 2026-04-16  

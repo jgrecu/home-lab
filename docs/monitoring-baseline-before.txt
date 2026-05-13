@@ -30,3 +30,13 @@ kube-system       reloader                                         PodMonitor
 network           envoy-proxy                                      PodMonitor
 Total monitors deployed:
       29
+---
+
+## Baseline Data Format
+
+This baseline captures cluster state at a point in time for comparison.
+Output includes:
+- Resource usage metrics (CPU, memory, disk)
+- Pod counts and distribution
+- Service health status
+- Performance indicators

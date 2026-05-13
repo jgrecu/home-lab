@@ -656,3 +656,43 @@ aws s3 ls s3://cnpg-backups/ --recursive --endpoint-url http://localhost:8333
 - You follow the restore procedures in this guide
 
 When in doubt: **Don't panic, check backups exist, then restore methodically.** 🧘
+
+---
+
+## Verification After Recovery
+
+After completing disaster recovery procedures, verify the restoration:
+
+### Expected Outcomes
+
+**Backup Verification**:
+```bash
+kubectl get replicationsource -A
+# Expected: All sources showing recent lastSyncTime, no errors
+```
+
+**Storage Health**:
+```bash
+kubectl -n storage get pods -l app=seaweedfs
+# Expected: All SeaweedFS pods Running
+```
+
+**Data Restored**:
+```bash
+# Verify PVC bound and mounted
+kubectl -n <namespace> get pvc <restored-pvc>
+# Expected: STATUS = Bound
+
+# Verify data exists
+kubectl -n <namespace> exec <pod> -- ls -lh /data/
+# Expected: Files present with correct timestamps
+```
+
+**Application Health**:
+```bash
+kubectl -n <namespace> get pods
+# Expected: All pods Running, no CrashLoopBackOff
+
+curl -f https://<service-url>/
+# Expected: HTTP 200 OK, service functional
+```

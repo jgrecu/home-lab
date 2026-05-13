@@ -167,3 +167,26 @@ Would you like to proceed with:
 - A) Just the Immich performance dashboard (feasible now)
 - B) Also deploy exporters for Nextcloud/Jellyfin (requires additional work)
 - C) Skip all application dashboards (infrastructure monitoring is already complete)
+
+---
+
+## Expected Output
+
+Assessment should produce:
+
+**Metrics Availability**:
+- List of applications currently exposing metrics
+- Endpoint URLs and ports for each
+- Sample metrics showing format and labels
+
+**Coverage Analysis**:
+- Percentage of deployed apps with metrics
+- Apps lacking metrics endpoints
+- Priority recommendations for metrics integration
+
+**Verification**:
+```bash
+# Test metrics endpoint
+curl http://<service>:<port>/metrics
+# Expected: Prometheus-format metrics output
+```
