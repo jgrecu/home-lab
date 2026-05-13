@@ -39,6 +39,15 @@ spec:
             command: ["/bin/sh", "-c"]
             args:
               - |
+                # Create runner config for Kubernetes backend
+                cat > /data/config.yaml <<EOF
+                log:
+                  level: info
+                runner:
+                  capacity: 1
+                  timeout: 3h
+                EOF
+
                 if [ ! -f /data/.runner ]; then
                   forgejo-runner register \
                     --no-interactive \
@@ -47,7 +56,7 @@ spec:
                     --name "$HOSTNAME" \
                     --labels "ubuntu-latest:kube://docker.io/node:20-bookworm,ubuntu-22.04:kube://docker.io/node:20-bookworm"
                 fi
-                forgejo-runner daemon
+                forgejo-runner --config /data/config.yaml daemon
             env:
               FORGEJO_INSTANCE_URL: "http://forgejo-http.forgejo.svc.cluster.local:3000"
               FORGEJO_RUNNER_REGISTRATION_TOKEN:
