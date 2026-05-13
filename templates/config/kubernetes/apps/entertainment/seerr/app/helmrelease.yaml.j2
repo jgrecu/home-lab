@@ -16,7 +16,7 @@ spec:
             image:
               repository: ghcr.io/hotio/seerr
               # renovate: datasource=docker depName=ghcr.io/hotio/seerr
-              tag: release-2.2.1
+              tag: release-v3
             env:
               TZ: "Europe/Madrid"
               PUID: "1000"
@@ -44,6 +44,11 @@ spec:
                 memory: 256Mi
               limits:
                 memory: 2Gi
+
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: "Always"
 
     persistence:
       # Seerr config + SQLite database — stores request history,
