@@ -9,6 +9,10 @@ spec:
     name: forgejo-runner
   interval: 1h
   values:
+    defaultPodOptions:
+      automountServiceAccountToken: true
+    serviceAccount:
+      name: forgejo-runner
     controllers:
       forgejo-runner:
         replicas: 1
@@ -21,15 +25,13 @@ spec:
             command: ["/bin/sh", "-c"]
             args:
               - |
-                # Wait for Docker daemon to be ready
-                while ! nc -z localhost 2375; do sleep 1; done
                 if [ ! -f /data/.runner ]; then
                   forgejo-runner register \
                     --no-interactive \
                     --instance "$FORGEJO_INSTANCE_URL" \
                     --token "$FORGEJO_RUNNER_REGISTRATION_TOKEN" \
                     --name "$HOSTNAME" \
-                    --labels "ubuntu-latest:docker://node:20-bullseye,ubuntu-22.04:docker://node:20-bullseye"
+                    --labels "ubuntu-latest:kube://docker.io/node:20-bookworm,ubuntu-22.04:kube://docker.io/node:20-bookworm"
                 fi
                 forgejo-runner daemon
             env:
@@ -39,7 +41,7 @@ spec:
                   secretKeyRef:
                     name: forgejo-runner-secret
                     key: registration-token
-              DOCKER_HOST: tcp://localhost:2375
+              KUBERNETES_NAMESPACE: "forgejo"
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
@@ -49,20 +51,6 @@ spec:
               requests:
                 cpu: 20m
                 memory: 256Mi
-              limits:
-                memory: 2Gi
-          # Docker-in-Docker sidecar for running containerized jobs
-          dind:
-            image:
-              repository: docker
-              tag: 29-dind
-            env:
-              DOCKER_TLS_CERTDIR: ""  # Disable TLS for localhost communication
-            securityContext:
-              privileged: true
-            resources:
-              requests:
-                cpu: 100m
               limits:
                 memory: 2Gi
         pod:
@@ -80,10 +68,3 @@ spec:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /data
-      # Docker storage for DinD — images, layers, build cache
-      docker:
-        type: emptyDir
-        advancedMounts:
-          forgejo-runner:
-            dind:
-              - path: /var/lib/docker

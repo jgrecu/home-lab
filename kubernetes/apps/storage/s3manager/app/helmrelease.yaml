@@ -16,7 +16,8 @@ spec:
           app:
             image:
               repository: cloudlena/s3manager
-              tag: latest
+              # renovate: datasource=docker depName=cloudlena/s3manager
+              tag: v0.6.0
             env:
               ENDPOINT: "seaweedfs-filer.storage.svc.cluster.local:8333"
               USE_SSL: "false"

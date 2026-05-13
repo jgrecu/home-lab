@@ -16,7 +16,7 @@ spec:
             image:
               repository: ghcr.io/hotio/seerr
               # renovate: datasource=docker depName=ghcr.io/hotio/seerr
-              tag: latest
+              tag: release-2.2.1
             env:
               TZ: "Europe/Madrid"
               PUID: "1000"
@@ -35,7 +35,9 @@ spec:
                   failureThreshold: 5
               readiness: *probes
             securityContext:
-              allowPrivilegeEscalation: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
             resources:
               requests:
                 cpu: 15m
