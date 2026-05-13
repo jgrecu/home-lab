@@ -53,6 +53,7 @@ spec:
     annotations:
       external-dns.alpha.kubernetes.io/hostname: external.${SECRET_DOMAIN}
       lbipam.cilium.io/ips: "#{ cloudflare_gateway_addr }#"
+      secret.reloader.stakater.com/reload: "${SECRET_DOMAIN/./-}-production-tls"
   listeners:
     - name: http
       protocol: HTTP
@@ -83,6 +84,7 @@ spec:
     annotations:
       external-dns.alpha.kubernetes.io/hostname: internal.${SECRET_DOMAIN}
       lbipam.cilium.io/ips: "#{ cluster_gateway_addr }#"
+      secret.reloader.stakater.com/reload: "${SECRET_DOMAIN/./-}-production-tls"
   listeners:
     - name: http
       protocol: HTTP
