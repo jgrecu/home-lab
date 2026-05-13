@@ -12,6 +12,22 @@ spec:
     kubernetes:
       envoyDeployment:
         replicas: 2
+        pod:
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchLabels:
+                        gateway.envoyproxy.io/owning-gateway-name: envoy-external
+                    topologyKey: kubernetes.io/hostname
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchLabels:
+                        gateway.envoyproxy.io/owning-gateway-name: envoy-internal
+                    topologyKey: kubernetes.io/hostname
         container:
           imageRepository: mirror.gcr.io/envoyproxy/envoy
           resources:
