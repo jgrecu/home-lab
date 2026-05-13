@@ -12,6 +12,7 @@ spec:
     defaultPodOptions:
       automountServiceAccountToken: true
     serviceAccount:
+      create: false
       name: forgejo-runner
     controllers:
       forgejo-runner:
