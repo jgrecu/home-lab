@@ -375,6 +375,79 @@ kubectl -n <namespace> describe pod <pod-name> | grep -A 10 "Events:"
    kubectl -n <namespace> get pod <pod-name> -o yaml | grep -A 5 tolerations
    ```
 
+### Pod Security Standards (PSS) Violations
+
+**Symptom:** Pods fail to create with "violates PodSecurity" errors. Deployment shows 0/1 replicas but no pods exist.
+
+**Diagnosis:**
+
+```bash
+# Check namespace PSS policy
+kubectl get namespace <namespace> -o yaml | grep pod-security
+
+# Find PSS violation events
+kubectl get events -n <namespace> --field-selector type=Warning --sort-by='.lastTimestamp' | grep "PodSecurity"
+
+# Check replicaset events (most common location for PSS errors)
+kubectl describe rs -n <namespace> | grep -A 5 "Error creating"
+```
+
+**Common Error Messages:**
+
+1. **`allowPrivilegeEscalation != false`**
+   - Container missing `securityContext.allowPrivilegeEscalation: false`
+
+2. **`unrestricted capabilities`**
+   - Container missing `securityContext.capabilities.drop: ["ALL"]`
+
+3. **`runAsNonRoot != true`**
+   - Container running as root (UID 0)
+   - Pod spec missing `securityContext.runAsNonRoot: true`
+
+4. **`seccompProfile`**
+   - Container missing `securityContext.seccompProfile.type: RuntimeDefault`
+
+5. **`privileged`**
+   - Container has `securityContext.privileged: true`
+   - Only allowed in `baseline` PSS, not `restricted`
+
+**Solution: Relax Namespace PSS (Most Common)**
+
+Most applications (media servers, CI/CD, home automation) cannot meet `restricted` PSS requirements. Use `baseline` instead:
+
+```bash
+# 1. Edit namespace template
+vi templates/config/kubernetes/apps/<namespace>/namespace.yaml.j2
+
+# 2. Change PSS labels from 'restricted' to 'baseline'
+pod-security.kubernetes.io/enforce: baseline
+pod-security.kubernetes.io/audit: baseline
+pod-security.kubernetes.io/warn: baseline
+
+# 3. Regenerate manifests
+task configure --yes
+
+# 4. Commit changes
+git add -A
+git commit -m "fix(pss): relax <namespace> to baseline for <app-name>"
+git push
+
+# 5. Force reconcile
+flux reconcile kustomization cluster-apps --with-source
+
+# 6. Restart deployment
+kubectl rollout restart deployment <app> -n <namespace>
+```
+
+**Why This Happens:**
+
+- Default cluster policy may enforce `restricted` PSS
+- Legacy container images lack proper security contexts
+- Sidecar containers (exportarr, DinD) need relaxed permissions
+- Applications legitimately need root access (cron jobs)
+
+**See Also:** [`docs/pod-security-standards.md`](./pod-security-standards.md) for comprehensive PSS guide.
+
 ---
 
 ## Storage Issues
