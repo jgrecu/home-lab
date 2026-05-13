@@ -49,7 +49,6 @@ spec:
                 fi
                 forgejo-runner daemon
             env:
-              DOCKER_HOST: ""
               FORGEJO_INSTANCE_URL: "http://forgejo-http.forgejo.svc.cluster.local:3000"
               FORGEJO_RUNNER_REGISTRATION_TOKEN:
                 valueFrom:
