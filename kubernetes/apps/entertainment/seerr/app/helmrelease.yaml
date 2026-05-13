@@ -34,10 +34,6 @@ spec:
                   timeoutSeconds: 5
                   failureThreshold: 5
               readiness: *probes
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: ["ALL"]
             resources:
               requests:
                 cpu: 15m
