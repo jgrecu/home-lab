@@ -1,8 +1,0 @@
-dyld[31836]: Library not loaded: @rpath/libpython3.14.dylib
-  Referenced from: <4C4C44D0-5555-3144-A1CF-0EED2798E3B6> /Users/I337469/.local/share/mise/installs/poetry/2.4.1/venv/bin/python3.14
-  Reason: tried: '/Users/I337469/.local/share/mise/installs/poetry/2.4.1/venv/lib/libpython3.14.dylib' (no such file), '/Users/I337469/.local/share/mise/installs/poetry/2.4.1/venv/lib/libpython3.14.dylib' (no such file)
-
-Traceback:
-
-  File "<stdin>", line 936, in main
-  File "<stdin>", line 575, in run
