@@ -10,10 +10,10 @@ metadata:
 spec:
   # Custom image with pgvecto.rs extension built in
   imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16-v0.3.0
-  # 1 instance = single primary (no standby).
-  # Reduced from 2 to fit cluster resource constraints.
-  # Still has backup protection via CNPG continuous WAL archiving to S3.
-  instances: 1
+  # 2 instances = 1 primary + 1 replica for high availability.
+  # CNPG operator automatically enables soft pod anti-affinity to spread across nodes.
+  # Provides automatic failover and read scaling.
+  instances: 2
   resources:
     requests:
       cpu: 250m
