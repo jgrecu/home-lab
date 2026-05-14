@@ -35,6 +35,8 @@ spec:
         namespace: volsync-system
         labels:
           prometheus: kube-prometheus
+        # Add bearer token for authentication (fixes 401 Unauthorized)
+        bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
 
     # Container security context
     securityContext:

@@ -5,3 +5,4 @@ resources:
   - ./dragonfly.yaml
   - ./service-metrics.yaml
   - ./servicemonitor.yaml
+  - ./networkpolicy-metrics.yaml
