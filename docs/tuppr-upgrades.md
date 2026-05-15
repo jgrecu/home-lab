@@ -87,12 +87,17 @@ When the maintenance window opens (Sunday 02:00 UTC):
 - Proceed to `m900-wrk1` node
 - Drain, upgrade, reboot
 - Wait for node to be Ready
+- Proceed to `m920x-wrk2` node
+- Drain, upgrade, reboot
+- Wait for node to be Ready
 - Complete
 
 #### 2. Kubernetes Upgrade (v1.35.3 → v1.36.0)
 - Upgrade control plane on `m900-ctrl`
 - Wait for health checks to pass
 - Upgrade kubelet on `m900-wrk1`
+- Wait for health checks to pass
+- Upgrade kubelet on `m920x-wrk2`
 - Wait for health checks to pass
 - Complete
 
