@@ -41,8 +41,8 @@ spec:
               period: 24h
 
       limits_config:
-        # Keep logs for 30 days, then delete automatically
-        retention_period: 720h
+        # Keep logs for 14 days, then delete automatically
+        retention_period: 336h
         # Allow high-cardinality streams from a busy home lab
         ingestion_rate_mb: 16
         ingestion_burst_size_mb: 32
