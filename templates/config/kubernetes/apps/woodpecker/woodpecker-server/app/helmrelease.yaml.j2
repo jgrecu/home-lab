@@ -50,7 +50,7 @@ spec:
                     name: woodpecker-server-secret
                     key: agent-secret
               # Privileged Plugins
-              WOODPECKER_PLUGINS_PRIVILEGED: "woodpeckerci/plugin-docker-buildx:*,woodpeckerci/plugin-docker:*"
+              WOODPECKER_PLUGINS_PRIVILEGED: "woodpeckerci/plugin-docker-buildx:*,woodpeckerci/plugin-docker:*,plugins/docker:*"
             probes:
               startup:
                 enabled: true
