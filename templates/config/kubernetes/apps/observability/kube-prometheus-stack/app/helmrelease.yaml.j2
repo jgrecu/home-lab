@@ -60,14 +60,10 @@ spec:
 
     # node-exporter runs as a DaemonSet on every node and exposes hardware
     # metrics: CPU, memory, disk I/O, network, filesystem usage.
-    # Requires privileged access (hostNetwork, hostPID, hostPath) which violates
-    # baseline PSS. Add pod-level label to exempt from namespace PSS enforcement.
+    # Requires privileged access (hostNetwork, hostPID, hostPath).
+    # Observability namespace is set to 'privileged' PSS to allow this.
     nodeExporter:
       enabled: true
-      podLabels:
-        # Exempt node-exporter from Pod Security Standards enforcement
-        # Node-exporter legitimately needs hostNetwork/hostPID/hostPath to collect metrics
-        pod-security.kubernetes.io/enforce: privileged
 
     # kube-state-metrics exposes Kubernetes object metrics: pod status,
     # deployment replicas, PVC capacity, node conditions, etc.
