@@ -4,9 +4,10 @@ kind: Namespace
 metadata:
   name: woodpecker
   labels:
-    pod-security.kubernetes.io/enforce: baseline
-    pod-security.kubernetes.io/audit: baseline
-    pod-security.kubernetes.io/warn: baseline
+    # Relaxed to privileged for Docker buildx plugin in CI pipelines
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged
     goldilocks.fairwinds.com/enabled: "true"
   annotations:
     kustomize.toolkit.fluxcd.io/prune: disabled
