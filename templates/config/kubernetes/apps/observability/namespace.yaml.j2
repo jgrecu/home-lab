@@ -4,8 +4,9 @@ kind: Namespace
 metadata:
   name: observability
   labels:
-    # Baseline: some components need hostPath or capabilities
-    pod-security.kubernetes.io/enforce: baseline
+    # Privileged: node-exporter requires hostNetwork/hostPID/hostPath for metrics
+    # TODO: Split node-exporter into separate namespace or use PSS exemption config
+    pod-security.kubernetes.io/enforce: privileged
     pod-security.kubernetes.io/audit: restricted
     pod-security.kubernetes.io/warn: restricted
     goldilocks.fairwinds.com/enabled: "true"
