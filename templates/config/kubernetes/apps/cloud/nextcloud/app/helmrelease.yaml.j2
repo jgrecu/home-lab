@@ -99,6 +99,21 @@ spec:
               repository: nextcloud
               tag: 33.0.3-apache
             command: ["su", "-s", "/bin/bash", "www-data", "-c", "php -f /var/www/html/cron.php"]
+            env:
+              # Database connection - required for cron jobs to access Nextcloud DB
+              POSTGRES_HOST: nextcloud-postgres-rw
+              POSTGRES_DB: nextcloud
+              POSTGRES_USER: nextcloud
+              POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: nextcloud-postgres-app
+                    key: password
+              # Redis for caching and locking
+              REDIS_HOST: dragonfly.database-system.svc.cluster.local
+              REDIS_HOST_PORT: "6379"
+              # PHP settings
+              PHP_MEMORY_LIMIT: 512M
             securityContext:
               runAsUser: 0
               runAsGroup: 0
