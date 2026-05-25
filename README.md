@@ -13,38 +13,58 @@ A beginner-friendly homelab project that demonstrates how to run your own Kubern
 This homelab runs a collection of self-hosted applications organized by purpose:
 
 **📦 Storage & Backup**
-- **SeaweedFS** - S3-compatible object storage
-- **Longhorn** - Distributed block storage with snapshots
+- **SeaweedFS** - S3-compatible distributed object storage
+- **Longhorn** - Distributed block storage with replication and snapshots
+- **VolSync** - Automated daily PVC volume backup/replication via Restic to SeaweedFS S3
+- **CSI Driver NFS** - Network File System (NFS) storage driver integration
+- **S3Manager** - Web-based S3 bucket management interface for SeaweedFS
 
 **📊 Observability**
-- **Prometheus** - Metrics collection and alerting
-- **Grafana** - Visualization dashboards
-- **Loki** - Log aggregation
+- **Kube-Prometheus-Stack** - Complete Prometheus and Alertmanager stack for cluster metrics scraping and alerting
+- **Grafana** - Advanced visualization and infrastructure monitoring dashboards
+- **Loki** - Scalable log aggregation and indexing
+- **Fluent Bit** - Lightweight log processor and forwarder
+- **Gatus** - Service health monitoring and interactive status dashboard (30+ endpoints)
+- **Goldilocks** - Resource recommendation utility for pod CPU/Memory optimization
+- **Smartctl Exporter** - Hardware monitoring and SMART status metrics collection
 
-**🎬 Media**
-- **Jellyfin** - Media server
-- **Immich** - Photo management and backup
-- **Kavita** - eBook and manga reader
-- **Seerr** - Media request management
-- **Sonarr / Radarr** - TV and movie automation
-- **Prowlarr** - Indexer management
-- **Bazarr** - Subtitle management
-- **Transmission** - Download client
-- **Autobrr** - Torrent automation
-- **Recyclarr** - Quality profile sync
+**🎬 Media & Entertainment**
+- **Jellyfin** - Open-source media server with hardware transcoding support
+- **Immich** - Self-hosted backup and management platform for photos and videos
+- **Kavita** - Feature-rich eBook, comic, and manga reader
+- **Seerr** - Interactive request management platform for media files
+- **Sonarr / Radarr** - Automated TV show and movie download organizers
+- **Prowlarr** - Centralized indexer manager for torrent trackers and Usenet
+- **Bazarr** - Automatic subtitle companion for Sonarr and Radarr
+- **Transmission** - Lightweight, high-performance BitTorrent client
+- **Autobrr** - High-speed automated torrent monitor and downloader
+- **Recyclarr** - Automated Sonarr/Radarr quality profile and custom format sync
+- **FlareSolverr** - Cloudflare bypass proxy for torrent indexers
 
 **🌐 Networking**
-- **Cloudflare Tunnel** - Secure external access
-- **ExternalDNS** - Automatic DNS management
-- **Cilium** - Container networking (CNI - Container Network Interface)
-- **cert-manager** - TLS certificate automation
+- **Cloudflare Tunnel** - Secure, credential-managed external network access without opening router ports
+- **ExternalDNS (Cloudflare DNS)** - Automatic sync of internal/external gateway records with Cloudflare DNS
+- **Cilium** - High-performance eBPF-based container networking (CNI) with Direct Server Return (DSR) load balancing
+- **cert-manager** - Automated TLS certificate generation using Let's Encrypt and Cloudflare ACME validation
+- **Pi-hole** - Network-wide ad blocking and custom split-horizon local DNS resolution
+- **WireGuard (wg-easy)** - Self-hosted VPN access with a sleek web administration dashboard
+- **Envoy Gateway** - Modern Kubernetes Gateway API ingress controller and routing engine
 
-**🔧 System**
-- **Flux** - GitOps continuous delivery (CD - Continuous Delivery)
-- **Woodpecker CI** - Container-native continuous integration
-- **Tuppr** - Automated OS and Kubernetes upgrades
-- **Renovate** - Dependency update automation
-- **Reloader** - Auto-restart pods on config changes
+**💼 Productivity & Collaboration**
+- **Nextcloud** - Complete self-hosted productivity hub for cloud storage, documents, and contacts
+- **Forgejo** - Lightweight, self-hosted software development platform and Git service
+
+**🏠 Home Automation**
+- **Home Assistant** - Smart home automation engine and hub for local device control
+
+**🔧 System & GitOps**
+- **Flux CD** - GitOps continuous delivery engine syncing cluster state directly from Git
+- **Woodpecker CI** - Container-native, Kubernetes-executor continuous integration engine
+- **Tuppr** - Automated Talos Linux OS and Kubernetes cluster upgrades with node health checks
+- **Renovate** - Automated dependency tracking and pull request creation
+- **Reloader** - Hot-reloads application pods automatically when ConfigMaps or Secrets change
+- **Spegel** - Stateless cluster-local OCI registry mirror and container image cache
+- **Vertical Pod Autoscaler (VPA)** - Automatic pod resource allocation and scaling recommendation
 
 [View full app inventory →](./kubernetes/apps/)
 
@@ -159,9 +179,12 @@ kubectl get pods -A
 ## 📖 Learn More
 
 - 📚 [Full Documentation](./docs/README.md)
+- 🛠️ [Troubleshooting Guide](./docs/TROUBLESHOOTING.md) - Symptom-driven diagnostics
+- 🧹 [Maintenance Procedures](./docs/MAINTENANCE.md) - Routine operation checklists
 - 📈 [Automated Upgrades (Tuppr)](./docs/tuppr-upgrades.md)
 - 🔄 [Disaster Recovery](./docs/disaster-recovery.md)
 - 💾 [Volsync Backups](./docs/volsync-deployment-guide.md)
+- 📦 [Pod Security Standards](./docs/pod-security-standards.md) - Security enforcement policies
 
 ## 🔧 Operational Commands
 
@@ -194,6 +217,9 @@ task ops:describe -- <type> <name> [namespace]
 ### Storage Management
 
 ```bash
+# Bootstrap SeaweedFS S3 storage buckets and keys
+task storage:bootstrap-seaweedfs
+
 # Backup status
 task storage:backup-status
 
