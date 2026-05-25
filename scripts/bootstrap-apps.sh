@@ -33,6 +33,7 @@ function apply_namespaces() {
         log error "Directory does not exist" "directory=${apps_dir}"
     fi
 
+    shopt -s nullglob
     for app in "${apps_dir}"/*/; do
         namespace=$(basename "${app}")
 
@@ -51,6 +52,7 @@ function apply_namespaces() {
             log error "Failed to apply namespace resource" "resource=${namespace}"
         fi
     done
+    shopt -u nullglob
 }
 
 # SOPS secrets to be applied before the helmfile charts are installed

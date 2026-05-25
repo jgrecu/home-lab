@@ -26,12 +26,19 @@ fi
 
 # Scale down any deployments using this PVC
 echo "==> Finding deployments using PVC $PVC_NAME..."
-DEPLOYMENTS=$(kubectl get deployment -n "$NAMESPACE" -o json | \
-  jq -r --arg pvc "$PVC_NAME" '.items[] | select(.spec.template.spec.volumes[]?.persistentVolumeClaim.claimName == $pvc) | .metadata.name')
+DEPLOY_DATA=$(kubectl get deployment -n "$NAMESPACE" -o json | \
+  jq -r --arg pvc "$PVC_NAME" '.items[] | select(.spec.template.spec.volumes[]?.persistentVolumeClaim.claimName == $pvc) | "\(.metadata.name)=\(.spec.replicas)"')
 
-if [[ -n "$DEPLOYMENTS" ]]; then
-  echo "Found deployments: $DEPLOYMENTS"
-  for DEPLOY in $DEPLOYMENTS; do
+declare -A DEPLOY_REPLICAS
+
+if [[ -n "$DEPLOY_DATA" ]]; then
+  echo "Found deployments using this PVC:"
+  while IFS='=' read -r name replicas; do
+    DEPLOY_REPLICAS["$name"]=$replicas
+    echo "  - $name (currently $replicas replicas)"
+  done <<< "$DEPLOY_DATA"
+
+  for DEPLOY in "${!DEPLOY_REPLICAS[@]}"; do
     echo "Scaling down deployment: $DEPLOY"
     kubectl scale deployment -n "$NAMESPACE" "$DEPLOY" --replicas=0
   done
@@ -89,11 +96,12 @@ echo "==> Cleaning up ReplicationDestination..."
 kubectl delete replicationdestination/"${PVC_NAME}-restore" -n "$NAMESPACE"
 
 # Scale deployments back up
-if [[ -n "$DEPLOYMENTS" ]]; then
+if [[ ${#DEPLOY_REPLICAS[@]} -gt 0 ]]; then
   echo "==> Scaling deployments back up..."
-  for DEPLOY in $DEPLOYMENTS; do
-    echo "Scaling up deployment: $DEPLOY"
-    kubectl scale deployment -n "$NAMESPACE" "$DEPLOY" --replicas=1
+  for DEPLOY in "${!DEPLOY_REPLICAS[@]}"; do
+    REPS=${DEPLOY_REPLICAS["$DEPLOY"]}
+    echo "Scaling up deployment $DEPLOY back to $REPS replicas..."
+    kubectl scale deployment -n "$NAMESPACE" "$DEPLOY" --replicas="$REPS"
   done
 fi
 
