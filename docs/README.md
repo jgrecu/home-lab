@@ -1,6 +1,6 @@
 # Documentation
 
-Documentation for the Talos Raspberry Pi 4 home lab cluster.
+Documentation for the Talos Lenovo ThinkCentre M900 home lab cluster.
 
 ## Backup & Recovery
 
