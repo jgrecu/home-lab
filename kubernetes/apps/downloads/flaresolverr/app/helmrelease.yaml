@@ -35,10 +35,10 @@ spec:
               capabilities: { drop: ["ALL"] }
             resources:
               requests:
-                cpu: 10m
-                memory: 512Mi
-              limits:
+                cpu: 15m
                 memory: 1Gi
+              limits:
+                memory: 2Gi
 
     # Stateless — no persistent storage needed
     service:
