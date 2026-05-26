@@ -44,10 +44,10 @@ spec:
               allowPrivilegeEscalation: false
             resources:
               requests:
-                cpu: 10m
-                memory: 128Mi
+                cpu: 15m
+                memory: 320Mi
               limits:
-                memory: 512Mi
+                memory: 640Mi
           exportarr:
             image:
               repository: ghcr.io/onedr0p/exportarr
