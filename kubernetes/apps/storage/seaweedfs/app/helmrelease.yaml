@@ -67,12 +67,13 @@ spec:
       logs:
         type: emptyDir
       # Resource constraints - Tier 3 storage infrastructure
+      # Based on VPA: 15m/121Mi observed
       resources:
         requests:
-          cpu: 250m
-          memory: 512Mi
+          cpu: 15m
+          memory: 128Mi
         limits:
-          memory: 2Gi
+          memory: 256Mi
       livenessProbe:
         enabled: true
         initialDelaySeconds: 30
@@ -106,12 +107,13 @@ spec:
       logs:
         type: emptyDir
       # Resource constraints - Tier 3 storage infrastructure
+      # Based on VPA: 15m/600Mi observed
       resources:
         requests:
-          cpu: 100m
-          memory: 256Mi
+          cpu: 15m
+          memory: 640Mi
         limits:
-          memory: 1Gi
+          memory: 1280Mi
       livenessProbe:
         enabled: true
         initialDelaySeconds: 30
