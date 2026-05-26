@@ -31,11 +31,10 @@ spec:
     domainFilters: ["${SECRET_DOMAIN}"]
     resources:
       requests:
-        cpu: 50m
-        memory: 64Mi
+        cpu: 15m
+        memory: 100Mi
       limits:
-        cpu: 200m
-        memory: 128Mi
+        memory: 256Mi
     serviceMonitor:
       enabled: true
     podAnnotations:
