@@ -41,10 +41,10 @@ spec:
                 REDIS_PORT: "6379"
               resources:
                 requests:
-                  cpu: 100m
-                  memory: 1Gi
+                  cpu: 50m
+                  memory: 896Mi
                 limits:
-                  memory: 4Gi
+                  memory: 2Gi
       route:
         enabled: false
 
@@ -84,10 +84,10 @@ spec:
                     failureThreshold: 3
               resources:
                 requests:
-                  cpu: 200m
-                  memory: 2Gi
+                  cpu: 20m
+                  memory: 1536Mi
                 limits:
-                  memory: 8Gi
+                  memory: 4Gi
       persistence:
         cache:
           enabled: true
