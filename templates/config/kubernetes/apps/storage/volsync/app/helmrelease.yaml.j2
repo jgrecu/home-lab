@@ -22,11 +22,11 @@ spec:
   values:
     # Resource limits appropriate for RPi4
     resources:
-      limits:
-        memory: 256Mi
       requests:
-        cpu: 50m
-        memory: 128Mi
+        cpu: 15m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
 
     # Enable metrics for Prometheus monitoring
     metrics:
