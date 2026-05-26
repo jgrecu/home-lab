@@ -29,6 +29,31 @@ spec:
       # Secret in the storage namespace with AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
       # AWS_ENDPOINTS, and AWS_REGION. Created by storage/seaweedfs/app/longhorn-backup-secret.sops.yaml.
       backupTargetCredentialSecret: "longhorn-backup-secret"
+      # CSI component resource limits based on VPA recommendations
+      # JSON object format: component name -> ResourceRequirements
+      systemManagedCSIComponentsResourceLimits: |
+        {
+          "csi-attacher": {
+            "requests": {"cpu": "15m", "memory": "100Mi"},
+            "limits": {"memory": "256Mi"}
+          },
+          "csi-provisioner": {
+            "requests": {"cpu": "15m", "memory": "100Mi"},
+            "limits": {"memory": "256Mi"}
+          },
+          "csi-resizer": {
+            "requests": {"cpu": "15m", "memory": "100Mi"},
+            "limits": {"memory": "256Mi"}
+          },
+          "csi-snapshotter": {
+            "requests": {"cpu": "15m", "memory": "100Mi"},
+            "limits": {"memory": "256Mi"}
+          },
+          "longhorn-csi-plugin": {
+            "requests": {"cpu": "15m", "memory": "96Mi"},
+            "limits": {"memory": "192Mi"}
+          }
+        }
     persistence:
       # Make Longhorn the default StorageClass for the cluster.
       # Any PVC without an explicit storageClassName will use Longhorn.
@@ -44,6 +69,12 @@ spec:
     longhornUI:
       # Expose the Longhorn UI via the internal gateway
       # Access at https://longhorn.${SECRET_DOMAIN}
+      resources:
+        requests:
+          cpu: 15m
+          memory: 100Mi
+        limits:
+          memory: 256Mi
     service:
       ui:
         type: ClusterIP
@@ -51,10 +82,10 @@ spec:
     longhornManager:
       resources:
         requests:
-          cpu: 100m
-          memory: 256Mi
-        limits:
+          cpu: 50m
           memory: 512Mi
+        limits:
+          memory: 1Gi
     longhornDriver:
       resources:
         requests:
