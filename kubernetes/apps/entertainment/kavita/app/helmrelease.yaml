@@ -37,10 +37,10 @@ spec:
               capabilities: { drop: ["ALL"] }
             resources:
               requests:
-                cpu: 15m
-                memory: 256Mi
+                cpu: 25m
+                memory: 512Mi
               limits:
-                memory: 2Gi
+                memory: 1Gi
     persistence:
       # Kavita config + SQLite database — kept locally on Longhorn
       config:
