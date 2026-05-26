@@ -79,3 +79,9 @@ spec:
         - name: customresourcestate-config
           configMap:
             name: kube-state-metrics-customresourcestate-config
+      resources:
+        requests:
+          cpu: 15m
+          memory: 448Mi
+        limits:
+          memory: 896Mi
