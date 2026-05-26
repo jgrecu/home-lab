@@ -7,7 +7,7 @@ metadata:
 spec:
   sourcePVC: prowlarr
   trigger:
-    schedule: "0 3 * * *"  # Daily at 3 AM
+    schedule: "0 4 * * *"  # Daily at 4 AM (staggered)
   restic:
     repository: prowlarr-config-restic-secret
     retain:

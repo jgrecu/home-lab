@@ -7,7 +7,7 @@ metadata:
 spec:
   sourcePVC: transmission
   trigger:
-    schedule: "0 3 * * *"  # Daily at 3 AM
+    schedule: "0 5 * * *"  # Daily at 5 AM (staggered)
   restic:
     repository: transmission-config-restic-secret
     retain:
