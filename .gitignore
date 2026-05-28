@@ -13,6 +13,16 @@
 # Kubernetes
 kubeconfig
 talosconfig
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
 # Misc.
 .private/
 .task/
