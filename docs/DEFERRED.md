@@ -8,7 +8,7 @@ This document tracks features and improvements that are blocked by upstream depe
 **Date Deferred:** 2026-05-13  
 **Date Removed:** 2026-06-01  
 **Tracked Issue:** N/A (Forgejo runner is early stage)  
-**Review Date:** 2026-09-01 (3-month check for upstream progress)
+**Review Date:** 2026-09-14 (3-month check for upstream progress)
 
 ### Summary
 
@@ -130,9 +130,9 @@ DinD requires:
 **Deployment status:** Runner removed from `kubernetes/`, referenced commented out in kustomization.
 When upstream adds support, uncomment the line in `templates/config/kubernetes/apps/forgejo/kustomization.yaml.j2` and regenerate.
 
-### Review Checklist (2026-09-01)
+### Review Checklist (2026-09-14)
 
-**Automated reminder scheduled via CronCreate.**
+**Automated reminder scheduled via CronCreate for 2026-09-14 at 9:42 AM.**
 
 - [ ] Check Forgejo runner releases for Kubernetes improvements
   - Visit: https://code.forgejo.org/forgejo/runner/releases
