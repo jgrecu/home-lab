@@ -4,14 +4,17 @@ This document tracks features and improvements that are blocked by upstream depe
 
 ## Forgejo Runner - Kubernetes Native Execution
 
-**Status:** ⏸️ **DEFERRED** - Waiting for upstream support  
+**Status:** ⏸️ **DEFERRED** - Runner deployment removed, waiting for upstream support  
 **Date Deferred:** 2026-05-13  
+**Date Removed:** 2026-06-01  
 **Tracked Issue:** N/A (Forgejo runner is early stage)  
-**Review Date:** 2026-07-01 (check for upstream progress)
+**Review Date:** 2026-09-01 (3-month check for upstream progress)
 
 ### Summary
 
 Attempted to migrate Forgejo runner from Docker-in-Docker (DinD) to Kubernetes native pod execution using `kube://` executor labels. Configuration was correct, but **the runner daemon has a hard requirement for Docker socket presence at startup**, even when using Kubernetes-only execution mode.
+
+**Decision (2026-06-01):** Removed Forgejo runner deployment from cluster. Using **Woodpecker CI** for Kubernetes-native CI/CD instead. Woodpecker is already deployed and working with Kubernetes backend (no Docker socket required).
 
 ### What Was Attempted
 
@@ -56,18 +59,39 @@ DinD requires:
 - Scales with cluster capacity
 - No privileged containers needed
 
-### Alternative: Woodpecker CI
+### Alternative: Woodpecker CI (Current Solution)
 
 **Woodpecker CI is already deployed and working** in this cluster with Kubernetes native execution:
 - Namespace: `woodpecker`
 - PSS: `baseline` (CI runners need relaxed security)
 - Executor: Kubernetes native (not DinD)
 - Jobs spawn as separate pods successfully
+- **NO Docker socket required**
+
+**Architecture (as of 2026-06-01):**
+```
+┌─────────────┐
+│   Forgejo   │  Git hosting, code review, repositories
+│  (forgejo)  │  Lightweight, privacy-focused
+└──────┬──────┘
+       │ webhook triggers
+       ▼
+┌─────────────┐
+│ Woodpecker  │  CI/CD execution
+│  (woodpecker)│  Kubernetes-native jobs (WOODPECKER_BACKEND: "kubernetes")
+└─────────────┘
+```
 
 **Trade-off:** Using Woodpecker instead of Forgejo Actions means:
-- Forgejo repository still available for git hosting
-- CI/CD workflows run in Woodpecker (different UI)
-- Both are Drone CI forks with similar YAML syntax
+- Forgejo repository still available for git hosting ✅
+- CI/CD workflows run in Woodpecker (separate UI) ⚠️
+- Both are Drone CI forks with similar YAML syntax ✅
+- Resource efficient: ~300MB total (Forgejo 200MB + Woodpecker 100MB) ✅
+
+**Why This Works:**
+- Separation of concerns: Git hosting ≠ CI/CD platform
+- Woodpecker has mature Kubernetes executor (no Docker socket)
+- Lightweight and perfect for homelab constraints
 
 ### What Would Unblock This
 
@@ -96,18 +120,32 @@ DinD requires:
 - `a641d5f4` - Removed DOCKER_HOST env var
 - `b4491aa6` - Added config.yaml with runner settings
 
-**Configuration preserved in:**
+**Configuration preserved in templates (ready for future re-enablement):**
 - `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/helmrelease.yaml.j2`
 - `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/rbac.yaml.j2`
+- `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/kustomization.yaml.j2`
+- `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/ocirepository.yaml.j2`
+- `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/secret.sops.yaml.j2`
 
-When upstream adds support, the configuration is ready to be re-enabled.
+**Deployment status:** Runner removed from `kubernetes/`, referenced commented out in kustomization.
+When upstream adds support, uncomment the line in `templates/config/kubernetes/apps/forgejo/kustomization.yaml.j2` and regenerate.
 
-### Review Checklist (2026-07-01)
+### Review Checklist (2026-09-01)
+
+**Automated reminder scheduled via CronCreate.**
 
 - [ ] Check Forgejo runner releases for Kubernetes improvements
-- [ ] Search Forgejo issue tracker for "kubernetes executor" or "no docker"
+  - Visit: https://code.forgejo.org/forgejo/runner/releases
+  - Look for: "kubernetes", "no-docker", "--no-docker-check" flag mentions
+- [ ] Search Gitea act_runner for similar improvements (Forgejo uses this)
+  - Visit: https://gitea.com/gitea/act_runner/releases
 - [ ] Test if new runner version works without Docker socket
-- [ ] If still blocked, defer review to 2026-10-01
+  - Uncomment runner in kustomization
+  - Run `task configure --yes`
+  - Deploy and observe startup logs
+- [ ] Compare with alternatives: Is GitLab or other solution now better?
+- [ ] Evaluate Woodpecker CI satisfaction: Are we happy with current setup?
+- [ ] If still blocked, defer review to 2026-12-01 (6-month check)
 
 ### Documentation
 
