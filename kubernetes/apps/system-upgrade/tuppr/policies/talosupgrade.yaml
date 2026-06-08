@@ -10,7 +10,7 @@ spec:
 
   policy:
     debug: false
-    force: false
+    force: true
     # default reboot mode — graceful shutdown and reboot
     rebootMode: default
     # soft placement — prefers to upgrade non-critical nodes first
