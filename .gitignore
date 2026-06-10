@@ -11,8 +11,9 @@
 /cluster.yaml
 /nodes.yaml
 # Kubernetes
-kubeconfig
+kubeconfig*
 talosconfig
+*.zip
 # Python
 __pycache__/
 *.py[cod]

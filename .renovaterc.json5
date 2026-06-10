@@ -25,6 +25,9 @@
       '/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/',
     ],
   },
+  'pre-commit': {
+    enabled: true,
+  },
   helmfile: {
     managerFilePatterns: [
       '/(^|/)helmfile\\.ya?ml(?:\\.gotmpl)?(?:\\.j2)?$/',
