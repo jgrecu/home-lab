@@ -57,7 +57,11 @@ spec:
             env:
               PORT: "9707"
               URL: "http://localhost:8989"
-              APIKEY: "9962d9f7dce342d182519cad90571b6a"
+              APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sonarr-secret
+                    key: api-key
               ENABLE_ADDITIONAL_METRICS: "true"
               ENABLE_UNKNOWN_QUEUE_ITEMS: "true"
             resources:

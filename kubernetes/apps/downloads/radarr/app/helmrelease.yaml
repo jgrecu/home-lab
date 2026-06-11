@@ -57,7 +57,11 @@ spec:
             env:
               PORT: "9707"
               URL: "http://localhost:7878"
-              APIKEY: "a3e72cc1caf74f6696f0e125ff5b6eaf"
+              APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: radarr-secret
+                    key: api-key
               ENABLE_ADDITIONAL_METRICS: "true"
               ENABLE_UNKNOWN_QUEUE_ITEMS: "true"
             resources:

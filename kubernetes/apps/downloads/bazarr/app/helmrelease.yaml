@@ -53,7 +53,11 @@ spec:
             env:
               PORT: "9707"
               URL: "http://localhost:6767"
-              APIKEY: "f37d19a0721c8c32e995f1c274fc1453"
+              APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: bazarr-secret
+                    key: api-key
               ENABLE_ADDITIONAL_METRICS: "true"
             resources:
               requests:

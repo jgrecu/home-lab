@@ -57,7 +57,11 @@ spec:
             env:
               PORT: "9707"
               URL: "http://localhost:9696"
-              APIKEY: "d170418952af4ca88bd606cdf570bc13"
+              APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: prowlarr-secret
+                    key: api-key
               ENABLE_ADDITIONAL_METRICS: "true"
               PROWLARR_BACKFILL: "true"  # Enable historical data
             resources:
