@@ -32,14 +32,6 @@ This homelab runs a collection of self-hosted applications organized by purpose:
 - **Jellyfin** - Open-source media server with hardware transcoding support
 - **Immich** - Self-hosted backup and management platform for photos and videos
 - **Kavita** - Feature-rich eBook, comic, and manga reader
-- **Seerr** - Interactive request management platform for media files
-- **Sonarr / Radarr** - Automated TV show and movie download organizers
-- **Prowlarr** - Centralized indexer manager for torrent trackers and Usenet
-- **Bazarr** - Automatic subtitle companion for Sonarr and Radarr
-- **Transmission** - Lightweight, high-performance BitTorrent client
-- **Autobrr** - High-speed automated torrent monitor and downloader
-- **Recyclarr** - Automated Sonarr/Radarr quality profile and custom format sync
-- **FlareSolverr** - Cloudflare bypass proxy for torrent indexers
 
 **🌐 Networking**
 - **Cloudflare Tunnel** - Secure, credential-managed external network access without opening router ports
