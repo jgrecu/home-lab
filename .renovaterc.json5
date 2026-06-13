@@ -107,6 +107,16 @@
       },
     },
     {
+      description: 'mise tools group (python, aqua:*, pipx:*)',
+      groupName: 'mise-tools',
+      matchManagers: [
+        'mise',
+      ],
+      group: {
+        commitMessageTopic: '{{{groupName}}} group',
+      },
+    },
+    {
       description: 'Auto-merge GitHub Actions digest updates (skip tests)',
       matchManagers: [
         'github-actions',
