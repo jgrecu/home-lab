@@ -16,7 +16,7 @@ spec:
           app:
             image:
               repository: nextcloud
-              tag: 33.0.4-apache
+              tag: 33.0.5-apache
             env:
               # Initial admin account — only used on first boot.
               # After init, credentials are stored in the Longhorn PVC.
@@ -97,7 +97,7 @@ spec:
           cron:
             image:
               repository: nextcloud
-              tag: 33.0.4-apache
+              tag: 33.0.5-apache
             command: ["su", "-s", "/bin/bash", "www-data", "-c", "php -f /var/www/html/cron.php"]
             env:
               # Database connection - required for cron jobs to access Nextcloud DB
