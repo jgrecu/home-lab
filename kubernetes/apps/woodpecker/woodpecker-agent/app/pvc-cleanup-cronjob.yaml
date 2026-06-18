@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: woodpecker-pvc-cleanup
+  namespace: woodpecker
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: woodpecker-pvc-cleanup
+  namespace: woodpecker
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "delete"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: woodpecker-pvc-cleanup
+  namespace: woodpecker
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: woodpecker-pvc-cleanup
+subjects:
+  - kind: ServiceAccount
+    name: woodpecker-pvc-cleanup
+    namespace: woodpecker
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: woodpecker-pvc-cleanup
+  namespace: woodpecker
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: woodpecker-pvc-cleanup
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+          containers:
+            - name: cleanup
+              image: bitnami/kubectl:latest
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+                readOnlyRootFilesystem: true
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  NAMESPACE="woodpecker"
+
+                  USED_PVCS=$(kubectl get pods -n "$NAMESPACE" -o go-template='{{range .items}}{{range .spec.volumes}}{{if .persistentVolumeClaim}}{{.persistentVolumeClaim.claimName}}{{"\n"}}{{end}}{{end}}{{end}}')
+
+                  WP_PVCS=$(kubectl get pvc -n "$NAMESPACE" --no-headers -o custom-columns=NAME:.metadata.name 2>/dev/null | grep '^wp-' || true)
+
+                  if [ -z "$WP_PVCS" ]; then
+                    echo "No wp-* PVCs found, nothing to clean up"
+                    exit 0
+                  fi
+
+                  for pvc in $WP_PVCS; do
+                    if echo "$USED_PVCS" | grep -qx "$pvc"; then
+                      echo "PVC $pvc is in use, skipping"
+                    else
+                      echo "Deleting orphaned PVC: $pvc"
+                      kubectl delete pvc "$pvc" -n "$NAMESPACE" --wait=false
+                    fi
+                  done
