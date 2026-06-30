@@ -1,0 +1,35 @@
+---
+# Supplemental NetworkPolicy to allow Redis client access from application namespaces
+# The Dragonfly operator creates a default NetworkPolicy that only allows same-namespace traffic.
+# This policy explicitly allows cross-namespace client connections on port 6379.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dragonfly-allow-clients
+  namespace: database-system
+spec:
+  podSelector:
+    matchLabels:
+      app: dragonfly
+      app.kubernetes.io/name: dragonfly
+      app.kubernetes.io/part-of: dragonfly
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow Redis client connections (port 6379) from application namespaces
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: forgejo
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: entertainment
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: cloud
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: observability
+      ports:
+        - port: 6379
+          protocol: TCP
