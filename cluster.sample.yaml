@@ -233,6 +233,20 @@ prowlarr_api_key: ""
 bazarr_api_key: ""
 
 # ============================================================================
+# Grimmory Configuration
+# ============================================================================
+
+# -- Grimmory MariaDB root password
+#    Generate with: openssl rand -base64 16
+#    (REQUIRED for Grimmory)
+grimmory_mariadb_root_password: ""
+
+# -- Grimmory MariaDB user password
+#    Generate with: openssl rand -base64 16
+#    (REQUIRED for Grimmory)
+grimmory_mariadb_password: ""
+
+# ============================================================================
 # Volsync Backup Configuration
 # ============================================================================
 

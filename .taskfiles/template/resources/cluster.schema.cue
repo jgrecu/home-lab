@@ -66,6 +66,9 @@ import (
 	recyclarr_sonarr_api_key?:      string
 	prowlarr_api_key?:              string
 	bazarr_api_key?:                string
+	// Grimmory Configuration
+	grimmory_mariadb_root_password?: string
+	grimmory_mariadb_password?:      string
 	// Volsync Backup Configuration
 	volsync_restic_password?:       string
 	volsync_s3_access_key?:         string

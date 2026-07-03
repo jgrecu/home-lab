@@ -1,0 +1,39 @@
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: grimmory-data-backup
+  namespace: entertainment
+spec:
+  sourcePVC: grimmory-data
+  trigger:
+    schedule: "0 5 * * *"  # Daily at 5 AM (staggered)
+  restic:
+    repository: grimmory-data-restic-secret
+    retain:
+      daily: 7      # Last week
+      weekly: 8     # Last 2 months
+      monthly: 6    # Last 6 months
+    copyMethod: Snapshot
+    storageClassName: longhorn
+    volumeSnapshotClassName: longhorn
+    capacity: 500Mi
+    accessModes:
+      - ReadWriteOnce
+    pruneIntervalDays: 7
+    cacheCapacity: 512Mi
+    cacheStorageClassName: longhorn
+    cacheAccessModes:
+      - ReadWriteOnce
+    moverResources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+    moverSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      fsGroup: 65534
+      seccompProfile:
+        type: RuntimeDefault

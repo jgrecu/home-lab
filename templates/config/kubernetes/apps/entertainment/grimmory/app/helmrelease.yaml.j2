@@ -1,0 +1,62 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grimmory
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: grimmory
+  interval: 1h
+  values:
+    image:
+      repository: ghcr.io/grimmory-tools/grimmory
+      tag: v3.2.4
+
+    # Bundled MariaDB subchart
+    mariadb:
+      enabled: true
+      image:
+        tag: 12.2.2
+      auth:
+        database: grimmory
+        username: grimmory
+        existingSecret: grimmory-mariadb-secret
+        secretKeys:
+          rootPasswordKey: mariadb-root-password
+          userPasswordKey: mariadb-password
+      service:
+        port: 3306
+
+    extraEnv:
+      - name: USER_ID
+        value: "1000"
+      - name: GROUP_ID
+        value: "1000"
+      - name: TZ
+        value: "Europe/Madrid"
+      - name: DISK_TYPE
+        value: "NETWORK"
+
+    service:
+      type: ClusterIP
+      port: 6060
+
+    ingress:
+      enabled: false
+
+    persistence:
+      dataVolume:
+        enabled: true
+        size: 500Mi
+        storageClass: longhorn
+      booksVolume:
+        enabled: true
+        existingClaim: grimmory-books
+
+    resources:
+      requests:
+        cpu: 25m
+        memory: 256Mi
+      limits:
+        memory: 1Gi
