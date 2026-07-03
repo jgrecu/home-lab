@@ -12,7 +12,7 @@
   schedule: [
     'every weekend',
   ],
-  minimumReleaseAge: '3 days',
+  minimumReleaseAge: '2 days',
   osvVulnerabilityAlerts: true,
   platformAutomerge: true,
   ignorePaths: [
