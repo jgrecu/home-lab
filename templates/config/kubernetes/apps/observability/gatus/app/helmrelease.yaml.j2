@@ -124,6 +124,14 @@ spec:
                   - "[STATUS] == 200"
                   - "[RESPONSE_TIME] < 5000"
 
+              - name: Grimmory (via CloudFlare)
+                group: CloudFlare
+                url: "https://grimmory.${SECRET_DOMAIN}/api/v1/healthcheck"
+                interval: 3m
+                conditions:
+                  - "[STATUS] == 200"
+                  - "[RESPONSE_TIME] < 5000"
+
               - name: Docker Hub
                 group: CloudFlare
                 url: "https://registry-1.docker.io/v2/"
@@ -194,6 +202,14 @@ spec:
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
+
+              - name: Grimmory
+                group: Internal Services
+                url: "http://grimmory.entertainment.svc.cluster.local:6060/api/v1/healthcheck"
+                interval: 5m
+                conditions:
+                  - "[STATUS] == 200"
+                  - "[BODY].status == 200"
 
               # Downloads - Media Management
               - name: Sonarr
