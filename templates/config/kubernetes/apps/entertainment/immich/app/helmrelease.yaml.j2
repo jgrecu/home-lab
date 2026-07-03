@@ -9,14 +9,6 @@ spec:
     name: immich
   interval: 1h
   values:
-    # Override image version to match database backup (v2.7.5)
-    controllers:
-      main:
-        containers:
-          main:
-            image:
-              tag: v2.7.5
-
     # Server component configuration
     server:
       controllers:
@@ -25,7 +17,7 @@ spec:
           containers:
             main:
               image:
-                tag: v2.7.5
+                tag: v3.0.1
               env:
                 # Database — CNPG creates the immich-postgres-app secret automatically
                 DB_HOSTNAME: immich-postgres-rw
@@ -67,7 +59,7 @@ spec:
           containers:
             main:
               image:
-                tag: v2.7.5
+                tag: v3.0.1
               probes:
                 startup:
                   enabled: true
