@@ -37,9 +37,6 @@ spec:
                   memory: 896Mi
                 limits:
                   memory: 2Gi
-      route:
-        enabled: false
-
     immich:
       # Enable Prometheus metrics collection
       metrics:
@@ -83,7 +80,7 @@ spec:
       persistence:
         cache:
           enabled: true
-          storageClass: longhorn
+          type: persistentVolumeClaim
+          accessMode: ReadWriteOnce
           size: 10Gi
-      route:
-        enabled: false
+          storageClass: longhorn
