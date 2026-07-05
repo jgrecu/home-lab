@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forgejo-runner-podspecs
+data:
+  # Default PodSpec for CI job pods spawned by the K8s plugin.
+  # This is used when no per-label PodSpec is specified.
+  # Uses a fixed node:20-bookworm image for general CI tasks.
+  # Labels can override this by providing a different PodSpec path.
+  podspec-default.yaml: |
+    containers:
+      - name: main
+        image: docker.io/node:20-bookworm
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            memory: 256Mi

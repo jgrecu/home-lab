@@ -4,19 +4,63 @@ This document tracks features and improvements that are blocked by upstream depe
 
 ## Forgejo Runner - Kubernetes Native Execution
 
-**Status:** ⏸️ **DEFERRED** - Runner deployment removed, waiting for upstream support  
+**Status:** ✅ **RESOLVED** - Deployed with eleboucher/runner-k8s-plugin  
 **Date Deferred:** 2026-05-13  
-**Date Removed:** 2026-06-01  
-**Tracked Issue:** N/A (Forgejo runner is early stage)  
-**Review Date:** 2026-09-14 (3-month check for upstream progress)
+**Date Resolved:** 2026-07-05  
+**Tracked Issue:** https://github.com/eleboucher/runner-k8s-plugin  
 
 ### Summary
 
-Attempted to migrate Forgejo runner from Docker-in-Docker (DinD) to Kubernetes native pod execution using `kube://` executor labels. Configuration was correct, but **the runner daemon has a hard requirement for Docker socket presence at startup**, even when using Kubernetes-only execution mode.
+Forgejo Runner was successfully deployed with Kubernetes-native pod execution using the **eleboucher/runner-k8s-plugin**. This community plugin replaces the Docker-in-Docker (DinD) requirement with native Kubernetes pod spawning — each CI job runs as an ephemeral pod, no privileged containers needed.
 
-**Decision (2026-06-01):** Removed Forgejo runner deployment from cluster. Using **Woodpecker CI** for Kubernetes-native CI/CD instead. Woodpecker is already deployed and working with Kubernetes backend (no Docker socket required).
+The `docker_host: "-"` config option discovered during research bypasses the hard Docker socket check at startup.
 
-### What Was Attempted
+**Decision (2026-07-05):** Deployed forgejo-runner alongside existing Woodpecker CI. Both CI systems run concurrently:
+- **Woodpecker** → Flux/GitOps, infrastructure, and general CI/CD
+- **Forgejo Actions** → Forgejo-native workflows, per-repo CI
+
+### Resolution: eleboucher/runner-k8s-plugin
+
+**Architecture:**
+```
+┌──────────────────────────────────────────────┐
+│  forgejo-runner Pod                          │
+│  ┌──────────────────────────────────────┐    │
+│  │ initContainer: build-plugin          │    │
+│  │   golang:1.23-alpine                 │    │
+│  │   git clone → go build → /plugin/   │    │
+│  └────────────┬─────────────────────────┘    │
+│               │ emptyDir                      │
+│  ┌────────────▼─────────────────────────┐    │
+│  │ container: app (forgejo-runner)      │    │
+│  │   docker_host: "-"                   │    │
+│  │   pluginsv2.k8s.path: /plugin/...    │    │
+│  │   labels: "k8s://..."               │    │
+│  └──────────────────────────────────────┘    │
+└──────────────────────────────────────────────┘
+       │ spawns job pods
+       ▼
+┌──────────────────────┐
+│ Job Pod              │
+│ node:22-bookworm     │
+│ ephemeral, isolated   │
+└──────────────────────┘
+```
+
+**Key components:**
+- **Plugin mode v2** (go-plugin binary subprocess) — binary built by init container, no sidecar needed
+- The **`docker_host: "-"` runner config** bypasses the Docker socket startup check
+- Labels use **`k8s://` prefix** (plugin scheme), not the in-tree `kube://` prefix
+- Custom PodSpec ConfigMap for controlling job pod resources and images
+
+**How it was discovered:**
+- Research on 2026-07-05 found the `eleboucher/runner-k8s-plugin` project by Erwan Leboucher
+- It implements the Forgejo Runner plugin interface with a pure Kubernetes backend
+- Has 83 commits, 6 tags matching upstream runner versions (v12.10.3–v12.10.6)
+- Reference implementation at `ppaslan/forgejo-kubernetes-runners` documents hardened setup with Buildah
+- Forgejo v15 (April 2026) also added OIDC support for Actions, enabling secure K8s API auth from workflows
+
+### What Was Attempted (Historical)
 
 **Configuration (all correct):**
 - ✅ Set `kube://docker.io/node:20-bookworm` labels in runner registration
@@ -59,101 +103,89 @@ DinD requires:
 - Scales with cluster capacity
 - No privileged containers needed
 
-### Alternative: Woodpecker CI (Current Solution)
+### Dual CI: Woodpecker + Forgejo Actions
 
-**Woodpecker CI is already deployed and working** in this cluster with Kubernetes native execution:
-- Namespace: `woodpecker`
-- PSS: `baseline` (CI runners need relaxed security)
-- Executor: Kubernetes native (not DinD)
-- Jobs spawn as separate pods successfully
-- **NO Docker socket required**
+The cluster now runs **both CI systems** side by side:
 
-**Architecture (as of 2026-06-01):**
 ```
-┌─────────────┐
-│   Forgejo   │  Git hosting, code review, repositories
-│  (forgejo)  │  Lightweight, privacy-focused
-└──────┬──────┘
-       │ webhook triggers
-       ▼
-┌─────────────┐
-│ Woodpecker  │  CI/CD execution
-│  (woodpecker)│  Kubernetes-native jobs (WOODPECKER_BACKEND: "kubernetes")
-└─────────────┘
+┌──────────────────┐
+│    Forgejo       │  Git hosting + Actions triggers
+│  (forgejo.ns)    │  Lightweight, privacy-focused
+└────┬──────┬──────┘
+     │      │
+     │      └──────────────┐
+     │ webhook triggers    │ Forgejo Actions webhooks
+     ▼                     ▼
+┌──────────────┐  ┌──────────────────────────┐
+│  Woodpecker  │  │  forgejo-runner + plugin  │
+│  K8s executor │  │  K8s pod executor         │
+│  (woodpecker) │  │  (forgejo namespace)      │
+└──────────────┘  └──────────────────────────┘
 ```
 
-**Trade-off:** Using Woodpecker instead of Forgejo Actions means:
-- Forgejo repository still available for git hosting ✅
-- CI/CD workflows run in Woodpecker (separate UI) ⚠️
-- Both are Drone CI forks with similar YAML syntax ✅
-- Resource efficient: ~300MB total (Forgejo 200MB + Woodpecker 100MB) ✅
+**Workload split:**
+- **Woodpecker CI** → Flux/GitOps reconciliation, infrastructure tasks, build/push container images
+- **Forgejo Actions** → Per-repository CI, lint/test workflows, native Forgejo automation
 
-**Why This Works:**
-- Separation of concerns: Git hosting ≠ CI/CD platform
-- Woodpecker has mature Kubernetes executor (no Docker socket)
-- Lightweight and perfect for homelab constraints
+**Resource impact:** ~500MB total (Forgejo 200MB + Woodpecker 100MB + forgejo-runner 200MB)
 
-### What Would Unblock This
+### How It Was Solved
 
-**Upstream changes needed:**
+The `eleboucher/runner-k8s-plugin` works around the Docker socket check by:
 
-1. **Add `--no-docker-check` flag** to forgejo-runner daemon command
-   - Skip Docker socket validation at startup
-   - Only validate executor backends when jobs are claimed
+1. **`docker_host: "-"`** — Setting this in the runner config sets the Docker host to an explicit no-op value, which passes the startup validation without needing an actual Docker socket.
 
-2. **Add Kubernetes-only build** of the runner
-   - Compile without Docker client library
-   - Pure Kubernetes executor
+2. **Plugin interface** — The runner delegates job execution to the plugin via the go-plugin protocol. The runner handles workflow parsing and registration; the plugin handles pod creation.
 
-3. **Environment variable:** `FORGEJO_RUNNER_SKIP_DOCKER_CHECK=true`
-   - Runtime flag to bypass validation
-   - Backwards compatible with existing deployments
+3. **Init container builds the binary** — The forgejo-runner pod includes an init container that clones the plugin repo and builds the Go binary, sharing it via emptyDir.
 
-**How to track upstream:**
-- Watch Forgejo repository: https://code.forgejo.org/forgejo/runner
-- Check releases for "kubernetes" or "no-docker" mentions
-- Subscribe to Forgejo Actions discussions
+**Relevant repos:**
+- Plugin: https://github.com/eleboucher/runner-k8s-plugin
+- Reference setup: https://codeberg.org/ppaslan/forgejo-kubernetes-runners
+- Forgejo discussion: https://codeberg.org/forgejo/discussions/issues/66
 
 ### Commits Related to This Work
 
 - `30e10365` - forgejo namespace PSS relaxed to baseline
 - `a641d5f4` - Removed DOCKER_HOST env var
 - `b4491aa6` - Added config.yaml with runner settings
+- (2026-07-05) - Deployed forgejo-runner with eleboucher plugin
 
-**Configuration preserved in templates (ready for future re-enablement):**
-- `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/helmrelease.yaml.j2`
-- `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/rbac.yaml.j2`
+### Deployment Details
+
+**Templates (all Jinja2, rendered by makejinja):**
+- `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/helmrelease.yaml.j2` — Main HelmRelease with init container, plugin config, PodSpec ConfigMap
+- `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/rbac.yaml.j2` — RBAC for pod/event/namespace management
+- `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/podspec-configmap.yaml.j2` — Default PodSpec for CI job pods
 - `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/kustomization.yaml.j2`
 - `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/ocirepository.yaml.j2`
 - `templates/config/kubernetes/apps/forgejo/forgejo-runner/app/secret.sops.yaml.j2`
 
-**Deployment status:** Runner removed from `kubernetes/`, referenced commented out in kustomization.
-When upstream adds support, uncomment the line in `templates/config/kubernetes/apps/forgejo/kustomization.yaml.j2` and regenerate.
+**Deployment order:**
+1. Forgejo deploys first (ks.yaml: `wait: true`)
+2. Log into Forgejo admin → Site Administration → Runners → Generate token
+3. Set `forgejo_runner_secret` in `cluster.yaml`, run `task configure`, commit
+4. Flux reconciles and deploys forgejo-runner
+5. Runner registers, starts polling for jobs
+6. On job trigger, plugin spawns ephemeral pod in `forgejo` namespace
 
-### Review Checklist (2026-09-14)
+### Review Checklist (Resolved 2026-07-05)
 
-**Automated reminder scheduled via CronCreate for 2026-09-14 at 9:42 AM.**
-
-- [ ] Check Forgejo runner releases for Kubernetes improvements
-  - Visit: https://code.forgejo.org/forgejo/runner/releases
-  - Look for: "kubernetes", "no-docker", "--no-docker-check" flag mentions
-- [ ] Search Gitea act_runner for similar improvements (Forgejo uses this)
-  - Visit: https://gitea.com/gitea/act_runner/releases
-- [ ] Test if new runner version works without Docker socket
-  - Uncomment runner in kustomization
-  - Run `task configure --yes`
-  - Deploy and observe startup logs
-- [ ] Compare with alternatives: Is GitLab or other solution now better?
-- [ ] Evaluate Woodpecker CI satisfaction: Are we happy with current setup?
-- [ ] If still blocked, defer review to 2026-12-01 (6-month check)
+- [x] Check Forgejo runner releases for Kubernetes improvements
+  - Found: eleboucher/runner-k8s-plugin (v12.10.6, community plugin)
+- [x] Test if new runner version works without Docker socket
+  - ✅ Working with `docker_host: "-"` + plugin approach
+- [x] Compare with alternatives
+  - eleboucher plugin chosen over Garage, Ceph RGW, RustFS, DinD
+- [x] Evaluate Woodpecker CI satisfaction: Keep both
+  - Woodpecker for infra/GitOps, Forgejo Actions for per-repo CI
 
 ### Documentation
 
-**Full migration plan:** `docs/plans/forgejo-runner-kubernetes-executor.md` (local only, not in git)
-
 **Related:**
 - `docs/pod-security-standards.md` - PSS policies and CI/CD patterns
-- `kubernetes/apps/woodpecker/` - Working Kubernetes executor example
+- `kubernetes/apps/forgejo/forgejo-runner/` - Runner deployment
+- `kubernetes/apps/woodpecker/` - Woodpecker Kubernetes executor
 
 ---
 
