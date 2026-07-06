@@ -11,7 +11,7 @@ data:
   podspec-default.yaml: |
     containers:
       - name: main
-        image: docker.io/node:20-bookworm
+        image: docker.io/node:24-bookworm
         resources:
           requests:
             cpu: 50m
