@@ -4,20 +4,43 @@ This document tracks features and improvements that are blocked by upstream depe
 
 ## Forgejo Runner - Kubernetes Native Execution
 
-**Status:** ✅ **RESOLVED** - Deployed with eleboucher/runner-k8s-plugin  
+**Status:** ⏸️ **IN PROGRESS** - Plugin builds, but runner binary requires eleboucher's fork  
 **Date Deferred:** 2026-05-13  
-**Date Resolved:** 2026-07-05  
+**Date Resumed:** 2026-07-05  
+**Last Worked:** 2026-07-06  
 **Tracked Issue:** https://github.com/eleboucher/runner-k8s-plugin  
 
 ### Summary
 
-Forgejo Runner was successfully deployed with Kubernetes-native pod execution using the **eleboucher/runner-k8s-plugin**. This community plugin replaces the Docker-in-Docker (DinD) requirement with native Kubernetes pod spawning — each CI job runs as an ephemeral pod, no privileged containers needed.
+Forgejo Runner deployment is in progress using the **eleboucher/runner-k8s-plugin**. The plugin builds and works, but the **upstream Forgejo runner binary does NOT support plugins or `k8s://` labels**. The runner binary must come from eleboucher's fork.
 
-The `docker_host: "-"` config option discovered during research bypasses the hard Docker socket check at startup.
-
-**Decision (2026-07-05):** Deployed forgejo-runner alongside existing Woodpecker CI. Both CI systems run concurrently:
+**Decision (2026-07-05):** Deploy forgejo-runner alongside existing Woodpecker CI. Both CI systems run concurrently:
 - **Woodpecker** → Flux/GitOps, infrastructure, and general CI/CD
 - **Forgejo Actions** → Forgejo-native workflows, per-repo CI
+
+### Current Blocker (2026-07-06)
+
+The **upstream** `code.forgejo.org/forgejo/runner` binary:
+1. Does NOT support `pluginsv2` config section (plugin system is eleboucher-fork-only)
+2. Only accepts `docker`, `host`, `lxc` label schemes — rejects `k8s://` with "unsupported schema"
+3. The `docker_host: "-"` does NOT bypass the Docker socket check — it means "auto-detect but don't mount to containers"
+
+**What's needed:** Use eleboucher's runner fork (`git.erwanleboucher.dev/eleboucher/runner`) which:
+- Accepts arbitrary label schemes (including `k8s://`, `k8spod://`)
+- Supports `pluginsv2` config for go-plugin binary subprocess execution
+- Has `docker_host: "-"` actually bypass the Docker check when no docker-scheme labels exist
+
+**Options to resolve:**
+1. **Build runner from source in init container** — The plugin's go.mod downloads eleboucher's runner as a dependency. Copy from Go module cache and build. Issue: module cache is read-only, need to `cp -a` first. Also adds ~2min build time.
+2. **Pre-build a container image** — Build eleboucher's runner fork into a custom image, push to a registry. Cleaner but requires maintaining a custom image.
+3. **Wait for upstream** — Forgejo may merge plugin support upstream eventually.
+
+**HelmRelease is suspended** to prevent crash loops. Resume with:
+```bash
+flux resume helmrelease forgejo-runner -n forgejo
+```
+
+**Templates are ready** — all template files in `templates/config/kubernetes/apps/forgejo/forgejo-runner/` are correct. The init container just needs the runner binary source resolved.
 
 ### Resolution: eleboucher/runner-k8s-plugin
 
