@@ -10,6 +10,4 @@ resources:
   - ./namespace.yaml
   - ./forgejo/ks.yaml
   - ./forgejo/backup-ks.yaml
-  # Forgejo runner disabled - requires Docker socket even for Kubernetes executor
-  # See docs/DEFERRED.md for details and review schedule
-  # - ./forgejo-runner/ks.yaml
+  - ./forgejo-runner/ks.yaml

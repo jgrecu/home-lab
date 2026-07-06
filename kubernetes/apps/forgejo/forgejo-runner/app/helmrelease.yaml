@@ -31,21 +31,60 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
           annotations:
             secret.reloader.stakater.com/reload: *app
+        # Builds the eleboucher/runner-k8s-plugin binary from source,
+        # shared with the main container via the plugin emptyDir volume.
+        initContainers:
+          build-plugin:
+            image:
+              repository: golang
+              tag: 1.23-alpine
+            command:
+              - /bin/sh
+              - -c
+              - |
+                apk add --no-cache git
+                git clone --depth 1 --branch v12.10.6 \
+                  https://github.com/eleboucher/runner-k8s-plugin.git \
+                  /tmp/plugin-src
+                cd /tmp/plugin-src
+                go build -o /plugin/forgejo-runner-k8s .
+                chmod 755 /plugin/forgejo-runner-k8s
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+              # Root needed to apk add git/alpine packages
+              runAsUser: 0
         containers:
           app:
             image:
               repository: code.forgejo.org/forgejo/runner
+              # renovate: datasource=docker depName=code.forgejo.org/forgejo/runner
               tag: 12.12.0
             command: ["/bin/sh", "-c"]
             args:
               - |
-                # Create runner config for Kubernetes backend
+                # Wait for init container to build the plugin binary
+                while [ ! -f /plugin/forgejo-runner-k8s ]; do
+                  echo "waiting for plugin binary..."
+                  sleep 2
+                done
+                echo "plugin binary ready"
+
+                # Create runner config with K8s plugin backend
                 cat > /data/config.yaml <<EOF
                 log:
                   level: info
                 runner:
-                  capacity: 1
+                  capacity: 4
                   timeout: 3h
+                  docker_host: "-"
+                pluginsv2:
+                  k8s:
+                    path: /plugin/forgejo-runner-k8s
+                    options:
+                      namespace: forgejo
+                      # Default PodSpec for CI job pods (overridable per-label)
+                      podspec: /config/podspec-default.yaml
                 EOF
 
                 if [ ! -f /data/.runner ]; then
@@ -54,7 +93,7 @@ spec:
                     --instance "$FORGEJO_INSTANCE_URL" \
                     --token "$FORGEJO_RUNNER_REGISTRATION_TOKEN" \
                     --name "$HOSTNAME" \
-                    --labels "ubuntu-latest:kube://docker.io/node:20-bookworm,ubuntu-22.04:kube://docker.io/node:20-bookworm"
+                    --labels "ubuntu-latest:k8s:///config/podspec-default.yaml,ubuntu-22.04:k8s:///config/podspec-default.yaml"
                 fi
                 forgejo-runner --config /data/config.yaml daemon
             env:
@@ -64,7 +103,6 @@ spec:
                   secretKeyRef:
                     name: forgejo-runner-secret
                     key: registration-token
-              KUBERNETES_NAMESPACE: "forgejo"
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
@@ -78,7 +116,7 @@ spec:
                 memory: 128Mi
     persistence:
       # Stores runner registration state (.runner file) and config per replica.
-      # Each replica registers independently — 2 replicas = 2 concurrent jobs.
+      # Each replica registers independently.
       data:
         type: persistentVolumeClaim
         storageClass: longhorn
@@ -86,3 +124,15 @@ spec:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /data
+      # Shared emptyDir for the plugin binary built by the init container.
+      plugin:
+        type: emptyDir
+        globalMounts:
+          - path: /plugin
+      # PodSpec YAML files for CI job pod customization.
+      podspec:
+        type: configMap
+        name: forgejo-runner-podspecs
+        globalMounts:
+          - path: /config
+            readOnly: true

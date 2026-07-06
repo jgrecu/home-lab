@@ -9,19 +9,23 @@ kind: Role
 metadata:
   name: forgejo-runner
 rules:
-  # Forgejo runner needs to create, watch, and delete pods for CI jobs
+  # Plugin: creates, watches, and deletes job pods
   - apiGroups: [""]
     resources: ["pods", "pods/log"]
     verbs: ["create", "delete", "get", "list", "watch"]
-  # Needs to create PVCs for job workspaces
+  # Plugin: creates events for pod lifecycle tracking
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "get", "list", "watch"]
+  # Plugin: creates PVCs for job workspace volumes
   - apiGroups: [""]
     resources: ["persistentvolumeclaims"]
     verbs: ["create", "delete", "get", "list", "watch"]
-  # Needs to read secrets passed to jobs
+  # Runner: reads secrets (registration token) and image pull secrets
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "list"]
-  # Needs to read configmaps passed to jobs
+  # Runner: reads ConfigMaps (podspecs, runner config)
   - apiGroups: [""]
     resources: ["configmaps"]
     verbs: ["get", "list"]
