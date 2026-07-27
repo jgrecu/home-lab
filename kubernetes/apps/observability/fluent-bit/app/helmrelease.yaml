@@ -52,6 +52,13 @@ spec:
             Exclude log .*GET /readyz.*
             Exclude log .*GET /livez.*
 
+        # Drop logs from high-volume namespaces that are rarely inspected.
+        # This significantly reduces Loki storage consumption.
+        [FILTER]
+            Name    grep
+            Match   kube.*
+            Exclude $kubernetes['namespace_name'] ^(downloads|entertainment|storage)$
+
       # Ship to Loki. Each log line gets labels for namespace, pod, and container
       # so you can filter in Grafana with: {namespace="immich", pod=~"immich-.*"}
       outputs: |

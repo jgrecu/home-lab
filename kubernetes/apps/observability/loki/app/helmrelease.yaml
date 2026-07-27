@@ -40,9 +40,20 @@ spec:
               prefix: loki_index_
               period: 24h
 
+      # Compactor enforces retention by deleting expired chunks.
+      # Without this, retention_period is just advisory and data accumulates.
+      compactor:
+        working_directory: /var/loki/compactor
+        compaction_interval: 10m
+        retention_enabled: true
+        retention_delete_delay: 2h
+        retention_delete_worker_count: 150
+        delete_request_store: filesystem
+
       limits_config:
-        # Keep logs for 14 days, then delete automatically
-        retention_period: 336h
+        # Keep logs for 3 days — sufficient for a home lab where logs are
+        # rarely checked. Reduces PVC usage by ~75% vs the previous 14 days.
+        retention_period: 72h
         # Allow high-cardinality streams from a busy home lab
         ingestion_rate_mb: 16
         ingestion_burst_size_mb: 32
