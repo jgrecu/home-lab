@@ -34,6 +34,39 @@ The **upstream** `code.forgejo.org/forgejo/runner` binary:
 1. **Build runner from source in init container** — The plugin's go.mod downloads eleboucher's runner as a dependency. Copy from Go module cache and build. Issue: module cache is read-only, need to `cp -a` first. Also adds ~2min build time.
 2. **Pre-build a container image** — Build eleboucher's runner fork into a custom image, push to a registry. Cleaner but requires maintaining a custom image.
 3. **Wait for upstream** — Forgejo may merge plugin support upstream eventually.
+4. **Wait for native K8s backend** — A native Kubernetes executor is being built directly into the Forgejo runner (see "Upstream Progress" below). This would eliminate the need for the eleboucher fork entirely.
+
+### Upstream Progress (as of 2026-07-28)
+
+A **native Kubernetes backend** for the Forgejo runner is in active PoC development upstream:
+
+- **PoC repo:** https://codeberg.org/infinoid/forgejo-k8s-runner-poc
+- **Discussion:** https://codeberg.org/forgejo/discussions/issues/66 (68 comments, active)
+- **Lead:** @infinoid, with support from @earl-warren (Forgejo maintainer)
+
+**How it works:**
+- Each workflow job runs as a separate Kubernetes Pod
+- Each step runs as an ephemeral container within the pod
+- Steps share state via emptyDir volume mount
+- No Docker socket, no DinD, no plugin binary needed
+
+**Integration approach:**
+- Uses the runner's existing `Container` and `ExecutionsEnvironment` interfaces
+- Similar to how the LXC backend was implemented
+- Earl Warren confirmed the runner is "already half way there" in terms of backend abstraction
+
+**Status (Sep 2025):**
+- Basic multi-step workflows execute successfully
+- Parallel job execution works
+- Still missing: Forgejo API integration, services, caching, artifacts, many workflow fields
+- Actively working on integrating PoC into the actual runner codebase
+
+**Impact on this homelab:**
+- Once merged upstream, this would be the cleanest solution — no fork, no plugin, no init container build step
+- Timeline unknown; likely months away from production-ready
+- Continue with eleboucher plugin approach for now; switch when native backend ships
+
+**Review date:** 2026-09-28 (check discussion #66 for merge progress)
 
 **HelmRelease is suspended** to prevent crash loops. Resume with:
 ```bash
