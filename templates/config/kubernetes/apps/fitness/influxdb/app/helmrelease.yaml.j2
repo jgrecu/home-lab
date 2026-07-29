@@ -1,0 +1,86 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: influxdb
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: influxdb
+  interval: 1h
+  values:
+    controllers:
+      influxdb:
+        containers:
+          app:
+            image:
+              repository: influxdb
+              # renovate: datasource=docker depName=influxdb
+              tag: 2.7.11-alpine
+            env:
+              TZ: "Europe/Madrid"
+              DOCKER_INFLUXDB_INIT_MODE: "setup"
+              DOCKER_INFLUXDB_INIT_USERNAME: "admin"
+              DOCKER_INFLUXDB_INIT_PASSWORD: "${FITNESS_INFLUXDB_ADMIN_PASSWORD}"
+              DOCKER_INFLUXDB_INIT_ORG: "homelab"
+              DOCKER_INFLUXDB_INIT_BUCKET: "health_metrics"
+              DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "${FITNESS_INFLUXDB_ADMIN_TOKEN}"
+              DOCKER_INFLUXDB_INIT_RETENTION: "365d"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &port 8086
+                  initialDelaySeconds: 15
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: "Always"
+
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /var/lib/influxdb2
+
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+
+    route:
+      app:
+        hostnames: ["influxdb.${SECRET_DOMAIN}"]
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "InfluxDB"
+          gethomepage.dev/group: "Fitness"
+          gethomepage.dev/description: "Time-series database"
+          gethomepage.dev/icon: "influxdb.png"
+          gethomepage.dev/href: "https://influxdb.${SECRET_DOMAIN}"
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port

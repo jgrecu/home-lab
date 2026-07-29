@@ -1,0 +1,38 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: fitness-sync
+  namespace: fitness
+spec:
+  schedule: "15 */1 * * *"  # Every hour at :15
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 300
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: sync
+              image: curlimages/curl:8.11.1
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "Triggering Garmin sync..."
+                  curl -sf -X POST http://fitness-ingestion.fitness.svc.cluster.local:8000/api/garmin/sync
+                  echo ""
+                  echo "Triggering Withings sync..."
+                  curl -sf -X POST http://fitness-ingestion.fitness.svc.cluster.local:8000/api/withings/sync
+                  echo ""
+                  echo "Sync complete."
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 64Mi

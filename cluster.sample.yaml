@@ -274,3 +274,34 @@ volsync_s3_secret_key: ""
 #    (REQUIRED after bootstrap)
 seaweedfs_s3_access_key_id: ""
 seaweedfs_s3_secret_access_key: ""
+
+# ============================================================================
+# Fitness Pipeline Configuration
+# ============================================================================
+
+# -- Garmin Connect credentials (for syncing activities, HR, sleep, etc.)
+#    (REQUIRED for fitness pipeline)
+#    NOTE: garth library handles MFA/token refresh automatically
+fitness_garmin_email: ""
+fitness_garmin_password: ""
+
+# -- Withings OAuth2 credentials (for body composition, BP, etc.)
+#    Register at: https://developer.withings.com/
+#    (REQUIRED for fitness pipeline)
+fitness_withings_client_id: ""
+fitness_withings_client_secret: ""
+
+# -- Apple Health webhook API key (random token for authenticating webhook POSTs)
+#    Generate with: openssl rand -hex 32
+#    (REQUIRED for fitness pipeline)
+fitness_apple_webhook_key: ""
+
+# -- InfluxDB admin token (for fitness time-series database)
+#    Generate with: openssl rand -hex 32
+#    (REQUIRED for fitness pipeline)
+fitness_influxdb_admin_token: ""
+
+# -- InfluxDB admin password
+#    Generate with: openssl rand -base64 16
+#    (REQUIRED for fitness pipeline)
+fitness_influxdb_admin_password: ""
