@@ -16,7 +16,7 @@ spec:
             image:
               repository: influxdb
               # renovate: datasource=docker depName=influxdb
-              tag: 2.7.11-alpine
+              tag: 2.9.1-alpine
             env:
               TZ: "Europe/Madrid"
               DOCKER_INFLUXDB_INIT_MODE: "setup"
