@@ -17,7 +17,7 @@ spec:
             image:
               repository: forgejo.${SECRET_DOMAIN}/jeremy/fitness-ingestion
               # Updated by Woodpecker CI on each push
-              tag: 8cfa61a7
+              tag: e4056a5f
             envFrom:
               - secretRef:
                   name: fitness-ingestion-secret
@@ -39,9 +39,9 @@ spec:
             resources:
               requests:
                 cpu: 15m
-                memory: 128Mi
+                memory: 256Mi
               limits:
-                memory: 512Mi
+                memory: 2Gi
 
     defaultPodOptions:
       securityContext:
