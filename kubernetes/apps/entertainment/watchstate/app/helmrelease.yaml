@@ -1,0 +1,80 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: watchstate
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: watchstate
+  interval: 1h
+  values:
+    controllers:
+      watchstate:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/arabcoders/watchstate
+              # renovate: datasource=docker depName=ghcr.io/arabcoders/watchstate
+              tag: v1.10.0
+            env:
+              TZ: "Europe/Madrid"
+              WS_TZ: "Europe/Madrid"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /v1/api/system/healthcheck
+                    port: &port 8080
+                  initialDelaySeconds: 15
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 15m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: "Always"
+
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 2Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config
+
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+
+    route:
+      app:
+        hostnames: ["watchstate.${SECRET_DOMAIN}"]
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "WatchState"
+          gethomepage.dev/group: "Entertainment"
+          gethomepage.dev/description: "Media watch state sync"
+          gethomepage.dev/icon: "mdi-eye-check"
+          gethomepage.dev/href: "https://watchstate.${SECRET_DOMAIN}"
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port

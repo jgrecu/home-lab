@@ -1,0 +1,24 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-07-29T12:00:00Z",
+  "libraries": {
+    "watchstate": {
+      "files": [
+        {
+          "filename": "deployment-guide.md",
+          "topic": "Container deployment (image, ports, volumes, env vars, health check)",
+          "tech_stack": "Docker/Kubernetes",
+          "fetched": "2026-07-29T12:00:00Z",
+          "source": "GitHub Repository"
+        },
+        {
+          "filename": "configuration-and-webhooks.md",
+          "topic": "Backend configuration, webhooks, scheduled tasks, troubleshooting",
+          "tech_stack": "Plex/Jellyfin/Emby",
+          "fetched": "2026-07-29T12:00:00Z",
+          "source": "GitHub Repository"
+        }
+      ]
+    }
+  }
+}

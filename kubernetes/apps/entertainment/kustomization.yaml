@@ -17,4 +17,6 @@ resources:
   - ./jellyfin/backup-ks.yaml
   - ./immich/ks.yaml
   - ./seerr/ks.yaml
+  - ./watchstate/ks.yaml
+  - ./watchstate/backup-ks.yaml
 
