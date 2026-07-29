@@ -26,3 +26,9 @@ resources:
   - ./dashboard-dragonfly.yaml
   # Storage dashboards
   - ./dashboard-volsync.yaml
+  # Fitness dashboards
+  - ./dashboard-fitness-daily.yaml
+  - ./dashboard-fitness-heart.yaml
+  - ./dashboard-fitness-body.yaml
+  - ./dashboard-fitness-sleep.yaml
+  - ./dashboard-fitness-activities.yaml
