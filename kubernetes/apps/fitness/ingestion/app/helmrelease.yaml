@@ -17,7 +17,7 @@ spec:
             image:
               repository: forgejo.${SECRET_DOMAIN}/jeremy/fitness-ingestion
               # Updated by Woodpecker CI on each push
-              tag: ee54eeed
+              tag: 8cfa61a7
             envFrom:
               - secretRef:
                   name: fitness-ingestion-secret
@@ -93,7 +93,7 @@ spec:
           - matches:
               - path:
                   type: PathPrefix
-                  value: /api/apple/webhook
+                  value: /api/apple
             backendRefs:
               - identifier: app
                 port: *port
