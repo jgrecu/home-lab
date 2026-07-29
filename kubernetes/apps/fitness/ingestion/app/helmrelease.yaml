@@ -100,7 +100,7 @@ spec:
           - matches:
               - path:
                   type: PathPrefix
-                  value: /api/withings/callback
+                  value: /api/withings
             backendRefs:
               - identifier: app
                 port: *port
