@@ -17,66 +17,62 @@ data:
       "time": {"from": "now-90d", "to": "now"},
       "panels": [
         {
-          "title": "Sleep Duration (Garmin)",
+          "title": "Sleep Duration (hours)",
           "type": "timeseries",
-          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+          "gridPos": {"h": 10, "w": 24, "x": 0, "y": 0},
           "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
           "targets": [{
-            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sleep\" and r._field == \"duration_sec\")\n  |> map(fn: (r) => ({r with _value: r._value / 3600.0}))\n  |> yield(name: \"sleep_hours\")",
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"sleep_analysis\")\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 60.0}))\n  |> yield(name: \"sleep_hours\")",
             "refId": "A"
           }],
-          "fieldConfig": {"defaults": {"unit": "h", "color": {"fixedColor": "dark-blue", "mode": "fixed"}, "thresholds": {"steps": [{"value": 6, "color": "red"}, {"value": 7, "color": "yellow"}, {"value": 8, "color": "green"}]}}}
+          "fieldConfig": {"defaults": {"unit": "h", "color": {"fixedColor": "dark-blue", "mode": "fixed"}, "thresholds": {"mode": "absolute", "steps": [{"value": 0, "color": "red"}, {"value": 6, "color": "yellow"}, {"value": 7, "color": "green"}]}}}
         },
         {
-          "title": "Sleep Score (Garmin)",
+          "title": "Time In Bed vs Asleep",
           "type": "timeseries",
-          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
-          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
-          "targets": [{
-            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sleep\" and r._field == \"score\")\n  |> yield(name: \"sleep_score\")",
-            "refId": "A"
-          }],
-          "fieldConfig": {"defaults": {"unit": "short", "min": 0, "max": 100, "color": {"fixedColor": "purple", "mode": "fixed"}}}
-        },
-        {
-          "title": "Sleep Stages (Garmin)",
-          "type": "barchart",
-          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 10},
           "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
           "targets": [
             {
-              "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sleep\" and r._field == \"deep_sec\")\n  |> map(fn: (r) => ({r with _value: r._value / 3600.0}))\n  |> yield(name: \"deep\")",
+              "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"sleep_analysis\")\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 60.0}))\n  |> yield(name: \"asleep\")",
               "refId": "A"
             },
             {
-              "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sleep\" and r._field == \"light_sec\")\n  |> map(fn: (r) => ({r with _value: r._value / 3600.0}))\n  |> yield(name: \"light\")",
+              "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"in_bed\")\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 60.0}))\n  |> yield(name: \"in_bed\")",
               "refId": "B"
-            },
-            {
-              "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sleep\" and r._field == \"rem_sec\")\n  |> map(fn: (r) => ({r with _value: r._value / 3600.0}))\n  |> yield(name: \"rem\")",
-              "refId": "C"
             }
           ],
           "fieldConfig": {"defaults": {"unit": "h", "color": {"mode": "palette-classic"}}}
         },
         {
-          "title": "Sleep SpO2 (Garmin)",
-          "type": "timeseries",
-          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+          "title": "Sleep Efficiency (Asleep / In Bed %)",
+          "type": "stat",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 10},
           "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
           "targets": [{
-            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sleep\" and r._field == \"avg_spo2\")\n  |> yield(name: \"sleep_spo2\")",
+            "query": "asleep = from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"sleep_analysis\")\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> mean()\n\ninBed = from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"in_bed\")\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> mean()\n\njoin(tables: {asleep: asleep, inBed: inBed}, on: [\"_stop\"])\n  |> map(fn: (r) => ({r with _value: r._value_asleep / r._value_inBed * 100.0}))\n  |> yield(name: \"efficiency\")",
             "refId": "A"
           }],
-          "fieldConfig": {"defaults": {"unit": "percent", "min": 90, "max": 100, "color": {"fixedColor": "purple", "mode": "fixed"}}}
+          "fieldConfig": {"defaults": {"unit": "percent", "color": {"fixedColor": "green", "mode": "fixed"}, "thresholds": {"mode": "absolute", "steps": [{"value": 0, "color": "red"}, {"value": 75, "color": "yellow"}, {"value": 85, "color": "green"}]}}}
         },
         {
-          "title": "Sleep Respiration (Garmin)",
+          "title": "Heart Rate During Sleep",
           "type": "timeseries",
-          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 18},
           "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
           "targets": [{
-            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sleep\" and r._field == \"avg_respiration\")\n  |> yield(name: \"sleep_resp\")",
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"heart_rate\")\n  |> aggregateWindow(every: 1d, fn: min, createEmpty: false)\n  |> yield(name: \"min_hr\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "bpm", "color": {"fixedColor": "red", "mode": "fixed"}, "displayName": "Lowest HR (proxy for sleep HR)"}}
+        },
+        {
+          "title": "Respiratory Rate",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 18},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"respiratory_rate\")\n  |> aggregateWindow(every: 1d, fn: mean, createEmpty: false)\n  |> yield(name: \"resp_rate\")",
             "refId": "A"
           }],
           "fieldConfig": {"defaults": {"unit": "breathspm", "color": {"fixedColor": "cyan", "mode": "fixed"}}}
