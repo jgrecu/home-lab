@@ -17,7 +17,7 @@ spec:
             image:
               repository: forgejo.${SECRET_DOMAIN}/jeremy/fitness-ingestion
               # Updated by Woodpecker CI on each push
-              tag: e4056a5f
+              tag: 592a45ae
             envFrom:
               - secretRef:
                   name: fitness-ingestion-secret
