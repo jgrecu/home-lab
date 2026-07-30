@@ -40,6 +40,8 @@ spec:
             jsonData:
               url: http://health-auto-export.health.svc.cluster.local:3001
               httpHeaderName1: api-key
+              allowedHosts:
+                - health-auto-export.health.svc.cluster.local:3001
             secureJsonData:
               httpHeaderValue1: "#{ hae_read_token }#"
 
