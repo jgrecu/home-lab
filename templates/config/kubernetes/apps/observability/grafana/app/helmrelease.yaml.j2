@@ -22,6 +22,9 @@ spec:
     datasources:
       datasources.yaml:
         apiVersion: 1
+        deleteDatasources:
+          - name: InfluxDB-Fitness
+            orgId: 1
         datasources:
           - name: Prometheus
             type: prometheus
@@ -37,11 +40,12 @@ spec:
           - name: Health Auto Export
             uid: health-auto-export
             type: yesoreyeram-infinity-datasource
+            access: proxy
             jsonData:
               url: http://health-auto-export.health.svc.cluster.local:3001
               httpHeaderName1: api-key
               allowedHosts:
-                - health-auto-export.health.svc.cluster.local:3001
+                - http://health-auto-export.health.svc.cluster.local:3001
             secureJsonData:
               httpHeaderValue1: "#{ hae_read_token }#"
 
