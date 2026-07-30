@@ -1,0 +1,14 @@
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: health-auto-export-timeout
+  namespace: health
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: health-auto-export
+  timeout:
+    http:
+      requestTimeout: 300s
