@@ -73,14 +73,6 @@ import (
 	volsync_restic_password?:       string
 	volsync_s3_access_key?:         string
 	volsync_s3_secret_key?:         string
-	// Fitness Pipeline Configuration
-	fitness_garmin_email?:           string
-	fitness_garmin_password?:        string
-	fitness_withings_client_id?:     string
-	fitness_withings_client_secret?: string
-	fitness_apple_webhook_key?:      string
-	fitness_influxdb_admin_token?:   string
-	fitness_influxdb_admin_password?: string
 }
 
 #Config

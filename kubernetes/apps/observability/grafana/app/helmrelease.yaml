@@ -31,15 +31,6 @@ spec:
             url: http://loki-gateway.observability.svc.cluster.local:80
             jsonData:
               maxLines: 1000
-          - name: InfluxDB-Fitness
-            type: influxdb
-            url: http://influxdb.fitness.svc.cluster.local:8086
-            jsonData:
-              version: Flux
-              organization: homelab
-              defaultBucket: health_metrics
-            secureJsonData:
-              token: "${FITNESS_INFLUXDB_ADMIN_TOKEN}"
 
     # Enable sidecar to watch for ConfigMaps with grafana_dashboard label
     # This adds custom dashboards from ConfigMaps to the existing downloaded ones
