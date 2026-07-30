@@ -1,0 +1,41 @@
+---
+# Workouts Table Dashboard - Lists all workouts with links to details
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-workouts-table
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: Health
+data:
+  workouts-table.json: |-
+    {
+      "annotations": {"list": [{"builtIn": 1, "datasource": {"type": "grafana", "uid": "-- Grafana --"}, "enable": true, "hide": true, "iconColor": "rgba(0, 211, 255, 1)", "name": "Annotations & Alerts", "type": "dashboard"}]},
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 0,
+      "links": [],
+      "panels": [
+        {
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"},
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "custom": {"align": "auto", "cellOptions": {"type": "auto"}, "inspect": false}, "links": [], "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": [{"matcher": {"id": "byName", "options": "ID"}, "properties": [{"id": "links", "value": [{"title": "View Workout Details", "url": "/d/workout-details/workout-details?var-selected_workout=${__data.fields[0]}&from=${__data.fields.Start}&to=${__data.fields.End}"}]}]}]},
+          "gridPos": {"h": 30, "w": 24, "x": 0, "y": 0},
+          "id": 1,
+          "options": {"cellHeight": "sm", "footer": {"countRows": false, "fields": "", "reducer": ["sum"], "show": false}, "showHeader": true},
+          "targets": [{"columns": [{"selector": "id", "text": "ID", "type": "string"}, {"selector": "workout_type", "text": "Workout Type", "type": "string"}, {"selector": "start_time", "text": "Start", "type": "timestamp"}, {"selector": "end_time", "text": "End", "type": "timestamp"}, {"selector": "duration_minutes", "text": "Duration (min)", "type": "number"}, {"selector": "calories_burned", "text": "Calories", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"}, "filters": [], "format": "table", "global_query_id": "", "parser": "simple", "refId": "Workouts", "root_selector": "", "source": "url", "type": "json", "url": "/api/workouts?startDate=${__from}&endDate=${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "title": "Workouts",
+          "type": "table"
+        }
+      ],
+      "schemaVersion": 40,
+      "tags": ["health"],
+      "templating": {"list": []},
+      "time": {"from": "now-90d", "to": "now"},
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "Workouts Table",
+      "uid": "workouts-table",
+      "version": 1
+    }

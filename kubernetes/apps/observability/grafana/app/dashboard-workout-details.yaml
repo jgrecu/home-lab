@@ -1,0 +1,50 @@
+---
+# Workout Details Dashboard - Route map + Heart Rate for a selected workout
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-workout-details
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: Health
+data:
+  workout-details.json: |-
+    {
+      "annotations": {"list": [{"builtIn": 1, "datasource": {"type": "grafana", "uid": "-- Grafana --"}, "enable": true, "hide": true, "iconColor": "rgba(0, 211, 255, 1)", "name": "Annotations & Alerts", "type": "dashboard"}]},
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 0,
+      "links": [],
+      "panels": [
+        {
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"},
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "custom": {"hideFrom": {"legend": false, "tooltip": false, "viz": false}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
+          "gridPos": {"h": 12, "w": 12, "x": 0, "y": 0},
+          "id": 2,
+          "options": {"basemap": {"config": {"showLabels": true, "theme": "auto"}, "name": "Layer 0", "type": "default"}, "controls": {"mouseWheelZoom": true, "showAttribution": true, "showDebug": false, "showMeasure": false, "showScale": false, "showZoom": true}, "layers": [{"config": {"arrow": 0, "style": {"color": {"fixed": "green"}, "lineWidth": 2, "opacity": 1, "size": {"fixed": 5, "max": 15, "min": 2}}}, "filterData": {"id": "byRefId", "options": "Workout Route"}, "location": {"latitude": "Latitude", "longitude": "Longitude", "mode": "coords"}, "name": "Route", "opacity": 0.4, "tooltip": true, "type": "route"}], "tooltip": {"mode": "details"}, "view": {"allLayers": false, "id": "fit", "lastOnly": false, "lat": 0, "layer": "Route", "lon": 0, "padding": 1, "zoom": 15}},
+          "targets": [{"columns": [{"selector": "latitude", "text": "Latitude", "type": "number"}, {"selector": "longitude", "text": "Longitude", "type": "number"}, {"selector": "time", "text": "Timestamp", "type": "timestamp"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"}, "filters": [], "format": "table", "global_query_id": "", "parser": "backend", "refId": "Workout Route", "root_selector": "route", "source": "url", "type": "json", "url": "/api/workouts/${selected_workout}", "url_options": {"data": "", "method": "GET"}}],
+          "title": "Workout Route",
+          "type": "geomap"
+        },
+        {
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"},
+          "fieldConfig": {"defaults": {"color": {"mode": "continuous-GrYlRd", "seriesBy": "last"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 0, "gradientMode": "scheme", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "auto", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "#6ED0E0", "value": 0}, {"color": "blue", "value": 40}, {"color": "green", "value": 100}, {"color": "#EAB839", "value": 120}, {"color": "red", "value": 135}]}}, "overrides": []},
+          "gridPos": {"h": 12, "w": 12, "x": 0, "y": 12},
+          "id": 1,
+          "targets": [{"columns": [{"selector": "timestamp", "text": "Time", "type": "timestamp"}, {"selector": "value", "text": "Heart Rate", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"}, "filters": [], "format": "timeseries", "global_query_id": "", "parser": "backend", "refId": "Heart Rate", "root_selector": "heartRateData", "source": "url", "type": "json", "url": "/api/workouts/${selected_workout}", "url_options": {"data": "", "method": "GET"}}],
+          "title": "Heart Rate",
+          "type": "timeseries"
+        }
+      ],
+      "schemaVersion": 40,
+      "tags": ["health"],
+      "templating": {"list": [{"current": {}, "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"}, "definition": "", "label": "Selected Workout", "name": "selected_workout", "options": [], "query": {"infinityQuery": {"columns": [{"selector": "id", "text": "ID", "type": "string"}], "filters": [], "format": "table", "parser": "backend", "refId": "variable", "root_selector": "", "source": "url", "type": "json", "url": "/api/workouts", "url_options": {"data": "", "method": "GET"}}, "query": "", "queryType": "infinity"}, "refresh": 1, "regex": "", "type": "query"}]},
+      "time": {"from": "now-7d", "to": "now"},
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "Workout Details",
+      "uid": "workout-details",
+      "version": 1
+    }

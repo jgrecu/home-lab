@@ -35,6 +35,7 @@ spec:
             jsonData:
               maxLines: 1000
           - name: Health Auto Export
+            uid: health-auto-export
             type: yesoreyeram-infinity-datasource
             jsonData:
               url: http://health-auto-export.health.svc.cluster.local:3001
