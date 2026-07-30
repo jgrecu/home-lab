@@ -19,48 +19,48 @@ data:
       "links": [],
       "panels": [
         {
-          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"},
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
           "fieldConfig": {"defaults": {"color": {"fixedColor": "blue", "mode": "shades"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "fillOpacity": 80, "gradientMode": "hue", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "lineWidth": 1, "scaleDistribution": {"type": "linear"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
           "id": 3,
           "options": {"barRadius": 0, "barWidth": 0.97, "fullHighlight": false, "groupWidth": 0.7, "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true}, "orientation": "auto", "showValue": "auto", "stacking": "none", "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}, "xTickLabelRotation": 0, "xTickLabelSpacing": 0},
-          "targets": [{"columns": [{"selector": "date", "text": "Date", "type": "timestamp"}, {"selector": "awake", "text": "Awake", "type": "number"}, {"selector": "core", "text": "Core", "type": "number"}, {"selector": "rem", "text": "REM", "type": "number"}, {"selector": "deep", "text": "Deep", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/sleep_analysis?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "targets": [{"columns": [{"selector": "date", "text": "Date", "type": "timestamp"}, {"selector": "awake", "text": "Awake", "type": "number"}, {"selector": "core", "text": "Core", "type": "number"}, {"selector": "rem", "text": "REM", "type": "number"}, {"selector": "deep", "text": "Deep", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/sleep_analysis?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
           "title": "Sleep Analysis",
           "type": "barchart"
         },
         {
-          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"},
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
           "fieldConfig": {"defaults": {"color": {"mode": "continuous-YlRd"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 0, "gradientMode": "scheme", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "auto", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
           "id": 2,
-          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "Min", "text": "Min", "type": "number"}, {"selector": "Avg", "text": "Avg", "type": "number"}, {"selector": "Max", "text": "Max", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/heart_rate?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "Min", "text": "Min", "type": "number"}, {"selector": "Avg", "text": "Avg", "type": "number"}, {"selector": "Max", "text": "Max", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/heart_rate?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
           "title": "Heart Rate",
           "type": "timeseries"
         },
         {
-          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"},
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
           "fieldConfig": {"defaults": {"color": {"mode": "continuous-GrYlRd", "seriesBy": "min"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 0, "gradientMode": "scheme", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "auto", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "#EAB839", "value": 400}, {"color": "orange", "value": 600}, {"color": "red", "value": 800}]}}, "overrides": []},
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
           "id": 1,
-          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Value", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"}, "filters": [], "format": "table", "global_query_id": "", "refId": "Active Energy", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/active_energy?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Value", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "Active Energy", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/active_energy?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
           "title": "Active Energy",
           "type": "timeseries"
         },
         {
-          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"},
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
           "fieldConfig": {"defaults": {"color": {"fixedColor": "blue", "mode": "shades"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "bars", "fillOpacity": 0, "gradientMode": "hue", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "auto", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
           "id": 6,
-          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Value", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"}, "filters": [], "format": "table", "global_query_id": "", "refId": "Step Count", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/step_count?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Value", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "Step Count", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/step_count?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
           "title": "Step Count",
           "type": "timeseries"
         },
         {
-          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"},
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
           "fieldConfig": {"defaults": {"color": {"mode": "continuous-RdYlGr", "seriesBy": "min"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "bars", "fillOpacity": 0, "gradientMode": "hue", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "auto", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "#EAB839", "value": 400}, {"color": "orange", "value": 600}, {"color": "red", "value": 800}]}}, "overrides": []},
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
           "id": 5,
-          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Value", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "health-auto-export"}, "filters": [], "format": "table", "global_query_id": "", "refId": "Walking Distance", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/walking_running_distance?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Value", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "Walking Distance", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/walking_running_distance?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
           "title": "Walking + Running Distance",
           "type": "timeseries"
         }
