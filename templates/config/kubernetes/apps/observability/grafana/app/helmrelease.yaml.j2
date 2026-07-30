@@ -37,17 +37,6 @@ spec:
             url: http://loki-gateway.observability.svc.cluster.local:80
             jsonData:
               maxLines: 1000
-          - name: Health Auto Export
-            uid: health-auto-export
-            type: yesoreyeram-infinity-datasource
-            access: proxy
-            jsonData:
-              url: http://health-auto-export.health.svc.cluster.local:3001
-              httpHeaderName1: api-key
-              allowedHosts:
-                - http://health-auto-export.health.svc.cluster.local:3001
-            secureJsonData:
-              httpHeaderValue1: "#{ hae_read_token }#"
 
     # Enable sidecar to watch for ConfigMaps with grafana_dashboard label
     # This adds custom dashboards from ConfigMaps to the existing downloaded ones
