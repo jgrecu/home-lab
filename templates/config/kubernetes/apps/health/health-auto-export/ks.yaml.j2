@@ -1,0 +1,21 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: health-auto-export
+spec:
+  interval: 1h
+  path: ./kubernetes/apps/health/health-auto-export/app
+  postBuild:
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: health
+  wait: false
+  dependsOn:
+    - name: health-auto-export-mongodb

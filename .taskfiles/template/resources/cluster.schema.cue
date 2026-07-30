@@ -69,6 +69,10 @@ import (
 	// Grimmory Configuration
 	grimmory_mariadb_root_password?: string
 	grimmory_mariadb_password?:      string
+	// Health Auto Export Configuration
+	hae_mongo_password?:             string
+	hae_read_token?:                 string
+	hae_write_token?:                string
 	// Volsync Backup Configuration
 	volsync_restic_password?:       string
 	volsync_s3_access_key?:         string

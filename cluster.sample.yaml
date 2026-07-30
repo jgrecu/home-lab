@@ -247,6 +247,25 @@ grimmory_mariadb_root_password: ""
 grimmory_mariadb_password: ""
 
 # ============================================================================
+# Health Auto Export Configuration
+# ============================================================================
+
+# -- MongoDB root password for Health Auto Export
+#    Generate with: openssl rand -base64 16
+#    (REQUIRED for Health Auto Export)
+hae_mongo_password: ""
+
+# -- API read token (used by Grafana to query health metrics)
+#    Generate with: echo "sk-$(openssl rand -hex 16)"
+#    (REQUIRED for Health Auto Export)
+hae_read_token: ""
+
+# -- API write token (used by iOS Health Auto Export app to push data)
+#    Generate with: echo "sk-$(openssl rand -hex 16)"
+#    (REQUIRED for Health Auto Export)
+hae_write_token: ""
+
+# ============================================================================
 # Volsync Backup Configuration
 # ============================================================================
 

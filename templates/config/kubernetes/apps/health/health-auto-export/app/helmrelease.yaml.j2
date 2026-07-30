@@ -1,0 +1,102 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: health-auto-export
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: health-auto-export
+  interval: 1h
+  values:
+    controllers:
+      health-auto-export:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: forgejo.jgrecu.dev/jeremy/health-auto-export
+              # renovate: datasource=docker depName=forgejo.jgrecu.dev/jeremy/health-auto-export
+              tag: "v0.1.0"
+            env:
+              NODE_ENV: production
+              MONGO_HOST: health-auto-export-mongodb.health.svc.cluster.local
+              MONGO_PORT: "27017"
+              MONGO_DB: health-auto-export
+              MONGO_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: health-auto-export-secret
+                    key: mongo-username
+              MONGO_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: health-auto-export-secret
+                    key: mongo-password
+              READ_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: health-auto-export-secret
+                    key: read-token
+              WRITE_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: health-auto-export-secret
+                    key: write-token
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 3001
+                  initialDelaySeconds: 10
+                  periodSeconds: 30
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+              runAsUser: 65534
+              runAsGroup: 65534
+              runAsNonRoot: true
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+
+    route:
+      app:
+        hostnames: ["hae.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Health
+          gethomepage.dev/name: Health Auto Export
+          gethomepage.dev/icon: apple-health.png
+          gethomepage.dev/description: Apple Health data ingestion
+          gethomepage.dev/href: https://hae.${SECRET_DOMAIN}

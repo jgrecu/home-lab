@@ -1,0 +1,68 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: health-auto-export-mongodb
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: health-auto-export-mongodb
+  interval: 1h
+  values:
+    controllers:
+      mongodb:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: docker.io/mongo
+              # renovate: datasource=docker depName=docker.io/mongo
+              tag: "8.3.7"
+            env:
+              MONGO_INITDB_ROOT_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: health-auto-export-mongodb-secret
+                    key: username
+              MONGO_INITDB_ROOT_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: health-auto-export-mongodb-secret
+                    key: password
+              MONGO_INITDB_DATABASE: health-auto-export
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - mongosh
+                      - --eval
+                      - "db.adminCommand('ping')"
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  failureThreshold: 5
+              readiness:
+                enabled: false
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 2Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /data/db
+
+    service:
+      app:
+        ports:
+          mongodb:
+            port: 27017

@@ -14,6 +14,9 @@ spec:
       userKey: admin-user
       passwordKey: admin-password
 
+    plugins:
+      - yesoreyeram-infinity-datasource
+
     # Pre-configure Prometheus and Loki as data sources so dashboards
     # work out of the box without any manual UI configuration.
     datasources:
@@ -31,6 +34,13 @@ spec:
             url: http://loki-gateway.observability.svc.cluster.local:80
             jsonData:
               maxLines: 1000
+          - name: Health Auto Export
+            type: yesoreyeram-infinity-datasource
+            jsonData:
+              url: http://health-auto-export.health.svc.cluster.local:3001
+              httpHeaderName1: api-key
+            secureJsonData:
+              httpHeaderValue1: "#{ hae_read_token }#"
 
     # Enable sidecar to watch for ConfigMaps with grafana_dashboard label
     # This adds custom dashboards from ConfigMaps to the existing downloaded ones
