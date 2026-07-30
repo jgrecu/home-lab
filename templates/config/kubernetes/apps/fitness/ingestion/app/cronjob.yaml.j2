@@ -23,9 +23,6 @@ spec:
                 - /bin/sh
                 - -c
                 - |
-                  echo "Triggering Garmin sync..."
-                  curl -sf -X POST http://fitness-ingestion.fitness.svc.cluster.local:8000/api/garmin/sync
-                  echo ""
                   echo "Triggering Withings sync..."
                   curl -sf -X POST http://fitness-ingestion.fitness.svc.cluster.local:8000/api/withings/sync
                   echo ""
