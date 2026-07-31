@@ -191,6 +191,12 @@ forgejo_runner_secret: ""
 #    NOTE: This will be encrypted with SOPS when you run 'task configure'
 linkding_admin_password: ""
 
+# -- Linkding API token for the healthcheck CronJob (linkding-healthcheck)
+#    Obtain AFTER first deploy: Linkding → Settings → Integrations → API Token
+#    (REQUIRED for healthcheck CronJob — leave empty until Linkding is running)
+#    NOTE: This will be encrypted with SOPS when you run 'task configure'
+linkding_healthcheck_token: ""
+
 # ============================================================================
 # Woodpecker CI Configuration
 # ============================================================================

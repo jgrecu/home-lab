@@ -56,6 +56,7 @@ import (
 	forgejo_runner_secret?:         string
 	// Linkding Configuration
 	linkding_admin_password?:       string
+	linkding_healthcheck_token?:    string
 	// Woodpecker CI Configuration
 	woodpecker_admin_user?:         string
 	woodpecker_oauth_client_id?:    string

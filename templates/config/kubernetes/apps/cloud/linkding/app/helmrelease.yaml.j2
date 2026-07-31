@@ -70,6 +70,46 @@ spec:
         globalMounts:
           - path: /etc/linkding/data
 
+    # ── Healthcheck CronJob ────────────────────────────────────────────────────
+    # Runs monthly, hits every bookmark via the Linkding REST API, and tags
+    # dead/broken links with @HEALTH_HTTP_<code>, @HEALTH_DNS, or @HEALTH_other.
+    # Also detects duplicate bookmarks.
+    #
+    # Prerequisites (one-time after first deploy):
+    #   1. Log into Linkding → Settings → Integrations → copy API Token
+    #   2. Set linkding_healthcheck_token in cluster.yaml
+    #   3. Run: task configure --yes && git commit && git push
+      healthcheck:
+        type: cronjob
+        cronjob:
+          schedule: "0 3 1 * *"   # 3 AM on the 1st of each month
+          concurrencyPolicy: Forbid
+          failedJobsHistory: 3
+          successfulJobsHistory: 1
+        containers:
+          app:
+            image:
+              repository: ghcr.io/sebw/ldhc
+              tag: 0.2.2
+            env:
+              API_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-secret
+                    key: healthcheck-token
+              # Internal service URL — stays within the cluster, no Cloudflare hop
+              API_URL: "http://linkding.cloud.svc.cluster.local:9090/api/bookmarks"
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+
     service:
       app:
         controller: linkding
