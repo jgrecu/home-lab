@@ -181,6 +181,17 @@ forgejo_admin_password: ""
 forgejo_runner_secret: ""
 
 # ============================================================================
+# Linkding Configuration
+# ============================================================================
+
+# -- Linkding initial admin password (for the 'admin' superuser account)
+#    Used only on first boot — after init, stored in the SQLite database.
+#    Generate with: openssl rand -base64 16
+#    (REQUIRED for Linkding)
+#    NOTE: This will be encrypted with SOPS when you run 'task configure'
+linkding_admin_password: ""
+
+# ============================================================================
 # Woodpecker CI Configuration
 # ============================================================================
 

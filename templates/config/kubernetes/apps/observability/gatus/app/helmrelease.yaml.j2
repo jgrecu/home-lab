@@ -108,6 +108,14 @@ spec:
                   - "[BODY].installed == true"
                   - "[RESPONSE_TIME] < 5000"
 
+              - name: Linkding (via CloudFlare)
+                group: CloudFlare
+                url: "https://linkding.${SECRET_DOMAIN}/health"
+                interval: 3m
+                conditions:
+                  - "[STATUS] == 200"
+                  - "[RESPONSE_TIME] < 5000"
+
               - name: Forgejo (via CloudFlare)
                 group: CloudFlare
                 url: "https://forgejo.${SECRET_DOMAIN}"
@@ -181,6 +189,13 @@ spec:
                 conditions:
                   - "[STATUS] == 200"
                   - "[BODY].installed == true"
+
+              - name: Linkding
+                group: Internal Services
+                url: "http://linkding.cloud.svc.cluster.local:9090/health"
+                interval: 5m
+                conditions:
+                  - "[STATUS] == 200"
 
               - name: Forgejo
                 group: Internal Services

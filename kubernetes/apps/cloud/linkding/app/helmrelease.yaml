@@ -1,0 +1,97 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: linkding
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: linkding
+  interval: 1h
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+
+    controllers:
+      linkding:
+        containers:
+          app:
+            image:
+              repository: sissbruecker/linkding
+              tag: 1.45.0
+            env:
+              # Initial superuser — only used on first boot.
+              # After init, credentials are stored in the SQLite database.
+              LD_SUPERUSER_NAME: admin
+              LD_SUPERUSER_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-secret
+                    key: admin-password
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &port 9090
+                  initialDelaySeconds: 10
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+            resources:
+              requests:
+                cpu: 15m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+
+    persistence:
+      # SQLite database + uploaded favicons stored on Longhorn.
+      # Survives pod restarts. Longhorn handles replication across nodes.
+      data:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 2Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /etc/linkding/data
+
+    service:
+      app:
+        controller: linkding
+        ports:
+          http:
+            port: *port
+
+    route:
+      app:
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+            sectionName: https
+        hostnames: ["linkding.${SECRET_DOMAIN}"]
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Cloud
+          gethomepage.dev/name: Linkding
+          gethomepage.dev/icon: linkding.png
+          gethomepage.dev/description: Self-hosted bookmark manager
+          gethomepage.dev/href: "https://linkding.${SECRET_DOMAIN}"
