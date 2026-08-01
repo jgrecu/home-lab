@@ -59,26 +59,15 @@ spec:
               limits:
                 memory: 512Mi
 
-    persistence:
-      # SQLite database + uploaded favicons stored on Longhorn.
-      # Survives pod restarts. Longhorn handles replication across nodes.
-      data:
-        type: persistentVolumeClaim
-        storageClass: longhorn
-        size: 2Gi
-        accessMode: ReadWriteOnce
-        globalMounts:
-          - path: /etc/linkding/data
-
-    # ── Healthcheck CronJob ────────────────────────────────────────────────────
-    # Runs monthly, hits every bookmark via the Linkding REST API, and tags
-    # dead/broken links with @HEALTH_HTTP_<code>, @HEALTH_DNS, or @HEALTH_other.
-    # Also detects duplicate bookmarks.
-    #
-    # Prerequisites (one-time after first deploy):
-    #   1. Log into Linkding → Settings → Integrations → copy API Token
-    #   2. Set linkding_healthcheck_token in cluster.yaml
-    #   3. Run: task configure --yes && git commit && git push
+      # ── Healthcheck CronJob ────────────────────────────────────────────────────
+      # Runs monthly, hits every bookmark via the Linkding REST API, and tags
+      # dead/broken links with @HEALTH_HTTP_<code>, @HEALTH_DNS, or @HEALTH_other.
+      # Also detects duplicate bookmarks.
+      #
+      # Prerequisites (one-time after first deploy):
+      #   1. Log into Linkding → Settings → Integrations → copy API Token
+      #   2. Set linkding_healthcheck_token in cluster.yaml
+      #   3. Run: task configure --yes && git commit && git push
       healthcheck:
         type: cronjob
         cronjob:
@@ -109,6 +98,17 @@ spec:
                 memory: 64Mi
               limits:
                 memory: 256Mi
+
+    persistence:
+      # SQLite database + uploaded favicons stored on Longhorn.
+      # Survives pod restarts. Longhorn handles replication across nodes.
+      data:
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        size: 2Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /etc/linkding/data
 
     service:
       app:
