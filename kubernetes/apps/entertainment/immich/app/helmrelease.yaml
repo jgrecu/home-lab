@@ -18,7 +18,7 @@ spec:
             main:
               image:
                 # datasource=docker depName=ghcr.io/immich-app/immich-server
-                tag: v3.0.3
+                tag: v3.1.0
               env:
                 # Database — CNPG creates the immich-postgres-app secret automatically
                 DB_HOSTNAME: immich-postgres-rw
@@ -58,7 +58,7 @@ spec:
             main:
               image:
                 # datasource=docker depName=ghcr.io/immich-app/immich-machine-learning
-                tag: v3.0.3
+                tag: v3.1.0
               probes:
                 startup:
                   enabled: true
