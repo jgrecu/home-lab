@@ -67,7 +67,7 @@ data:
         {
           "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
           "fieldConfig": {"defaults": {"color": {"mode": "continuous-BlYlRd"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "ms", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "scheme", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 6, "scaleDistribution": {"type": "linear"}, "showPoints": "always", "spanNulls": true, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
-          "gridPos": {"h": 8, "w": 8, "x": 0, "y": 24},
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
           "id": 7,
           "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
           "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "HRV", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/heart_rate_variability?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
@@ -77,7 +77,7 @@ data:
         {
           "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
           "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "bpm", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 6, "scaleDistribution": {"type": "linear"}, "showPoints": "always", "spanNulls": true, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "area"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 60}, {"color": "orange", "value": 80}, {"color": "red", "value": 100}]}}, "overrides": []},
-          "gridPos": {"h": 8, "w": 8, "x": 8, "y": 24},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
           "id": 8,
           "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
           "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Resting HR", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/resting_heart_rate?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
@@ -87,7 +87,7 @@ data:
         {
           "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
           "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "%", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 6, "scaleDistribution": {"type": "linear"}, "showPoints": "always", "spanNulls": true, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "area"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "yellow", "value": 90}, {"color": "green", "value": 95}]}}, "overrides": []},
-          "gridPos": {"h": 8, "w": 8, "x": 16, "y": 24},
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
           "id": 9,
           "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
           "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "SpO2", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json",           "url": "/api/metrics/blood_oxygen_saturation?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],

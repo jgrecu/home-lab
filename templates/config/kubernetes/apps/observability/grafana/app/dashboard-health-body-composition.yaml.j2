@@ -66,12 +66,11 @@ data:
           "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
           "targets": [
             {"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Weight", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/weight_body_mass?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}},
-            {"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Body Fat %", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "B", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/body_fat_percentage?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}
+            {"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Lean Mass", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "B", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/lean_body_mass?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}
           ],
           "transformations": [
             {"id": "joinByField", "options": {"byField": "Timestamp", "mode": "outer"}},
-            {"id": "calculateField", "options": {"alias": "BFM_raw", "mode": "binary", "binary": {"left": "Weight", "operator": "*", "right": "Body Fat %"}}},
-            {"id": "calculateField", "options": {"alias": "Body Fat Mass (kg)", "mode": "binary", "binary": {"left": "BFM_raw", "operator": "/", "right": "100"}}},
+            {"id": "calculateField", "options": {"alias": "Body Fat Mass (kg)", "mode": "binary", "binary": {"left": "Weight", "operator": "-", "right": "Lean Mass"}}},
             {"id": "filterFieldsByName", "options": {"include": {"names": ["Timestamp", "Body Fat Mass (kg)"]}}}
           ],
           "title": "Body Fat Mass",
