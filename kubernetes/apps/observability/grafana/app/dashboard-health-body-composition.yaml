@@ -60,7 +60,7 @@ data:
         },
         {
           "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
-          "fieldConfig": {"defaults": {"color": {"fixedColor": "orange", "mode": "fixed"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "kg", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 6, "scaleDistribution": {"type": "linear"}, "showPoints": "always", "spanNulls": true, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
+          "fieldConfig": {"defaults": {"color": {"fixedColor": "orange", "mode": "fixed"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "kg", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 6, "scaleDistribution": {"type": "linear"}, "showPoints": "always", "spanNulls": true, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": [{"matcher": {"id": "byName", "options": "Weight"}, "properties": [{"id": "custom.hideFrom", "value": {"legend": true, "tooltip": true, "viz": true}}]}, {"matcher": {"id": "byName", "options": "Lean Mass"}, "properties": [{"id": "custom.hideFrom", "value": {"legend": true, "tooltip": true, "viz": true}}]}]},
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
           "id": 14,
           "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
@@ -70,8 +70,7 @@ data:
           ],
           "transformations": [
             {"id": "joinByField", "options": {"byField": "Timestamp", "mode": "outer"}},
-            {"id": "calculateField", "options": {"alias": "Body Fat Mass (kg)", "mode": "binary", "binary": {"left": "Weight", "operator": "-", "right": "Lean Mass"}}},
-            {"id": "filterFieldsByName", "options": {"include": {"names": ["Timestamp", "Body Fat Mass (kg)"]}}}
+            {"id": "calculateField", "options": {"alias": "Body Fat Mass (kg)", "mode": "binary", "binary": {"left": "Weight", "operator": "-", "right": "Lean Mass"}}}
           ],
           "title": "Body Fat Mass",
           "type": "timeseries"
