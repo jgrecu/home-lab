@@ -24,7 +24,7 @@ data:
           "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
           "id": 10,
           "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
-          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Weight", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/body_mass?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Weight", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json",           "url": "/api/metrics/weight_body_mass?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
           "title": "Weight",
           "type": "timeseries"
         },
@@ -65,7 +65,7 @@ data:
           "id": 14,
           "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
           "targets": [
-            {"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Weight", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/body_mass?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}},
+            {"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Weight", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/weight_body_mass?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}},
             {"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Body Fat %", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "B", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/body_fat_percentage?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}
           ],
           "transformations": [

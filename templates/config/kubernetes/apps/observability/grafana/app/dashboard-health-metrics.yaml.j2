@@ -90,7 +90,7 @@ data:
           "gridPos": {"h": 8, "w": 8, "x": 16, "y": 24},
           "id": 9,
           "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
-          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "SpO2", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/blood_oxygen?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "SpO2", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json",           "url": "/api/metrics/blood_oxygen_saturation?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
           "title": "Blood Oxygen (SpO2)",
           "type": "timeseries"
         }
