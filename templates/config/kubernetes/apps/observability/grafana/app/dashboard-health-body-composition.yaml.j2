@@ -1,0 +1,91 @@
+---
+# Body Composition Dashboard - Weight, Body Fat %, Lean Body Mass, BMI, Body Fat Mass
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-health-body-composition
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: Health
+data:
+  health-body-composition.json: |-
+    {
+      "annotations": {"list": [{"builtIn": 1, "datasource": {"type": "grafana", "uid": "-- Grafana --"}, "enable": true, "hide": true, "iconColor": "rgba(0, 211, 255, 1)", "name": "Annotations & Alerts", "type": "dashboard"}]},
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 0,
+      "links": [],
+      "panels": [
+        {
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
+          "fieldConfig": {"defaults": {"color": {"mode": "continuous-BlYlRd"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "kg", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "scheme", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 6, "scaleDistribution": {"type": "linear"}, "showPoints": "always", "spanNulls": true, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+          "id": 10,
+          "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
+          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Weight", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/body_mass?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "title": "Weight",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
+          "fieldConfig": {"defaults": {"color": {"mode": "continuous-RdYlGr"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "%", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "scheme", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 6, "scaleDistribution": {"type": "linear"}, "showPoints": "always", "spanNulls": true, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+          "id": 11,
+          "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
+          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Body Fat %", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/body_fat_percentage?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "title": "Body Fat %",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
+          "fieldConfig": {"defaults": {"color": {"mode": "continuous-GrYlRd", "seriesBy": "min"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "kg", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "scheme", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 6, "scaleDistribution": {"type": "linear"}, "showPoints": "always", "spanNulls": true, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+          "id": 12,
+          "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
+          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Lean Body Mass", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/lean_body_mass?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "title": "Lean Body Mass",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "BMI", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 6, "scaleDistribution": {"type": "linear"}, "showPoints": "always", "spanNulls": true, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "area"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}, {"color": "green", "value": 18.5}, {"color": "yellow", "value": 25}, {"color": "orange", "value": 30}]}}, "overrides": []},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+          "id": 13,
+          "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
+          "targets": [{"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "BMI", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/body_mass_index?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}],
+          "title": "Body Mass Index (BMI)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"},
+          "fieldConfig": {"defaults": {"color": {"fixedColor": "orange", "mode": "fixed"}, "custom": {"axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "kg", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 6, "scaleDistribution": {"type": "linear"}, "showPoints": "always", "spanNulls": true, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+          "id": 14,
+          "options": {"legend": {"calcs": ["last", "min", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"hideZeros": false, "mode": "single", "sort": "none"}},
+          "targets": [
+            {"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Weight", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "A", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/body_mass?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}},
+            {"columns": [{"selector": "date", "text": "Timestamp", "type": "timestamp"}, {"selector": "qty", "text": "Body Fat %", "type": "number"}], "datasource": {"type": "yesoreyeram-infinity-datasource", "uid": "eftopo7rxdz40d"}, "filters": [], "format": "table", "global_query_id": "", "refId": "B", "root_selector": "", "source": "url", "type": "json", "url": "/api/metrics/body_fat_percentage?from=$${__from}&to=$${__to}", "url_options": {"data": "", "method": "GET"}}
+          ],
+          "transformations": [
+            {"id": "joinByField", "options": {"byField": "Timestamp", "mode": "outer"}},
+            {"id": "calculateField", "options": {"alias": "BFM_raw", "mode": "binary", "binary": {"left": "Weight", "operator": "*", "right": "Body Fat %"}}},
+            {"id": "calculateField", "options": {"alias": "Body Fat Mass (kg)", "mode": "binary", "binary": {"left": "BFM_raw", "operator": "/", "right": "100"}}},
+            {"id": "filterFieldsByName", "options": {"include": {"names": ["Timestamp", "Body Fat Mass (kg)"]}}}
+          ],
+          "title": "Body Fat Mass",
+          "type": "timeseries"
+        }
+      ],
+      "preload": false,
+      "schemaVersion": 40,
+      "tags": ["health"],
+      "templating": {"list": []},
+      "time": {"from": "now-90d", "to": "now"},
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "Body Composition",
+      "uid": "health-body-composition",
+      "version": 1
+    }
