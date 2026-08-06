@@ -16,12 +16,16 @@ spec:
     defaultSettings:
       # Where Longhorn stores replica data on each node's disk
       defaultDataPath: /var/lib/longhorn
-      # Keep 3 replicas across your 3 nodes — survives 2 node failures
-      defaultReplicaCount: 3
+      # 2 replicas — survives 1 node failure, balances HA with storage efficiency
+      defaultReplicaCount: 2
       # Automatically rebalance replicas when a node comes back online
       replicaAutoBalance: best-effort
       # Orphaned data cleanup
       orphanAutoDeletion: true
+      # Reserve 20% of each disk for OS + Longhorn operations.
+      # Reduced from 30% — frees ~51 GiB schedulable space per node.
+      # Physical safety is maintained by storage-minimal-available-percentage (25%).
+      storageReservedPercentageForDefaultDisk: 20
       # S3 backup target — SeaweedFS S3-compatible storage
       # The AWS_ENDPOINTS in longhorn-backup-secret points to SeaweedFS filer
       # Format: s3://bucket-name@region/ (region can be any value, endpoint overrides it)
@@ -58,7 +62,8 @@ spec:
       # Make Longhorn the default StorageClass for the cluster.
       # Any PVC without an explicit storageClassName will use Longhorn.
       defaultClass: true
-      defaultClassReplicaCount: 3
+      # 2 replicas for default class — matches defaultReplicaCount above
+      defaultClassReplicaCount: 2
     metrics:
       # Enable Prometheus metrics for Grafana dashboards
       serviceMonitor:
