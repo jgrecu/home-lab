@@ -93,6 +93,20 @@
       },
     },
     {
+      description: 'Grimmory group (chart + image)',
+      groupName: 'grimmory',
+      matchDatasources: [
+        'docker',
+      ],
+      matchPackageNames: [
+        '/grimmory-tools/grimmory/',
+        '/grimmory-tools/helm-charts/grimmory/',
+      ],
+      group: {
+        commitMessageTopic: '{{{groupName}}} group',
+      },
+    },
+    {
       description: 'Database operators group (cloudnative-pg, dragonfly)',
       groupName: 'database-operators',
       matchDatasources: [
