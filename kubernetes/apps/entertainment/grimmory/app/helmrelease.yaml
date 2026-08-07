@@ -11,7 +11,7 @@ spec:
   values:
     image:
       repository: ghcr.io/grimmory-tools/grimmory
-      tag: v3.2.4
+      tag: v3.3.0
 
     # Bundled MariaDB subchart
     mariadb:
