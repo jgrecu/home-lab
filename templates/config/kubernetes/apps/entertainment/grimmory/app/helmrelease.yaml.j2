@@ -60,3 +60,20 @@ spec:
         memory: 256Mi
       limits:
         memory: 1Gi
+
+  # grimmory-data is RWO — only one node can hold the volume at a time.
+  # Recreate terminates the old pod before the new one starts, preventing
+  # multi-attach failures when the scheduler picks a different node.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: apps
+              version: v1
+              kind: Deployment
+              name: grimmory
+            patch: |
+              - op: add
+                path: /spec/strategy
+                value:
+                  type: Recreate
