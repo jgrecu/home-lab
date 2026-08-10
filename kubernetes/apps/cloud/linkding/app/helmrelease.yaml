@@ -25,7 +25,7 @@ spec:
           app:
             image:
               repository: sissbruecker/linkding
-              tag: 1.45.0
+              tag: 1.46.0
             env:
               # Initial superuser — only used on first boot.
               # After init, credentials are stored in the SQLite database.
