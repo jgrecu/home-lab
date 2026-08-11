@@ -10,6 +10,9 @@ resources:
   - ./namespace.yaml
   - ./forgejo/ks.yaml
   - ./forgejo/backup-ks.yaml
-  # forgejo-runner paused - requires eleboucher's runner fork (not upstream)
+  # forgejo-runner (eleboucher plugin approach) — paused, requires custom fork
   # See docs/DEFERRED.md for current blocker and resolution options
   # - ./forgejo-runner/ks.yaml
+  # forgejo-runner-native (infinoid's native k8s backend) — under test
+  # Uses container.kubernetes: true, one pod per job, no plugin binary
+  - ./forgejo-runner-native/ks.yaml

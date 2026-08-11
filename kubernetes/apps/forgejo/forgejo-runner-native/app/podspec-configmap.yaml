@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forgejo-runner-native-podspecs
+data:
+  # Default pod spec for CI job pods.
+  # Container MUST be named "main" — required by infinoid's k8s backend.
+  # restartPolicy: Never prevents k8s from retrying failed CI jobs.
+  podspec-default.yaml: |
+    containers:
+      - name: main
+        image: docker.io/node:24-bookworm
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+    restartPolicy: Never

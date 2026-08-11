@@ -36,13 +36,15 @@ The **upstream** `code.forgejo.org/forgejo/runner` binary:
 3. **Wait for upstream** — Forgejo may merge plugin support upstream eventually.
 4. **Wait for native K8s backend** — A native Kubernetes executor is being built directly into the Forgejo runner (see "Upstream Progress" below). This would eliminate the need for the eleboucher fork entirely.
 
-### Upstream Progress (as of 2026-07-28)
+### Upstream Progress (as of 2026-08-11)
 
-A **native Kubernetes backend** for the Forgejo runner is in active PoC development upstream:
+A **native Kubernetes backend** for the Forgejo runner has progressed from PoC to a formal upstream PR:
 
 - **PoC repo:** https://codeberg.org/infinoid/forgejo-k8s-runner-poc
-- **Discussion:** https://codeberg.org/forgejo/discussions/issues/66 (68 comments, active)
-- **Lead:** @infinoid, with support from @earl-warren (Forgejo maintainer)
+- **Working fork:** https://code.forgejo.org/infinoid/k8s-runner (runs in homelab since Jan 2026)
+- **Upstream PR:** https://code.forgejo.org/forgejo/runner/pulls/1472 (eleboucher, submitted Apr 2026)
+- **Discussion:** https://codeberg.org/forgejo/discussions/issues/66 (active, last comment Jul 2026)
+- **Plugin architecture blocker:** https://code.forgejo.org/forgejo/forgejo-actions-feature-requests/issues/107
 
 **How it works:**
 - Each workflow job runs as a separate Kubernetes Pod
@@ -55,18 +57,57 @@ A **native Kubernetes backend** for the Forgejo runner is in active PoC developm
 - Similar to how the LXC backend was implemented
 - Earl Warren confirmed the runner is "already half way there" in terms of backend abstraction
 
-**Status (Sep 2025):**
-- Basic multi-step workflows execute successfully
-- Parallel job execution works
-- Still missing: Forgejo API integration, services, caching, artifacts, many workflow fields
-- Actively working on integrating PoC into the actual runner codebase
+**Status (Aug 2026):**
+- **infinoid's fork** (`code.forgejo.org/infinoid/k8s-runner`): working, battle-tested in homelabs since Sep 2025
+- **eleboucher** submitted a complete native k8s backend as PR `pulls/1472` in April 2026
+- **Maintainers declined to merge directly** — they want a plugin architecture first so backends can live outside core
+- Plugin architecture design is the active blocker (`issues/107`); PR `pulls/1472` waits on that decision
+- **ppaslan confirmed Talos 1.12.6 compatibility** with buildah: https://codeberg.org/ppaslan/forgejo-kubernetes-runners
+- johbo published kustomize deployment helpers: https://code.forgejo.org/johbo/k8s-runner
+- Referenced in Forgejo's official April/May 2026 monthly progress report
 
 **Impact on this homelab:**
-- Once merged upstream, this would be the cleanest solution — no fork, no plugin, no init container build step
-- Timeline unknown; likely months away from production-ready
+- Once plugin architecture is resolved and PR merges, this would be the cleanest solution — no fork, no plugin, no init container build step
+- Blocker is now a design decision (plugin architecture), not implementation — timeline clearer than before
 - Continue with eleboucher plugin approach for now; switch when native backend ships
 
-**Review date:** 2026-09-28 (check discussion #66 for merge progress)
+**Review date:** 2026-11-11 (check PR `pulls/1472` and `issues/107` for plugin arch progress)
+
+### Testing: infinoid/k8s-runner (Native Backend)
+
+**Status (2026-08-11):** 🧪 **UNDER TEST** — templates deployed alongside eleboucher runner
+
+A second runner (`forgejo-runner-native`) has been added to test infinoid's fork directly:
+
+- **Templates:** `templates/config/kubernetes/apps/forgejo/forgejo-runner-native/`
+- **Source cloned:** `/Users/I337469/projects/k8s-runner` (commit `3c0e7a5b`)
+- **Enabled in:** `templates/config/kubernetes/apps/forgejo/kustomization.yaml.j2`
+
+**Key differences from eleboucher approach:**
+
+| | eleboucher | infinoid (native) |
+|---|---|---|
+| Backend | External go-plugin binary | Built-in (`container.kubernetes: true`) |
+| Init container builds | 2 binaries (fork + plugin) | 1 binary only |
+| Label scheme | `k8s://` | `k8spod:` |
+| Docker socket bypass | `docker_host: "-"` | Not needed |
+| Cache | Not configured | `cache.enabled: false` (unsupported) |
+
+**Config:**
+```yaml
+container:
+  kubernetes: true
+  k8s_namespace: forgejo
+runner:
+  labels:
+    - "ubuntu-latest:k8spod:/config/podspec-default.yaml"
+```
+
+**Known limitations (from upstream README):**
+- No cache support
+- No service container support
+- Runner has no lookahead for k8s scheduling failures
+- `capacity` doesn't account for variable job sizes
 
 **HelmRelease is suspended** to prevent crash loops. Resume with:
 ```bash
