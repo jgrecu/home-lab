@@ -7,14 +7,16 @@ data:
   # Default pod spec for CI job pods.
   # Container MUST be named "main" — required by infinoid's k8s backend.
   # restartPolicy: Never prevents k8s from retrying failed CI jobs.
+  # Memory: setup-go downloads + extracts ~140MB Go archive; go test -race
+  # adds ~50MB overhead; go build peaks at 300-400MB. 1Gi gives safe headroom.
   podspec-default.yaml: |
     containers:
       - name: main
         image: docker.io/node:24-bookworm
         resources:
           requests:
-            cpu: 50m
-            memory: 64Mi
-          limits:
+            cpu: 100m
             memory: 256Mi
+          limits:
+            memory: 1Gi
     restartPolicy: Never
