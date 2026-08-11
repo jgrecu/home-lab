@@ -106,6 +106,9 @@ spec:
                 fi
                 /runner/forgejo-runner daemon --config /data/config.yaml
             env:
+              # The runner (UID 1000) caches downloaded actions under $HOME/.cache/act/.
+              # Without this, it tries /.cache which is owned by root and fails.
+              HOME: /data
               FORGEJO_INSTANCE_URL: "http://forgejo-http.forgejo.svc.cluster.local:3000"
               FORGEJO_RUNNER_REGISTRATION_TOKEN:
                 valueFrom:
