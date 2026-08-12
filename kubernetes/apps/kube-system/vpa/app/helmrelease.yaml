@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: vpa
-      version: 4.12.5
+      version: 5.0.0
       sourceRef:
         kind: HelmRepository
         name: fairwinds
@@ -23,6 +23,8 @@ spec:
           memory: 128Mi
         limits:
           memory: 512Mi
+      podMonitor:
+        enabled: true
 
     updater:
       enabled: true
@@ -32,6 +34,8 @@ spec:
           memory: 128Mi
         limits:
           memory: 512Mi
+      podMonitor:
+        enabled: true
 
     admissionController:
       enabled: true
@@ -41,9 +45,5 @@ spec:
           memory: 128Mi
         limits:
           memory: 512Mi
-
-    # Enable metrics for Prometheus
-    metrics:
-      serviceMonitor:
+      podMonitor:
         enabled: true
-        interval: 30s
