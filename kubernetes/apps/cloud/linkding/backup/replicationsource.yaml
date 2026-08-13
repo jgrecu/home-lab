@@ -15,7 +15,7 @@ spec:
       weekly: 4     # Last month
       monthly: 3    # Last 3 months
     copyMethod: Snapshot
-    storageClassName: longhorn-single
+    storageClassName: longhorn-volsync
     volumeSnapshotClassName: longhorn
     capacity: 2Gi
     accessModes:
