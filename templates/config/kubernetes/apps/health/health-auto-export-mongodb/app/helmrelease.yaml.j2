@@ -42,6 +42,7 @@ spec:
                       - "db.adminCommand('ping')"
                   initialDelaySeconds: 30
                   periodSeconds: 30
+                  timeoutSeconds: 5
                   failureThreshold: 5
               readiness:
                 enabled: false
