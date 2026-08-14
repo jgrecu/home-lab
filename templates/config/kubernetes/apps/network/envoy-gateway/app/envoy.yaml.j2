@@ -156,7 +156,12 @@ spec:
         - "#{ cluster_pod_cidr }#"
   http2:
     onInvalidMessage: TerminateStream
-  http3: {}
+  # http3: {}
+  # HTTP/3 (QUIC) disabled - 2026-08-14: Envoy Gateway v1.8.3 broke HTTP/3 POST body delivery.
+  # iOS Health Auto Export app uses HTTP/3 and Envoy logs show bytes_received=0 for all POST
+  # requests to hae.jgrecu.dev, causing "unexpected EOF" / "Request timed out" on the iOS side.
+  # Re-enable once a fix is confirmed in a future Envoy Gateway release.
+  # Clients will fall back to HTTP/2 (h2 is still in alpnProtocols below).
   targetSelectors:
     - group: gateway.networking.k8s.io
       kind: Gateway
