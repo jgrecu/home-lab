@@ -45,12 +45,3 @@ spec:
         enabled: true
         interval: 30s
 
-    # HTTPRoute for accessing the dashboard
-    route:
-      main:
-        enabled: true
-        hostnames: ["goldilocks.#{SECRET_DOMAIN}#"]
-        parentRefs:
-          - name: envoy-internal
-            namespace: network
-            sectionName: https
