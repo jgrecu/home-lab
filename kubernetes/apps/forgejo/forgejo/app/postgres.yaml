@@ -22,7 +22,7 @@ spec:
       memory: 4Gi
   storage:
     storageClass: longhorn-single
-    size: 5Gi
+    size: 10Gi
   bootstrap:
     initdb:
       database: forgejo
