@@ -37,10 +37,11 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  httpGet:
-                    path: /
-                    port: &port 3000
-                    host: "127.0.0.1"
+                  exec:
+                    command:
+                      - /bin/sh
+                      - -c
+                      - wget -qO /dev/null http://localhost:3000/api/healthcheck
                   initialDelaySeconds: 10
                   periodSeconds: 10
                   timeoutSeconds: 5
@@ -114,7 +115,7 @@ spec:
       app:
         ports:
           http:
-            port: *port
+            port: &port 3000
     route:
       app:
         # Using the internal gateway — Homepage is a private dashboard, not public
