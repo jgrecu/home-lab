@@ -10,7 +10,7 @@
   dependencyDashboard: true,
   dependencyDashboardTitle: 'Renovate Dashboard :robot:',
   schedule: [
-    'every day',
+    'after 11pm and before 1am',
   ],
   minimumReleaseAge: '3 days',
   osvVulnerabilityAlerts: true,
