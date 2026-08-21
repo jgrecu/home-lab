@@ -35,7 +35,7 @@ spec:
               resources:
                 requests:
                   cpu: 50m
-                  memory: 896Mi
+                  memory: 1500Mi
                 limits:
                   memory: 2Gi
     immich:
