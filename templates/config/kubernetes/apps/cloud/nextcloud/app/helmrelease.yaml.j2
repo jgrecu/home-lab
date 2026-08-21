@@ -86,13 +86,11 @@ spec:
         pod:
           affinity:
             podAffinity:
-              preferredDuringSchedulingIgnoredDuringExecution:
-                - weight: 100
-                  podAffinityTerm:
-                    labelSelector:
-                      matchLabels:
-                        app.kubernetes.io/controller: nextcloud
-                    topologyKey: kubernetes.io/hostname
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/controller: nextcloud
+                  topologyKey: kubernetes.io/hostname
         containers:
           cron:
             image:
