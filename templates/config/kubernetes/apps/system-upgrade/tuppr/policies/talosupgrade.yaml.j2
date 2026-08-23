@@ -35,4 +35,6 @@ spec:
 
   drain:
     enabled: true
-    disableEviction: false
+    # Use DELETE instead of Eviction API — bypasses Longhorn instance-manager
+    # PDBs (ALLOWED DISRUPTIONS: 0) which otherwise block the drain forever.
+    disableEviction: true
