@@ -56,6 +56,9 @@ spec:
                   httpGet:
                     path: /status.php
                     port: &port 80
+                    httpHeaders:
+                      - name: Host
+                        value: localhost
                   initialDelaySeconds: 30
                   periodSeconds: 30
                   timeoutSeconds: 10
@@ -141,6 +144,16 @@ spec:
         existingClaim: nextcloud-nfs-data
         globalMounts:
           - path: /var/www/html/data
+
+      # Custom config mounted from ConfigMap — persists trusted_domains,
+      # trusted_proxies, and overwrite settings across reinstalls.
+      custom-config:
+        type: configMap
+        name: nextcloud-custom-config
+        globalMounts:
+          - path: /var/www/html/config/custom.config.php
+            subPath: custom.config.php
+            readOnly: true
 
     service:
       app:
