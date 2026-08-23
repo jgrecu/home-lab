@@ -23,10 +23,10 @@ spec:
       replicas: 1
       port: 9333
       grpcPort: 19333
-      # Longhorn for metadata - latency sensitive
+      # NFS for master metadata - survives etcd/Longhorn loss (reclaimPolicy: Retain)
       data:
         type: persistentVolumeClaim
-        storageClass: longhorn
+        storageClass: nfs-seaweedfs
         size: 1Gi
       logs:
         type: emptyDir
@@ -62,7 +62,8 @@ spec:
           maxVolumes: 0
       idx:
         type: persistentVolumeClaim
-        storageClass: longhorn
+        # NFS for idx - can be rebuilt from NAS data but survives etcd/Longhorn loss
+        storageClass: nfs-seaweedfs
         size: 10Gi
       logs:
         type: emptyDir
@@ -99,10 +100,12 @@ spec:
         enableAuth: true
         existingConfigSecret: seaweedfs-s3-secret
         auditLogConfig: {}
-      # Longhorn for filer metadata
+      # NFS for filer metadata - survives etcd/Longhorn loss (reclaimPolicy: Retain)
+      # This is the critical component: maps S3 paths → volume IDs.
+      # On NFS it persists across cluster rebuilds, enabling real disaster recovery.
       data:
         type: persistentVolumeClaim
-        storageClass: longhorn
+        storageClass: nfs-seaweedfs
         size: 2Gi
       logs:
         type: emptyDir
