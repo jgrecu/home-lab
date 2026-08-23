@@ -15,4 +15,11 @@ data:
       'forwarded_for_headers'  => ['HTTP_X_FORWARDED_FOR'],
       'overwriteprotocol'      => 'https',
       'overwrite.cli.url'      => 'https://nextcloud.#{cluster.nextcloud.hostname}#',
+
+      // Trusted domains: external hostname + internal monitoring (Gatus)
+      'trusted_domains' => [
+        'nextcloud.#{cluster.nextcloud.hostname}#',
+        'localhost',
+        'nextcloud.cloud.svc.cluster.local',
+      ],
     ];
