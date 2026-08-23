@@ -20,6 +20,10 @@ spec:
       defaultReplicaCount: 2
       # Automatically rebalance replicas when a node comes back online
       replicaAutoBalance: best-effort
+      # Allow node drain when replicas are stopped — enables tuppr/talosctl upgrades
+      # to evict Longhorn instance-managers without being blocked by PDBs.
+      # Safe with 2 replicas: draining one node still leaves 1 healthy replica.
+      nodeDrainPolicy: allow-if-replica-is-stopped
       # Orphaned data cleanup
       orphanAutoDeletion: true
       # Reserve 20% of each disk for OS + Longhorn operations.
