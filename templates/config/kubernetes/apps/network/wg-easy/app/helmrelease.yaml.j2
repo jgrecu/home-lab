@@ -147,6 +147,13 @@ spec:
                 while true; do
                   sleep 10
 
+                  # Enforce listen port in case wg-easy resets it
+                  current_port=$(wg show wg0 listen-port 2>/dev/null)
+                  if [ "$current_port" != "51820" ]; then
+                    echo "Listen port is $current_port, correcting to 51820..."
+                    wg set wg0 listen-port 51820
+                  fi
+
                   # Check if interface is still up
                   if ! ip link show wg0 up >/dev/null 2>&1; then
                     echo "Interface wg0 is down, bringing it back up..."
