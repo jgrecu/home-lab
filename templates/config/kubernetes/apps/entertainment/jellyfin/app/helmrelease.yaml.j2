@@ -35,8 +35,7 @@ spec:
                   periodSeconds: 30
               readiness: *probes
             securityContext:
-              allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
+              privileged: true
             resources:
               requests:
                 cpu: 15m
