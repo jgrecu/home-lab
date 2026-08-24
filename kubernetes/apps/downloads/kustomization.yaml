@@ -10,8 +10,6 @@ resources:
   - ./namespace.yaml
   - ./downloads-pvc.yaml
   - ./media-pvc.yaml
-  - ./autobrr/ks.yaml
-  - ./autobrr/backup-ks.yaml
   - ./bazarr/ks.yaml
   - ./bazarr/backup-ks.yaml
   - ./flaresolverr/ks.yaml
