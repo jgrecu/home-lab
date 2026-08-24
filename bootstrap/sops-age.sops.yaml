@@ -4,20 +4,20 @@ metadata:
   name: sops-age
   namespace: flux-system
 stringData:
-  age.agekey: ENC[AES256_GCM,data:529D3NQt7A5av1Mxr9GJBtbJM2g1M3JSI1JrWNrhMBPRejodRiXlMrPdN2yow1YbG22Yfre8/mGAkTFm9KTTM99eUfTugpPZVdo=,iv:3fzzeYwFmDNqx6U210ViVkY8XW0btQW4DScru+7cq7w=,tag:+nW5O7eOODTuiJn/2vlF6w==,type:str]
+  age.agekey: ENC[AES256_GCM,data:fc4FMnh4uw2P+vZkf5JbQ3FFmESZIp/P9VnNrhFZecuWxU5YUaOgB1ZHxipwkTsCw3rQL4JJD5Y+OXL/qo1pexeHfXjuXoYLZEM=,iv:annBCRAfYKSSNA0GUjiOqWDHqRa5EAVFHiq7NBWNzCo=,tag:EFM3hn9XGRrKBOXRPCoUSg==,type:str]
 sops:
   age:
     - enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6UzdlU0phcDIxbmo3N0tT
-        dC9wTmJpT0dCK3g2NzdpQ0ZpK0k5T29mZzNnCmhNV01VWHMwSnY0Yml1TGdGd0RS
-        L3lzeFpYOXI3SUdCTXdDWUJHSWlBSEEKLS0tIDI5S0FVMDRrRGJsdklrL2p5WVla
-        UlgyN092Y29kUTcrcEo3ajBLeWxOTUEKzcB2jh0SMhdy1h+NKCWRpTNDDD7+m9EQ
-        g2jFrWkRfmrZ7ETR00UqPwD2gvs81FjpBp14ODM5gcWJhPzYBWAtxQ==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKZmJzTmY3bWdURGk0cUF5
+        MnV0bzEwUGpvNEZHdnYxanduc1d2aGcvN0UwCkZ5T0g2SGI5eTJkYlBFMmNybUt3
+        TFF5KzNvTkxxSUlXWXJXS1BTUktCNzgKLS0tIFg5aGkwSElHT3hkV2hEcGI0Vjlv
+        UmhjQXBZZlkwV05XUFZZaWhNR1JlV28K/Mtc7xGJ2l+rDfPdY896Vffam/+Y/VHk
+        zZ6dE3OYqvmOUv7rvLly2DUlN5hvx+q7xq53iGwwptjje8Hs1vsgIQ==
         -----END AGE ENCRYPTED FILE-----
       recipient: age1vmuwa3m333fmewnm9ltl02qg9sa6675qe4459cctyt7mjcfz6a0q5j4fxt
   encrypted_regex: ^(data|stringData)$
-  lastmodified: "2026-08-24T15:01:48Z"
-  mac: ENC[AES256_GCM,data:4KaaAkaCXoKrkRJIh+UV0wxjYGr2aPyClAIJBPOsEoTe+C4OTCfPstVPDxDWhkDjE+GyI7chBud8IdA2HNe1oyx5GfbtFm4qztHhF277KBvRJ9UkR30BpN24lgAaXboVRtnY+XIqdXkwKnwUBkHflcJM+E1dgWIZ+KJlr6Mpk7Y=,iv:oqDJDLDiHCShui4khhGsoniuJqa5HhLfQt/KmI5MNjo=,tag:dNjOtolWD0DTyOGZL93rMA==,type:str]
+  lastmodified: "2026-08-24T15:06:26Z"
+  mac: ENC[AES256_GCM,data:KCbm5ftA+yWAceOcHpX8nbBEHAn+uwUxM4iqymvUr2esfZ4w2caB/6Y4cSD2JXvIOA95Im7+soHEiVAgDyN0fqWCREfCfshvS34amkVW1RxXtdFMVZjhQHIzAYC6duVsw+kmzxeZNoq4Wb27o7au2N0lWhV8F0BUSUW9rKIBRsY=,iv:iHgbeL2Gna6u3MTCkhQLuwQS7ImqA0oHIJb7PoFus5I=,tag:DuelqcNwlE5qnJpH35cbyA==,type:str]
   mac_only_encrypted: true
   version: 3.13.3

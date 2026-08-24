@@ -114,7 +114,7 @@ spec:
                   echo "Config file found, bringing up interface..."
 
                   # Remove wg-quick specific directives and create clean config
-                  grep -v "^Address\|^MTU\|^PreUp\|^PostUp\|^PreDown\|^PostDown" /etc/wireguard/wg0.conf > /tmp/wg0-stripped.conf
+                  grep -v "^Address\|^MTU\|^Table\|^PreUp\|^PostUp\|^PreDown\|^PostDown" /etc/wireguard/wg0.conf > /tmp/wg0-stripped.conf
 
                   # Create WireGuard interface if it doesn't exist
                   if ! ip link show wg0 >/dev/null 2>&1; then
