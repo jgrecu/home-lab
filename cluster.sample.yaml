@@ -310,3 +310,15 @@ volsync_s3_secret_key: ""
 #    (REQUIRED after bootstrap)
 seaweedfs_s3_access_key_id: ""
 seaweedfs_s3_secret_access_key: ""
+
+# ============================================================================
+# Volsync Offsite Backup — Cloudflare R2
+# ============================================================================
+
+# -- Cloudflare R2 credentials for offsite Volsync backups
+#    Bucket: homelab-volsync
+#    Endpoint: https://<account-id>.eu.r2.cloudflarestorage.com
+r2_access_key_id: ""
+r2_secret_access_key: ""
+r2_endpoint: ""
+r2_bucket: ""

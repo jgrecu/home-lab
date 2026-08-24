@@ -80,6 +80,11 @@ import (
 	volsync_restic_password?:       string
 	volsync_s3_access_key?:         string
 	volsync_s3_secret_key?:         string
+	// Volsync Offsite Backup — Cloudflare R2
+	r2_access_key_id?:              string
+	r2_secret_access_key?:          string
+	r2_endpoint?:                   string
+	r2_bucket?:                     string
 }
 
 #Config

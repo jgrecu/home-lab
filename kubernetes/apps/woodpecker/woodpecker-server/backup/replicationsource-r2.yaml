@@ -1,0 +1,38 @@
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: woodpecker-server-data-backup-r2
+spec:
+  sourcePVC: woodpecker-server
+  trigger:
+    schedule: "0 12 * * *"  # Daily at noon (offsite R2 backup)
+  restic:
+    repository: woodpecker-server-data-r2-restic-secret
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 12
+    copyMethod: Snapshot
+    storageClassName: longhorn-volsync
+    volumeSnapshotClassName: longhorn
+    capacity: 2Gi
+    accessModes:
+      - ReadWriteOnce
+    pruneIntervalDays: 14
+    cacheCapacity: 512Mi
+    cacheStorageClassName: longhorn-single
+    cacheAccessModes:
+      - ReadWriteOnce
+    moverResources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 50m
+        memory: 256Mi
+    moverSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      fsGroup: 65534
+      seccompProfile:
+        type: RuntimeDefault
