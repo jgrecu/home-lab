@@ -124,6 +124,9 @@ spec:
                   # Apply WireGuard configuration
                   wg setconf wg0 /tmp/wg0-stripped.conf
 
+                  # Explicitly enforce listen port (wg setconf may not apply it on a running interface)
+                  wg set wg0 listen-port 51820
+
                   # Configure interface addresses
                   ip address flush dev wg0 2>/dev/null || true
                   ip address add 10.8.0.1/24 dev wg0
