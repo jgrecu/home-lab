@@ -39,7 +39,7 @@ spec:
             image:
               repository: ghcr.io/wg-easy/wg-easy
               # renovate: datasource=docker depName=ghcr.io/wg-easy/wg-easy
-              tag: 15
+              tag: 15.4.0
             env:
               TZ: "Europe/Madrid"
               # Web UI port
@@ -49,7 +49,7 @@ spec:
               # Minimal configuration required for v15
               INIT_ENABLED: "true"
               INIT_USERNAME: "admin"
-              INIT_PASSWORD: "testpassword123"
+              INIT_PASSWORD: "changeme12345"
               INIT_HOST: "vpn.jgrecu.dev"
               INIT_PORT: "51820"
               INIT_DNS: "192.168.1.166"
