@@ -40,6 +40,9 @@ spec:
             url: http://health-auto-export.health.svc.cluster.local:3001
             jsonData:
               tlsSkipVerify: true
+              httpHeaderName1: api-key
+            secureJsonData:
+              httpHeaderValue1: "sk-a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
 
     # Enable sidecar to watch for ConfigMaps with grafana_dashboard label
     # This adds custom dashboards from ConfigMaps to the existing downloaded ones
