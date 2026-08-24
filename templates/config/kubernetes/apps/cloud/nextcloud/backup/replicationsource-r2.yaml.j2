@@ -3,6 +3,7 @@ apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
   name: nextcloud-html-backup-r2
+  namespace: cloud
 spec:
   sourcePVC: nextcloud
   trigger:

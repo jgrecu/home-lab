@@ -3,6 +3,7 @@ apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
   name: woodpecker-server-data-backup-r2
+  namespace: woodpecker
 spec:
   sourcePVC: woodpecker-server
   trigger:

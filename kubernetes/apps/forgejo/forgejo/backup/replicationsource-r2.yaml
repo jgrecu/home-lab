@@ -3,6 +3,7 @@ apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
   name: forgejo-data-backup-r2
+  namespace: forgejo
 spec:
   sourcePVC: gitea-shared-storage
   trigger:

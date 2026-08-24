@@ -3,6 +3,7 @@ apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
   name: home-assistant-config-backup-r2
+  namespace: home-automation
 spec:
   sourcePVC: home-assistant
   trigger:

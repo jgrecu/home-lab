@@ -3,6 +3,7 @@ apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
   name: health-auto-export-mongodb-backup-r2
+  namespace: health
 spec:
   sourcePVC: health-auto-export-mongodb
   trigger:
