@@ -14,11 +14,11 @@ data:
       'trusted_proxies'        => ['10.42.0.0/16', '10.43.0.0/16'],
       'forwarded_for_headers'  => ['HTTP_X_FORWARDED_FOR'],
       'overwriteprotocol'      => 'https',
-      'overwrite.cli.url'      => 'https://nextcloud.',
+      'overwrite.cli.url'      => 'https://nextcloud.jgrecu.dev',
 
       // Trusted domains: external hostname + internal monitoring (Gatus)
       'trusted_domains' => [
-        'nextcloud.',
+        'nextcloud.jgrecu.dev',
         'localhost',
         'nextcloud.cloud.svc.cluster.local',
       ],
