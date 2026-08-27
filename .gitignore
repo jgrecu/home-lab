@@ -27,6 +27,7 @@ build/
 # Misc.
 .private/
 .task/
+.playwright-mcp/
 .venv/
 .DS_Store
 **/.DS_Store
