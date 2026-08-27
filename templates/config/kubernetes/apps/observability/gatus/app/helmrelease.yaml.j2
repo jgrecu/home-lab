@@ -262,6 +262,13 @@ spec:
                 conditions:
                   - "[STATUS] == 200"
 
+              - name: SABnzbd
+                group: Downloads
+                url: "http://sabnzbd-app.downloads.svc.cluster.local:8080"
+                interval: 5m
+                conditions:
+                  - "[STATUS] == 200"
+
               # Entertainment - Media Consumption
               - name: Jellyfin
                 group: Entertainment

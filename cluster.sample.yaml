@@ -249,6 +249,11 @@ prowlarr_api_key: ""
 #    (REQUIRED if using Exportarr metrics)
 bazarr_api_key: ""
 
+# -- SABnzbd API key (found in SABnzbd → Config → General → API Key)
+#    Obtain AFTER first deploy: SABnzbd UI → Config → General → API Key
+#    (REQUIRED for homepage widget integration)
+sabnzbd_api_key: ""
+
 # ============================================================================
 # Grimmory Configuration
 # ============================================================================

@@ -69,6 +69,8 @@ import (
 	recyclarr_sonarr_api_key?:      string
 	prowlarr_api_key?:              string
 	bazarr_api_key?:                string
+	// SABnzbd Configuration
+	sabnzbd_api_key?:               string
 	// Grimmory Configuration
 	grimmory_mariadb_root_password?: string
 	grimmory_mariadb_password?:      string

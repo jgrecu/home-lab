@@ -1,0 +1,39 @@
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: sabnzbd-config-backup
+  namespace: downloads
+spec:
+  sourcePVC: sabnzbd
+  trigger:
+    schedule: "0 3 * * *"
+  restic:
+    repository: sabnzbd-config-restic-secret
+    retain:
+      daily: 7
+      weekly: 8
+      monthly: 6
+    copyMethod: Snapshot
+    storageClassName: longhorn-volsync
+    volumeSnapshotClassName: longhorn
+    capacity: 1Gi
+    accessModes:
+      - ReadWriteOnce
+    pruneIntervalDays: 7
+    cacheCapacity: 512Mi
+    cacheStorageClassName: longhorn-single
+    cacheAccessModes:
+      - ReadWriteOnce
+    moverResources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+    moverSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      fsGroup: 65534
+      seccompProfile:
+        type: RuntimeDefault
