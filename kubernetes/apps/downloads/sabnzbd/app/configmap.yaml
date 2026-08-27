@@ -20,3 +20,14 @@ data:
     else
       sed -i "/^\[misc\]/a host_whitelist = $HOSTNAME" "$INI"
     fi
+
+  20-download-dirs.sh: |
+    #!/bin/sh
+    # Ensure SABnzbd uses the /downloads PVC, not the /config PVC.
+    # Runs on every container start via /custom-cont-init.d (linuxserver s6 hook).
+    INI="/config/sabnzbd.ini"
+
+    [ -f "$INI" ] || exit 0
+
+    sed -i "s|^download_dir =.*|download_dir = /downloads/incomplete|" "$INI"
+    sed -i "s|^complete_dir =.*|complete_dir = /downloads/complete|" "$INI"
