@@ -264,7 +264,7 @@ spec:
 
               - name: SABnzbd
                 group: Downloads
-                url: "http://sabnzbd-app.downloads.svc.cluster.local:8080"
+                url: "http://sabnzbd.downloads.svc.cluster.local:8080"
                 interval: 5m
                 conditions:
                   - "[STATUS] == 200"
