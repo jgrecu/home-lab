@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sabnzbd-custom-init
+  namespace: downloads
+data:
+  10-host-whitelist.sh: |
+    #!/bin/sh
+    # Ensure SABnzbd allows access through the reverse proxy hostname.
+    # Runs on every container start via /custom-cont-init.d (linuxserver s6 hook).
+    INI="/config/sabnzbd.ini"
+    HOSTNAME="sabnzbd.#{ cloudflare_domain }#"
+
+    [ -f "$INI" ] || exit 0
+    grep -q "$HOSTNAME" "$INI" && exit 0
+
+    if grep -q "^host_whitelist" "$INI"; then
+      sed -i "s/^host_whitelist =.*/host_whitelist = $HOSTNAME/" "$INI"
+    else
+      sed -i "/^\[misc\]/a host_whitelist = $HOSTNAME" "$INI"
+    fi

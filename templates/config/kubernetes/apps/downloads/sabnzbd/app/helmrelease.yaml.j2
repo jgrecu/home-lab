@@ -58,6 +58,12 @@ spec:
         existingClaim: media-downloads
         globalMounts:
           - path: /downloads
+      custom-init:
+        type: configMap
+        name: sabnzbd-custom-init
+        defaultMode: 0755
+        globalMounts:
+          - path: /custom-cont-init.d
 
     service:
       app:
