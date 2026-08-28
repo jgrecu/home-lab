@@ -47,6 +47,12 @@
   },
   packageRules: [
     {
+      description: 'hotio images use release-X.Y.Z versioning scheme',
+      matchDatasources: ['docker'],
+      matchPackageNames: ['/^ghcr\\.io\\/hotio\\//'],
+      versioning: 'loose',
+    },
+    {
       description: 'Override Helmfile Dependency Name',
       matchDatasources: [
         'docker',
