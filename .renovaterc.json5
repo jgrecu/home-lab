@@ -13,7 +13,7 @@
     'after 11pm',
     'before 1am',
   ],
-  minimumReleaseAge: '3 days',
+  minimumReleaseAge: '2 days',
   osvVulnerabilityAlerts: true,
   platformAutomerge: true,
   ignorePaths: [
@@ -91,7 +91,7 @@
       group: {
         commitMessageTopic: '{{{groupName}}} group',
       },
-      minimumGroupSize: 3,
+      minimumGroupSize: 1,
     },
     {
       description: '*arr stack group (sonarr, radarr, prowlarr, bazarr, recyclarr)',
