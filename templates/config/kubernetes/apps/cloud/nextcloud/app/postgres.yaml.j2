@@ -25,6 +25,8 @@ spec:
     initdb:
       database: nextcloud
       owner: nextcloud
+      postInitSQL:
+        - "GRANT CONNECT ON DATABASE nextcloud TO cnpg_metrics_exporter"
   # Continuous WAL archiving to SeaweedFS S3
   # Provides point-in-time recovery with ~5 minute RPO
   backup:
