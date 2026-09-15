@@ -1811,7 +1811,7 @@ data:
             "type": "prometheus",
             "uid": "$${DS_PROMETHEUS}"
           },
-          "description": "Base Backups are considered healthy when there has been at least one base backup in the last 24 hours.",
+          "description": "Base Backups are considered healthy when there has been at least one base backup in the last 7 days (weekly schedule).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1837,25 +1837,25 @@ data:
                       "index": 1,
                       "text": "Healthy"
                     },
-                    "to": 90000
+                    "to": 604800
                   },
                   "type": "range"
                 },
                 {
                   "options": {
-                    "from": 90000,
+                    "from": 604800,
                     "result": {
                       "color": "orange",
                       "index": 2,
                       "text": "Degraded"
                     },
-                    "to": 108000
+                    "to": 864000
                   },
                   "type": "range"
                 },
                 {
                   "options": {
-                    "from": 108000,
+                    "from": 864000,
                     "result": {
                       "color": "red",
                       "index": 3,
