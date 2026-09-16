@@ -1,4 +1,4 @@
-# Talos 1.14.0 Upgrade Guide
+# Talos 1.14 Upgrade Guide
 
 ## Why Manual Upgrade is Required
 
@@ -20,14 +20,14 @@ talosImageURL: factory.talos.dev/installer/2dcd442954d67662d41c61bdb92165aaf7189
 - `siderolabs/intel-ucode` - Intel CPU microcode  
 - `siderolabs/iscsi-tools` - Required for Longhorn storage
 
-## Why Upgrade to Talos 1.14.0?
+## Why Upgrade to Talos 1.14?
 
 **Required for Kubernetes 1.37 support:**
 - Talos 1.13.x only supports up to Kubernetes 1.36.x
 - Kubernetes 1.37.0 requires Talos 1.14.0+
-- PR #470 (Kubernetes 1.37 upgrade) is currently blocked
+- PR #470 (Kubernetes 1.37 upgrade) is blocked until this upgrade completes
 
-**What Talos 1.14.0 Brings:**
+**What Talos 1.14 Brings:**
 - Kubernetes 1.37 compatibility
 - Multi-document Kubernetes configuration
 - LVM logical volume support
@@ -38,17 +38,31 @@ talosImageURL: factory.talos.dev/installer/2dcd442954d67662d41c61bdb92165aaf7189
 
 ### Step 1: Update Version in Templates
 
-Edit `talos/talenv.yaml`:
+Edit **two template files** (never the generated files directly — they are overwritten by `task configure --yes`):
+
+**`templates/config/talos/talenv.yaml.j2`:**
 
 ```bash
 # Before:
 talosVersion: v1.13.10
 
 # After:
-talosVersion: v1.14.0
+talosVersion: v1.14.1
 ```
 
-**Note:** The Image Factory URL stays the same - no changes needed to `talos/talconfig.yaml`!
+**`templates/config/kubernetes/apps/system-upgrade/tuppr/policies/talosupgrade.yaml.j2`:**
+
+```bash
+# Before:
+    version: v1.13.10
+
+# After:
+    version: v1.14.1
+```
+
+> **Why two files?** `talenv.yaml.j2` drives talhelper config generation. The Tuppr policy has its own hardcoded version (with a Renovate annotation) that tells Tuppr which image to pull from Image Factory. They are independent — both must be updated.
+
+**Note:** The Image Factory URL stays the same — no changes needed to `talos/talconfig.yaml`!
 
 ### Step 2: Regenerate Configurations
 
@@ -64,7 +78,7 @@ This updates:
 
 ```bash
 git add talos/talenv.yaml kubernetes/ talos/
-git commit -m "feat(talos): upgrade to v1.14.0 for Kubernetes 1.37 support"
+git commit -m "feat(talos): upgrade to v1.14.1 for Kubernetes 1.37 support"
 git pull --rebase
 git push
 ```
@@ -108,7 +122,7 @@ talosctl -n 192.168.1.162 version
 After all nodes are upgraded:
 
 ```bash
-# Verify all nodes on v1.14.0
+# Verify all nodes on v1.14.1
 kubectl get nodes -o wide
 
 # Check Talos version
@@ -120,7 +134,7 @@ kubectl get pods -A | grep -v Running
 
 ### Step 7: Remove Kubernetes 1.37 Block
 
-Once Talos 1.14.0 is deployed, remove the Renovate block:
+Once Talos 1.14 is deployed, remove the Renovate block:
 
 Edit `.renovaterc.json5` and **remove or comment out** this rule (around line 57-65):
 ```json5
@@ -156,12 +170,13 @@ talosctl upgrade --image factory.talos.dev/installer/2dcd442954d67662d41c61bdb92
 
 ## Important Notes
 
-1. **No Image Factory schematic changes needed** - your existing schematic works with v1.14.0
-2. **Tuppr handles the upgrade automatically** - just update the version and wait for Sunday 02:00 UTC
-3. **One node at a time** - upgrade is safe with health checks between each node
-4. **Workloads keep running** - Longhorn replicates data across nodes during drain
+1. **Two template files must be updated** — `templates/config/talos/talenv.yaml.j2` AND `templates/config/kubernetes/apps/system-upgrade/tuppr/policies/talosupgrade.yaml.j2`. Editing only one will leave Tuppr pointing at the old version.
+2. **No Image Factory schematic changes needed** — your existing schematic works with v1.14.x
+3. **Tuppr handles the upgrade automatically** — just update the version and wait for Sunday 02:00 UTC
+4. **One node at a time** — upgrade is safe with health checks between each node
+5. **Workloads keep running** — Longhorn replicates data across nodes during drain
 
-## Breaking Changes in Talos 1.14.0
+## Breaking Changes in Talos 1.14
 
 Most breaking changes don't affect typical homelab setups, but be aware:
 
@@ -171,7 +186,7 @@ Most breaking changes don't affect typical homelab setups, but be aware:
 
 ## References
 
-- [Talos 1.14.0 Release Notes](https://github.com/siderolabs/talos/releases/tag/v1.14.0)
+- [Talos 1.14 Release Notes](https://github.com/siderolabs/talos/releases/tag/v1.14.0)
 - [Talos Image Factory Documentation](https://www.talos.dev/latest/talos-guides/install/boot-assets/)
 - [Tuppr Documentation](https://github.com/home-operations/tuppr)
 
@@ -183,7 +198,7 @@ Most breaking changes don't affect typical homelab setups, but be aware:
 
 ---
 
-**Last Updated:** 2026-09-14  
-**Current Talos:** v1.13.10  
-**Target Talos:** v1.14.0  
-**Blocking:** Kubernetes 1.37 upgrade (PR #470)
+**Last Updated:** 2026-09-16  
+**Current Talos:** v1.14.1 (committed; Tuppr applies Sunday 02:00 UTC)  
+**Previous Talos:** v1.13.10  
+**Blocking:** Kubernetes 1.37 upgrade (PR #470) — unblock after Tuppr completes
