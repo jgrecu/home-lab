@@ -55,15 +55,6 @@
       matchCurrentVersion: '1.21.1',
     },
     {
-      description: 'Block Kubernetes 1.37 until Talos 1.14+ is deployed (Talos 1.13.x only supports up to K8s 1.36.x)',
-      enabled: false,
-      matchDatasources: ['docker'],
-      matchPackageNames: [
-        'ghcr.io/siderolabs/kubelet',
-      ],
-      allowedVersions: '<1.37.0',
-    },
-    {
       description: 'hotio images use release-X.Y.Z versioning scheme',
       matchDatasources: ['docker'],
       matchPackageNames: ['/^ghcr\\.io\\/hotio\\//'],
