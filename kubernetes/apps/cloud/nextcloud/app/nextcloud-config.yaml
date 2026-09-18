@@ -22,4 +22,13 @@ data:
         'localhost',
         'nextcloud.cloud.svc.cluster.local',
       ],
+
+      // Run resource-intensive background jobs at 1 AM UTC (low-traffic window)
+      'maintenance_window_start' => 1,
+
+      // Default region for phone number validation without a country code prefix
+      'default_phone_region' => 'ES',
+
+      // Unique server identifier (relevant for multi-PHP-server setups)
+      'server_id' => 'nextcloud-k8s',
     ];

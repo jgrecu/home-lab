@@ -173,6 +173,12 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
+            filters:
+              - type: ResponseHeaderModifier
+                responseHeaderModifier:
+                  add:
+                    - name: Strict-Transport-Security
+                      value: "max-age=15552000; includeSubDomains; preload"
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Cloud
