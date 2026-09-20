@@ -9,21 +9,36 @@ spec:
     version: v1.14.1
 
   policy:
-    debug: false
+    # debug streams full installer output to the job log — a 1-second completion
+    # is immediately visible and signals a corrupted image snapshot.
+    debug: true
     force: true
     # default reboot mode — graceful shutdown and reboot
     rebootMode: default
     # soft placement — prefers to upgrade non-critical nodes first
     placement: soft
     timeout: 30m
+    # Wait for Longhorn CSI volumes to fully detach before sending the upgrade
+    # command to Talos. Prevents Multi-Attach races when a fast kexec reboot
+    # orphans a mount before the kubelet teardown completes.
+    waitForVolumeDetach: true
 
   healthChecks:
-    # Wait for each node to report Ready before moving to the next.
-    # Prevents a failed upgrade from cascading across all three nodes.
-    - apiVersion: v1
+    # All Longhorn storage nodes must be Ready before touching the next node.
+    # Catches replica-rebuild state between sequential node upgrades.
+    - apiVersion: longhorn.io/v1beta2
       kind: Node
+      description: "All Longhorn storage nodes must be Ready"
       expr: status.conditions.exists(c, c.type == "Ready" && c.status == "True")
       timeout: 10m
+    # Wait for each Kubernetes node to report Ready before moving to the next.
+    # Prevents a failed upgrade from cascading across all nodes.
+    # 15m gives enough runway for Longhorn volume remount on this hardware.
+    - apiVersion: v1
+      kind: Node
+      description: "Node must be Ready after upgrade"
+      expr: status.conditions.exists(c, c.type == "Ready" && c.status == "True")
+      timeout: 15m
 
   maintenance:
     windows:

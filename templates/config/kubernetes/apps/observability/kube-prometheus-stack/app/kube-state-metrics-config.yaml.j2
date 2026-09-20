@@ -188,6 +188,36 @@ data:
                     exported_namespace: [metadata, namespace]
 
         - groupVersionKind:
+            group: tuppr.home-operations.com
+            version: "v1alpha1"
+            kind: TalosUpgrade
+          metricNamePrefix: tuppr
+          commonLabels:
+            kind: "TalosUpgrade"
+          metrics:
+            - name: "upgrade_phase"
+              help: "The current phase of a TalosUpgrade resource"
+              each:
+                type: StateSet
+                stateSet:
+                  labelName: phase
+                  path: [status, phase]
+                  list:
+                    - "Pending"
+                    - "HealthChecking"
+                    - "PreHook"
+                    - "Draining"
+                    - "Upgrading"
+                    - "Rebooting"
+                    - "PostHook"
+                    - "Completed"
+                    - "Failed"
+                    - "MaintenanceWindow"
+                  labelsFromPath:
+                    name: [metadata, name]
+                    target_version: [spec, talos, version]
+
+        - groupVersionKind:
             group: helm.toolkit.fluxcd.io
             version: "v2"
             kind: HelmRelease

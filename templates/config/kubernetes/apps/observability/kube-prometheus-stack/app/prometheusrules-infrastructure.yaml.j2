@@ -87,6 +87,43 @@ spec:
             summary: "Flux {{ $labels.kind }} {{ $labels.name }} reconciliation failing"
             description: "{{ $labels.kind }}/{{ $labels.name }} in namespace {{ $labels.namespace }} has been failing reconciliation for 10 minutes"
 
+    - name: upgrades
+      interval: 1m
+      rules:
+        # Alert when a TalosUpgrade CR enters the Failed phase.
+        # Fires ~5 min after failure — catches silent failures like a corrupted
+        # installer snapshot returning exit_code=0 without rebooting.
+        # Recovery: kubectl delete talosupgrade <name> && task configure --yes && git push
+        - alert: TalosUpgradeFailed
+          expr: |
+            tuppr_upgrade_phase{phase="Failed"} == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Talos upgrade {{ $labels.name }} failed"
+            description: >-
+              TalosUpgrade {{ $labels.name }} targeting {{ $labels.target_version }}
+              has been in Failed phase for 5+ minutes. A node may be left cordoned.
+              Recovery: kubectl delete talosupgrade {{ $labels.name }} &&
+              task configure --yes && git push
+
+        # Alert when a node stays in Rebooting phase too long.
+        # The installer reported success (exit_code=0) but the node never came
+        # back on the new version — classic corrupted-snapshot false positive.
+        - alert: TalosUpgradeNodeStuck
+          expr: |
+            tuppr_upgrade_phase{phase="Rebooting"} == 1
+          for: 20m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Talos upgrade {{ $labels.name }} node stuck in Rebooting"
+            description: >-
+              TalosUpgrade {{ $labels.name }} has had a node in Rebooting phase for 20+
+              minutes. The installer may have returned exit_code=0 against a corrupted
+              image snapshot without actually rebooting. Check job logs and node version.
+
     - name: backup
       interval: 5m
       rules:
