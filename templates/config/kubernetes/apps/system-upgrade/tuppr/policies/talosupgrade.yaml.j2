@@ -7,14 +7,23 @@ spec:
   talos:
     # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
     version: v1.14.1
+    # prePull: false forces each node's upgrade job to pull the installer image
+    # fresh rather than relying on a pre-pulled snapshot. Eliminates the
+    # corrupted-snapshot false-success where the installer returns exit_code=0
+    # in ~1s without writing anything (seen when a context-canceled pre-pull
+    # leaves a broken containerd snapshot). Trade-off: factory.talos.dev must
+    # be reachable at each node's upgrade time, not just at run start.
+    prePull: false
 
   policy:
     # debug streams full installer output to the job log — a 1-second completion
     # is immediately visible and signals a corrupted image snapshot.
     debug: true
     force: true
-    # default reboot mode — graceful shutdown and reboot
-    rebootMode: default
+    # powercycle does a full ACPI hardware power cycle instead of kexec.
+    # Gives Longhorn a clean shutdown before the node comes back, eliminating
+    # the brief Multi-Attach window that kexec's fast in-memory swap can cause.
+    rebootMode: powercycle
     # soft placement — prefers to upgrade non-critical nodes first
     placement: soft
     timeout: 30m
