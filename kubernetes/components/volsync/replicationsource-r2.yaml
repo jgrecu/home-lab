@@ -1,15 +1,17 @@
 ---
+# Base ReplicationSource for offsite Cloudflare R2 backups.
+# Apps override only what differs from these defaults via Strategic Merge Patch.
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
-  name: jellyfin-config-backup-r2
-  namespace: entertainment
+  name: volsync-r2
+  namespace: default
 spec:
-  sourcePVC: jellyfin
+  sourcePVC: placeholder
   trigger:
     schedule: "0 12 * * *"  # Daily at noon (offsite R2 backup)
   restic:
-    repository: jellyfin-config-r2-restic-secret
+    repository: placeholder-r2-restic-secret
     retain:
       daily: 7
       weekly: 4
@@ -17,20 +19,20 @@ spec:
     copyMethod: Snapshot
     storageClassName: longhorn-volsync
     volumeSnapshotClassName: longhorn
-    capacity: 10Gi
+    capacity: 2Gi
     accessModes:
       - ReadWriteOnce
     pruneIntervalDays: 14
-    cacheCapacity: 2Gi
+    cacheCapacity: 512Mi
     cacheStorageClassName: longhorn-single
     cacheAccessModes:
       - ReadWriteOnce
     moverResources:
       limits:
-        memory: 1Gi
+        memory: 512Mi
       requests:
         cpu: 50m
-        memory: 512Mi
+        memory: 256Mi
     moverSecurityContext:
       runAsNonRoot: true
       runAsUser: 65534

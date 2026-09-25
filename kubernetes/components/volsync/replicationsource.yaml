@@ -1,23 +1,25 @@
 ---
+# Base ReplicationSource for local SeaweedFS backups.
+# Apps override only what differs from these defaults via Strategic Merge Patch.
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
-  name: grimmory-data-backup
-  namespace: entertainment
+  name: volsync-local
+  namespace: default
 spec:
-  sourcePVC: grimmory-data
+  sourcePVC: placeholder
   trigger:
-    schedule: "0 5 * * *"  # Daily at 5 AM (staggered)
+    schedule: "0 0 * * *"
   restic:
-    repository: grimmory-data-restic-secret
+    repository: placeholder-restic-secret
     retain:
-      daily: 7      # Last week
-      weekly: 8     # Last 2 months
-      monthly: 6    # Last 6 months
+      daily: 7
+      weekly: 8
+      monthly: 6
     copyMethod: Snapshot
     storageClassName: longhorn-volsync
     volumeSnapshotClassName: longhorn
-    capacity: 500Mi
+    capacity: 2Gi
     accessModes:
       - ReadWriteOnce
     pruneIntervalDays: 7

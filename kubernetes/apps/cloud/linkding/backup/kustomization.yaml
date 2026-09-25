@@ -1,8 +1,63 @@
 ---
+# BUG FIX applied:
+#   - repository: "linkding-restic-secret" → "linkding-data-restic-secret" (naming convention fix)
+#   - repository: "linkding-r2-restic-secret" → "linkding-data-r2-restic-secret"
+#   - secret.sops.yaml and secret-r2.sops.yaml metadata.name updated to match
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+components:
+  - ../../../../components/volsync
 resources:
   - ./secret.sops.yaml
-  - ./replicationsource.yaml
   - ./secret-r2.sops.yaml
-  - ./replicationsource-r2.yaml
+patches:
+  - target:
+      kind: ReplicationSource
+      name: volsync-local
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: linkding-data-backup
+      - op: replace
+        path: /metadata/namespace
+        value: cloud
+      - op: replace
+        path: /spec/sourcePVC
+        value: linkding
+      - op: replace
+        path: /spec/trigger/schedule
+        value: "0 2 * * *"
+      - op: replace
+        path: /spec/restic/repository
+        value: linkding-data-restic-secret
+      - op: replace
+        path: /spec/restic/cacheCapacity
+        value: 1Gi
+      - op: replace
+        path: /spec/restic/retain/weekly
+        value: 4
+      - op: replace
+        path: /spec/restic/retain/monthly
+        value: 3
+      - op: replace
+        path: /spec/restic/moverResources/limits/memory
+        value: 512Mi
+      - op: replace
+        path: /spec/restic/moverResources/requests/memory
+        value: 256Mi
+  - target:
+      kind: ReplicationSource
+      name: volsync-r2
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: linkding-data-backup-r2
+      - op: replace
+        path: /metadata/namespace
+        value: cloud
+      - op: replace
+        path: /spec/sourcePVC
+        value: linkding
+      - op: replace
+        path: /spec/restic/repository
+        value: linkding-data-r2-restic-secret

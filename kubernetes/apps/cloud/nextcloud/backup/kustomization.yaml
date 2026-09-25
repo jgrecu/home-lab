@@ -1,8 +1,68 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+components:
+  - ../../../../components/volsync
 resources:
   - ./secret.sops.yaml
-  - ./replicationsource.yaml
   - ./secret-r2.sops.yaml
-  - ./replicationsource-r2.yaml
+patches:
+  - target:
+      kind: ReplicationSource
+      name: volsync-local
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: nextcloud-html-backup
+      - op: replace
+        path: /metadata/namespace
+        value: cloud
+      - op: replace
+        path: /spec/sourcePVC
+        value: nextcloud
+      - op: replace
+        path: /spec/trigger/schedule
+        value: "0 1 * * *"
+      - op: replace
+        path: /spec/restic/repository
+        value: nextcloud-html-restic-secret
+      - op: replace
+        path: /spec/restic/capacity
+        value: 10Gi
+      - op: replace
+        path: /spec/restic/cacheCapacity
+        value: 2Gi
+      - op: replace
+        path: /spec/restic/moverResources/limits/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/restic/moverResources/requests/memory
+        value: 512Mi
+  - target:
+      kind: ReplicationSource
+      name: volsync-r2
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: nextcloud-html-backup-r2
+      - op: replace
+        path: /metadata/namespace
+        value: cloud
+      - op: replace
+        path: /spec/sourcePVC
+        value: nextcloud
+      - op: replace
+        path: /spec/restic/repository
+        value: nextcloud-html-r2-restic-secret
+      - op: replace
+        path: /spec/restic/capacity
+        value: 10Gi
+      - op: replace
+        path: /spec/restic/cacheCapacity
+        value: 2Gi
+      - op: replace
+        path: /spec/restic/moverResources/limits/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/restic/moverResources/requests/memory
+        value: 512Mi

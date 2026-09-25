@@ -1,36 +1,38 @@
 ---
+# Base ReplicationSource for local SeaweedFS backups.
+# Apps override only what differs from these defaults via Strategic Merge Patch.
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
-  name: bazarr-config-backup-r2
-  namespace: downloads
+  name: volsync-local
+  namespace: default
 spec:
-  sourcePVC: bazarr
+  sourcePVC: placeholder
   trigger:
-    schedule: "0 12 * * *"  # Daily at noon (offsite R2 backup)
+    schedule: "0 0 * * *"
   restic:
-    repository: bazarr-config-r2-restic-secret
+    repository: placeholder-restic-secret
     retain:
       daily: 7
-      weekly: 4
-      monthly: 12
+      weekly: 8
+      monthly: 6
     copyMethod: Snapshot
     storageClassName: longhorn-volsync
     volumeSnapshotClassName: longhorn
     capacity: 2Gi
     accessModes:
       - ReadWriteOnce
-    pruneIntervalDays: 14
+    pruneIntervalDays: 7
     cacheCapacity: 512Mi
     cacheStorageClassName: longhorn-single
     cacheAccessModes:
       - ReadWriteOnce
     moverResources:
       limits:
-        memory: 512Mi
+        memory: 256Mi
       requests:
         cpu: 50m
-        memory: 256Mi
+        memory: 128Mi
     moverSecurityContext:
       runAsNonRoot: true
       runAsUser: 65534
