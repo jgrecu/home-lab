@@ -107,8 +107,10 @@ spec:
         storageClass: longhorn
         size: 2Gi
         accessMode: ReadWriteOnce
-        globalMounts:
-          - path: /etc/linkding/data
+        advancedMounts:
+          linkding:
+            app:
+              - path: /etc/linkding/data
 
     service:
       app:
