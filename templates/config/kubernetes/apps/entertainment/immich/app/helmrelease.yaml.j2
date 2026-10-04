@@ -8,6 +8,14 @@ spec:
     kind: OCIRepository
     name: immich
   interval: 1h
+  upgrade:
+    timeout: 20m
+    cleanupOnFail: true
+    crds: CreateReplace
+    remediation:
+      remediateLastFailure: true
+      retries: 2
+      strategy: RemediateOnFailure
   values:
     # Server component configuration
     server:
