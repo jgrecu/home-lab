@@ -300,7 +300,11 @@ extraArgs:
 
 ## Last Updated
 
-**Date:** 2026-09-14  
-**Pinned Version:** external-dns v1.21.1  
-**Reason:** v1.22.0 breaks Gateway API + Cloudflare Tunnel + private IP setup  
-**Next Action:** Monitor upstream for fixes in v1.22.1+, v1.23.0+
+**Date:** 2026-10-04
+**Status:** RESOLVED — upgraded to external-dns v1.23.0
+**Fix:** Renamed Gateway annotations from `external-dns.alpha.kubernetes.io/*` to `external-dns.kubernetes.io/*` (annotation prefix promoted out of alpha in v0.22.0)
+**Upstream issue:** https://github.com/kubernetes-sigs/external-dns/issues/6748 (closed)
+**Files changed:**
+- `templates/config/kubernetes/apps/network/envoy-gateway/app/envoy.yaml.j2` — annotation rename
+- `templates/config/kubernetes/apps/network/cloudflare-dns/app/ocirepository.yaml.j2` — unpinned to 1.23.0
+- `.renovaterc.json5` — removed external-dns pin rule
