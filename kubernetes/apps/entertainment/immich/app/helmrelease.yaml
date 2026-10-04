@@ -11,11 +11,10 @@ spec:
   upgrade:
     timeout: 20m
     cleanupOnFail: true
-    crds: CreateReplace
     remediation:
       remediateLastFailure: true
-      retries: 2
-      strategy: RemediateOnFailure
+      retries: 3
+      strategy: rollback
   values:
     # Server component configuration
     server:
