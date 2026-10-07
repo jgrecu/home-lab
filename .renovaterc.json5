@@ -13,7 +13,6 @@
     'after 11pm',
     'before 1am',
   ],
-  minimumReleaseAge: '2 days',
   osvVulnerabilityAlerts: true,
   platformAutomerge: true,
   ignorePaths: [
@@ -43,6 +42,21 @@
     ],
   },
   packageRules: [
+    {
+      description: 'Wait 3 days before creating PRs for major updates',
+      matchUpdateTypes: ['major'],
+      minimumReleaseAge: '3 days',
+    },
+    {
+      description: 'Wait 2 days before creating PRs for minor updates',
+      matchUpdateTypes: ['minor'],
+      minimumReleaseAge: '2 days',
+    },
+    {
+      description: 'Wait 1 day before creating PRs for patch updates',
+      matchUpdateTypes: ['patch'],
+      minimumReleaseAge: '1 day',
+    },
     {
       description: 'hotio images use release-X.Y.Z versioning scheme',
       matchDatasources: ['docker'],
