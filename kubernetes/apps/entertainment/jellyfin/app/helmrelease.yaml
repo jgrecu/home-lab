@@ -20,7 +20,7 @@ spec:
             image:
               repository: ghcr.io/jellyfin/jellyfin
               # renovate: datasource=docker depName=ghcr.io/jellyfin/jellyfin versioning=loose
-              tag: 12.1
+              tag: 12.2
             env:
               TZ: "Europe/Madrid"
             probes:
