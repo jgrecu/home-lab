@@ -30,7 +30,7 @@ spec:
       memory: 256Mi
 
   # Dragonfly container configuration
-  image: docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.0
+  image: docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2
 
   # Additional Dragonfly args (optional)
   args:
