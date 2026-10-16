@@ -17,7 +17,7 @@ spec:
             image:
               repository: forgejo.jgrecu.dev/jeremy/health-auto-export
               # renovate: datasource=docker depName=forgejo.jgrecu.dev/jeremy/health-auto-export
-              tag: "v0.1.0"
+              tag: "v0.1.1"
             env:
               NODE_ENV: production
               MONGO_HOST: health-auto-export-mongodb.health.svc.cluster.local
