@@ -5,16 +5,20 @@ metadata:
   name: forgejo-runner-podspecs
 data:
   # Default PodSpec for CI job pods spawned by the K8s plugin.
-  # This is used when no per-label PodSpec is specified.
-  # Uses a fixed node:20-bookworm image for general CI tasks.
-  # Labels can override this by providing a different PodSpec path.
+  # Uses the bjw-s-labs Forgejo runner image: a purpose-built Ubuntu image with
+  # Node.js, git, and common CI tools pre-installed and correctly on PATH.
+  # Required for JavaScript actions (e.g. actions/checkout) to resolve `node`.
   podspec-default.yaml: |
     containers:
       - name: main
-        image: docker.io/node:24-bookworm
+        image: ghcr.io/bjw-s-labs/forgejo-runner:ubuntu-24.04
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: DEBIAN_FRONTEND
+            value: noninteractive
         resources:
           requests:
-            cpu: 50m
-            memory: 64Mi
-          limits:
+            cpu: 100m
             memory: 256Mi
+          limits:
+            memory: 1Gi
