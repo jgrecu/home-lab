@@ -22,3 +22,25 @@ data:
             memory: 256Mi
           limits:
             memory: 1Gi
+
+  # PodSpec for Docker image builds via Kaniko.
+  # Kaniko builds OCI images without a Docker daemon or privileged containers
+  # (compliant with baseline PSS). The debug image includes a busybox shell
+  # so the runner plugin can exec steps. Kaniko clones the repo directly from
+  # the git context, so no checkout action is needed in kaniko jobs.
+  podspec-kaniko.yaml: |
+    containers:
+      - name: main
+        image: gcr.io/kaniko-project/executor:debug
+        imagePullPolicy: IfNotPresent
+        # Kaniko requires root to manipulate overlay filesystems.
+        # runAsUser: 0 is allowed under baseline PSS (only privileged: true is blocked).
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            memory: 2Gi

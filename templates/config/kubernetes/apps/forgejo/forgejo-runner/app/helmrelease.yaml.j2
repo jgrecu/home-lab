@@ -73,10 +73,15 @@ spec:
                 set -e
 
                 # Migrate: clear stale registration from old eleboucher fork (pluginsv2 config).
-                # The fork binary is no longer used; re-register with the upstream runner.
                 if grep -q 'pluginsv2' /data/config.yaml 2>/dev/null; then
                   echo "Clearing stale fork registration (pluginsv2 detected)"
                   rm -f /data/.runner /data/config.yaml
+                fi
+
+                # Migrate: re-register if the kaniko label is not yet present.
+                if [ -f /data/.runner ] && ! grep -q '"kaniko"' /data/.runner 2>/dev/null; then
+                  echo "Adding kaniko label: re-registering runner"
+                  rm -f /data/.runner
                 fi
 
                 # Write runner config pointing to the gRPC plugin sidecar via Unix socket.
@@ -109,7 +114,7 @@ spec:
                     --instance "$FORGEJO_INSTANCE_URL" \
                     --token "$FORGEJO_RUNNER_REGISTRATION_TOKEN" \
                     --name "$HOSTNAME" \
-                    --labels "ubuntu-latest:k8s:///config/podspec-default.yaml,ubuntu-22.04:k8s:///config/podspec-default.yaml"
+                    --labels "ubuntu-latest:k8s:///config/podspec-default.yaml,ubuntu-22.04:k8s:///config/podspec-default.yaml,kaniko:k8s:///config/podspec-kaniko.yaml"
                 fi
                 exec forgejo-runner --config /data/config.yaml daemon
             env:
