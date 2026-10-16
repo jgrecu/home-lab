@@ -10,9 +10,9 @@ resources:
   - ./namespace.yaml
   - ./forgejo/ks.yaml
   - ./forgejo/backup-ks.yaml
-  # forgejo-runner (eleboucher plugin approach) — paused, requires custom fork
-  # See docs/DEFERRED.md for current blocker and resolution options
-  # - ./forgejo-runner/ks.yaml
-  # forgejo-runner-native (infinoid's native k8s backend) — under test
-  # Uses container.kubernetes: true, one pod per job, no plugin binary
-  - ./forgejo-runner-native/ks.yaml
+  # forgejo-runner: official upstream runner v13.x + eleboucher gRPC plugin sidecar.
+  # Upstream plugin architecture (PR #1500) merged Aug 2026; no fork required.
+  - ./forgejo-runner/ks.yaml
+  # forgejo-runner-native (infinoid k8s-runner fork) — superseded by eleboucher gRPC plugin.
+  # Kept for reference but disabled.
+  # - ./forgejo-runner-native/ks.yaml
