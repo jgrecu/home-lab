@@ -1,6 +1,7 @@
 # RustFS vs SeaweedFS — Migration Analysis
 
-**Date:** 2026-09-18
+**Originally written:** 2026-09-18
+**Last reviewed:** 2026-10-19
 **Status:** Deferred — revisit Q1 2027
 **Decision:** Stay on SeaweedFS for now
 
@@ -16,6 +17,7 @@ to replace SeaweedFS with RustFS as the cluster's S3-compatible object storage b
 | Aspect | Detail |
 |--------|--------|
 | Architecture | `master` (metadata) + `volume` (data) + `filer` (S3 gateway) |
+| Helm chart | `seaweedfs` v4.48.0 (as of 2026-10-02) |
 | Storage backend | NFS-mounted from NAS (`/seaweedfs`), not cluster-local |
 | Replication | `000` — no internal redundancy; durability delegated to NAS |
 | S3 buckets | `volsync-backups`, `cnpg-backups`, `longhorn-backups` |
@@ -33,7 +35,9 @@ Apache 2.0. It is positioned as a drop-in replacement for MinIO, not SeaweedFS.
 - Erasure coding for data durability (designed for direct-attached storage)
 - Built-in web console, IAM, versioning, object lock, lifecycle management, OIDC/SSO
 - MinIO tooling ecosystem (`mc`, `rclone`) works natively
-- 32.9k GitHub stars; 1.0.0 GA shipped 2026-09-16
+- ~35K GitHub stars; latest stable: 1.0.3 (2026-10-17)
+- **Note:** MinIO on-disk compatibility is `🧪 Preview` status only (behind `rio-v2` feature flag,
+  disabled in default builds) — objects MinIO-encrypted are not readable by RustFS
 
 ---
 
@@ -69,10 +73,21 @@ out of the box, replacing the 3 separate SeaweedFS ServiceMonitors.
 
 ## Cons / Risks
 
-**RustFS is very new**
-1.0.0 GA released 2026-09-16 — 2 days before this analysis. Post-GA edge cases will surface over
-the coming months. Adopting it immediately for a system storing PostgreSQL WAL archives and daily
-PVC backups is premature.
+**RustFS is very new — and stabilising rapidly**
+1.0.0 GA released 2026-09-16. By the one-month mark (2026-10-19) four releases have shipped:
+
+| Version | Date | Nature |
+|---------|------|--------|
+| 1.0.0 | 2026-09-16 | GA |
+| 1.0.1 | 2026-10-03 | Major patch (ecstore data safety, replication convergence, S3 auth security fix, heal) |
+| 1.0.2 | 2026-10-16 | Large patch (~100 PRs: multipart integrity, SSE security, S3 pagination/listing correctness, IAM/OIDC overhaul, interrupted delete recovery, cold-start EC quorum fix) |
+| 1.0.3 | 2026-10-17 | Console-only (embedded UI v0.1.37, no server changes) |
+
+The depth of 1.0.1 and 1.0.2 — covering data integrity in ecstore, delete transaction recovery,
+multipart commit guards, SSE key handling, and S3 listing correctness — confirms that adopting
+1.0.0 immediately for critical backup data would have been risky. The project is iterating
+fast, which is a positive sign for long-term quality, but also means the codebase is not yet
+settled.
 
 **Architecture mismatch: RustFS is designed for DAS, not NFS**
 The most important architectural decision in the current SeaweedFS setup is the NFS backend — all
@@ -81,9 +96,11 @@ and optimized for direct-attached storage with erasure coding. Running RustFS on
 volume eliminates all erasure coding benefits and is an untested, undocumented deployment pattern.
 This would undermine a deliberate and well-tested homelab design decision.
 
-**Incompatible data formats — full migration required**
-SeaweedFS uses its own internal volume format. RustFS uses a MinIO-compatible on-disk format.
-There is no in-place migration. The process would be:
+**Incompatible data formats — full migration required, MinIO compat is preview-only**
+SeaweedFS uses its own internal volume format. RustFS uses a MinIO-compatible on-disk format —
+but that compatibility is gated behind the `rio-v2` feature flag and marked `🧪 Preview` in the
+current README. It is not part of the default build, and objects MinIO-encrypted are not readable
+by RustFS. There is no in-place migration from SeaweedFS. The process would be:
 
 1. Deploy RustFS alongside SeaweedFS
 2. Copy all S3 data using `mc mirror` or `rclone`
@@ -105,8 +122,11 @@ backups are still present on the NAS. With RustFS on local/attached storage this
 unless an NFS backend is explicitly re-implemented — which is not documented or tested.
 
 **Helm chart maturity gap**
-SeaweedFS Helm chart (v4.47.0) is battle-tested. RustFS's Helm chart will have rough edges in
-the months immediately following 1.0.0 GA.
+SeaweedFS Helm chart (v4.48.0) is battle-tested. The `rustfs/helm` GitHub repository has
+**zero tagged releases** — Helm chart changes are committed directly to the main `rustfs/rustfs`
+repository (e.g. ingress support, readinessProbe endpoint corrections, Gateway API routing fixes
+all landed as PRs in 1.0.1–1.0.2). There is no independently versioned, stable chart to pin
+against.
 
 ---
 
@@ -130,13 +150,36 @@ GA, the risk/reward ratio does not favour migration at this time.
 
 ---
 
+## One-Month Checkpoint (2026-10-19)
+
+Reviewed against the revisit criteria one month after original analysis.
+
+**RustFS trajectory:** Four releases in 31 days (1.0.0 → 1.0.3). The 1.0.1 and 1.0.2 changelogs
+contain substantial fixes to data integrity paths (ecstore, multipart, delete transactions, heal)
+and S3 API correctness (listing, pagination, SSE). This confirms the original "very new" risk was
+well-founded. The fast iteration is healthy but the codebase has not yet settled.
+
+**Revisit criteria status:**
+
+| Criterion | Status |
+|-----------|--------|
+| 3–6 months post-GA hardening | 🔴 At 1 month — too early |
+| NFS-backed single-node deployment documented | 🔴 Not addressed; issue #2481 (S3 File/NFS) still open, no ETA |
+| Stable versioned Helm chart | 🔴 `rustfs/helm` has zero releases; chart ships inside main repo |
+| Community `mc mirror` migration runbook | 🔴 No runbook found |
+
+**Conclusion:** All four criteria remain unmet. Decision unchanged — stay on SeaweedFS.
+Next scheduled review: Q1 2027.
+
+---
+
 ## Revisit Criteria (Q1 2027)
 
 Reconsider when **all** of the following are true:
 
 - [ ] RustFS has at least 3-6 months of post-GA production hardening
 - [ ] RustFS documents and supports NFS-backed single-node deployments
-- [ ] A Helm chart with stability comparable to SeaweedFS v4.x exists
+- [ ] A versioned Helm chart with stability comparable to SeaweedFS v4.x exists
 - [ ] A tested `mc mirror` migration runbook is available from the community
 
 If RustFS does not support NFS backends by Q1 2027, the alternative worth evaluating is keeping
@@ -149,7 +192,10 @@ the bootstrap script).
 
 - RustFS GitHub: https://github.com/rustfs/rustfs
 - RustFS 1.0.0 GA announcement: https://rustfs.com/blog/announcing-rustfs-1-0-0-ga/
-- RustFS Helm chart: https://charts.rustfs.com/
+- RustFS 1.0.1 release: https://github.com/rustfs/rustfs/releases/tag/1.0.1
+- RustFS 1.0.2 release: https://github.com/rustfs/rustfs/releases/tag/1.0.2
+- RustFS 1.0.3 release: https://github.com/rustfs/rustfs/releases/tag/1.0.3
+- RustFS Helm chart repo (no versioned releases): https://github.com/rustfs/helm
 - SeaweedFS Helm chart: https://seaweedfs.github.io/seaweedfs/helm
 - Current SeaweedFS deploy: `templates/config/kubernetes/apps/storage/seaweedfs/`
 - Bootstrap script: `scripts/bootstrap-seaweedfs.sh`
