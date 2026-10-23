@@ -2,7 +2,7 @@
 KUBECONFIG = "{{config_root}}/kubeconfig"
 SOPS_CONFIG = "{{config_root}}/.sops.yaml"
 SOPS_AGE_KEY_FILE = "{{config_root}}/age.key"
-TALOSCONFIG = "{{config_root}}/talos/clusterconfig/talosconfig"
+TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 
 [tools]
 # Python tooling — uv manages makejinja and pytest via pyproject.toml
@@ -27,8 +27,8 @@ TALOSCONFIG = "{{config_root}}/talos/clusterconfig/talosconfig"
 "aqua:kubernetes/kubernetes/kubectl" = "1.37.1"
 "aqua:yannh/kubeconform" = "0.8.0"
 
-# Talos tools — keeping talhelper until Phase 2 (talhelper → topf migration)
-"aqua:budimanjojo/talhelper" = "3.1.17"
+# Talos tools — topf replaces talhelper (archived Aug 2026)
+"github:postfinance/topf" = "v0.6.1"
 "aqua:siderolabs/talos" = "1.14.4"
 
 # Infrastructure tools

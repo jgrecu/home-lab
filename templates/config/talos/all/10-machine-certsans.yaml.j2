@@ -1,0 +1,7 @@
+machine:
+  certSANs:
+    - "127.0.0.1"
+    - "#{ cluster_api_addr }#"
+    #% for item in cluster_api_tls_sans | default([]) %#
+    - "#{ item }#"
+    #% endfor %#

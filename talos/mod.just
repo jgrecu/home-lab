@@ -3,38 +3,43 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 REPO_ROOT  := source_directory() + "/.."
 TALOS_DIR  := source_directory()
 
-# Generate Talos machine configuration files
-generate-config:
-    cd "{{TALOS_DIR}}" && talhelper genconfig
+# Generate Talos machine configuration files (offline, to talos/output/)
+render:
+    cd "{{TALOS_DIR}}" && topf render --output ./output
 
-# Apply Talos config to a specific node (usage: just talos apply-node IP=192.168.1.160)
-apply-node IP MODE="auto":
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cd "{{TALOS_DIR}}"
-    talhelper gencommand apply --node "{{IP}}" --extra-flags "--mode={{MODE}}" | bash
+# Show pending config changes without applying (dry-run diff)
+diff:
+    cd "{{TALOS_DIR}}" && topf apply --dry-run
 
-# Upgrade Talos on a single node (usage: just talos upgrade-node IP=192.168.1.160)
-upgrade-node IP:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cd "{{TALOS_DIR}}"
-    TALOS_IMAGE=$(yq '.nodes[] | select(.ipAddress == "{{IP}}") | .talosImageURL' "{{TALOS_DIR}}/talconfig.yaml")
-    TALOS_VERSION=$(yq '.talosVersion' "{{TALOS_DIR}}/talenv.yaml")
-    talhelper gencommand upgrade --node "{{IP}}" \
-        --extra-flags "--image='${TALOS_IMAGE}:${TALOS_VERSION}' --timeout=10m" | bash
+# Apply Talos config to all nodes
+apply MODE="auto":
+    cd "{{TALOS_DIR}}" && topf apply --mode "{{MODE}}"
 
-# Upgrade Kubernetes to the version defined in talos/talenv.yaml
-upgrade-k8s:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cd "{{TALOS_DIR}}"
-    K8S_VERSION=$(yq '.kubernetesVersion' "{{TALOS_DIR}}/talenv.yaml")
-    talhelper gencommand upgrade-k8s --extra-flags "--to '${K8S_VERSION}'" | bash
+# Apply Talos config to a single node (usage: just talos apply-node m900-ctrl)
+apply-node NODE MODE="auto":
+    cd "{{TALOS_DIR}}" && topf apply --nodes-filter "^{{NODE}}$" --mode "{{MODE}}"
+
+# Upgrade Talos on all nodes to the version in talos/topf.yaml
+upgrade:
+    cd "{{TALOS_DIR}}" && topf upgrade
+
+# Upgrade Talos on a single node (usage: just talos upgrade-node m900-ctrl)
+upgrade-node NODE:
+    cd "{{TALOS_DIR}}" && topf upgrade --nodes-filter "^{{NODE}}$"
+
+# List all nodes and their current state (version, stage, schematic)
+nodes:
+    cd "{{TALOS_DIR}}" && topf nodes
+
+# Regenerate kubeconfig from the live cluster
+kubeconfig:
+    cd "{{TALOS_DIR}}" && topf kubeconfig > "{{REPO_ROOT}}/kubeconfig"
+
+# Regenerate talosconfig from the secrets bundle
+talosconfig:
+    cd "{{TALOS_DIR}}" && topf talosconfig > talosconfig
 
 # Reset all nodes back to maintenance mode (destroys cluster state)
 [confirm("This will destroy your cluster and reset nodes to maintenance mode... continue?")]
 reset:
-    cd "{{TALOS_DIR}}" && talhelper gencommand reset \
-        --extra-flags="--reboot --system-labels-to-wipe STATE --system-labels-to-wipe EPHEMERAL --graceful=false --wait=false" \
-        | bash
+    cd "{{TALOS_DIR}}" && topf reset

@@ -1,17 +1,30 @@
 cluster:
   allowSchedulingOnControlPlanes: true
+  network:
+    podSubnets:
+      - "#{ cluster_pod_cidr }#"
+    serviceSubnets:
+      - "#{ cluster_svc_cidr }#"
+    cni:
+      name: none
   coreDNS:
     disabled: true
   etcd:
     extraArgs:
       listen-metrics-urls: http://0.0.0.0:2381
     advertisedSubnets:
-      - 192.168.1.0/24
+      - #{ node_cidr }#
+  apiServer:
+    certSANs:
+      - "127.0.0.1"
+      - "#{ cluster_api_addr }#"
+      #% for item in cluster_api_tls_sans | default([]) %#
+      - "#{ item }#"
+      #% endfor %#
 ---
 apiVersion: v1alpha1
 kind: KubeAPIServerConfig
 extraArgs:
-  # https://kubernetes.io/docs/tasks/extend-kubernetes/configure-aggregation-layer/
   enable-aggregator-routing: "true"
 ---
 apiVersion: v1alpha1

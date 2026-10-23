@@ -5,7 +5,7 @@ set minimum-version := "1.55.1"
 export KUBECONFIG := justfile_directory() + "/kubeconfig"
 export SOPS_AGE_KEY_FILE := justfile_directory() + "/age.key"
 export SOPS_CONFIG := justfile_directory() + "/.sops.yaml"
-export TALOSCONFIG := justfile_directory() + "/talos/clusterconfig/talosconfig"
+export TALOSCONFIG := justfile_directory() + "/talos/talosconfig"
 
 mod bootstrap "bootstrap"
 mod talos "talos"

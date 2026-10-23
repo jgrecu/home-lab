@@ -1,0 +1,14 @@
+{{- if .Node.Data.encryptDisk }}
+machine:
+  systemDiskEncryption:
+    state:
+      provider: luks2
+      keys:
+        - slot: 0
+          tpm: {}
+    ephemeral:
+      provider: luks2
+      keys:
+        - slot: 0
+          tpm: {}
+{{- end }}

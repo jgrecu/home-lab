@@ -53,7 +53,8 @@ configure:
     echo "==> Validating Kubernetes manifests..."
     bash "{{TEMPLATE_DIR}}/scripts/kubeconform.sh" "{{KUBERNETES_DIR}}"
     echo "==> Validating Talos configuration..."
-    cd "{{TALOS_DIR}}" && talhelper validate talconfig talconfig.yaml
+    VALIDATE_DIR=$(mktemp -d)
+    cd "{{TALOS_DIR}}" && topf render --output "$VALIDATE_DIR" && rm -rf "$VALIDATE_DIR"
     echo "✓ configure complete"
 
 # Gather common resources from the cluster for debugging

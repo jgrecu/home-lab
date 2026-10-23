@@ -1,0 +1,48 @@
+---
+clusterName: kubernetes
+clusterEndpoint: https://192.168.1.55:6443
+
+# renovate: datasource=github-releases depName=siderolabs/talos
+talosVersion: v1.14.4
+# renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
+kubernetesVersion: v1.37.1
+
+secretsPath: secrets.sops.yaml
+
+# Global data available to .yaml.tpl patch files via {{ .Data.<key> }}
+data:
+  clusterApiAddr: "192.168.1.55"
+  nodeGateway: "192.168.1.1"
+  nodeCidrPrefix: "24"
+
+nodes:
+  - host: "m900-ctrl"
+    ip: "192.168.1.160"
+    role: control-plane
+    schematicId: "2dcd442954d67662d41c61bdb92165aaf7189aff9997bd011b6968c12ce8d9c0"
+    data:
+      installDisk: "/dev/nvme0n1"
+      macAddr: "00:23:24:df:a2:64"
+      mtu: 1500
+      encryptDisk: false
+      mediaNode: false
+  - host: "m900-wrk1"
+    ip: "192.168.1.161"
+    role: worker
+    schematicId: "2dcd442954d67662d41c61bdb92165aaf7189aff9997bd011b6968c12ce8d9c0"
+    data:
+      installDisk: "/dev/nvme0n1"
+      macAddr: "00:23:24:df:a4:57"
+      mtu: 1500
+      encryptDisk: false
+      mediaNode: true
+  - host: "m920x-wrk2"
+    ip: "192.168.1.162"
+    role: worker
+    schematicId: "2dcd442954d67662d41c61bdb92165aaf7189aff9997bd011b6968c12ce8d9c0"
+    data:
+      installDisk: "/dev/nvme0n1"
+      macAddr: "00:2b:67:10:18:c9"
+      mtu: 1500
+      encryptDisk: false
+      mediaNode: false
