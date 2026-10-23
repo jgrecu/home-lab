@@ -50,7 +50,7 @@ jobs:
           touch kubeconfig
 
       - name: Run configure
-        run: just configure
+        run: just --yes configure
 
       - name: Dry run bootstrap talos
         run: just --dry-run bootstrap bootstrap-talos
