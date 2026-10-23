@@ -4,8 +4,8 @@
 
 A beginner-friendly homelab project demonstrating how to run your own Kubernetes cluster for self-hosting applications. Learn GitOps principles, automated deployments, and infrastructure-as-code while building a production-like environment at home.
 
-![Talos](https://img.shields.io/badge/Talos-v1.14.1-blue?logo=talos&logoColor=white)
-![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.36.4-blue?logo=kubernetes&logoColor=white)
+![Talos](https://img.shields.io/badge/Talos-v1.14.4-blue?logo=talos&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.37.1-blue?logo=kubernetes&logoColor=white)
 ![Flux](https://img.shields.io/badge/Flux-GitOps-blue?logo=flux&logoColor=white)
 
 ## 🚀 What's Running
@@ -38,7 +38,7 @@ A beginner-friendly homelab project demonstrating how to run your own Kubernetes
 **Tools** (installed via `mise`):
 - `talosctl` - Talos Linux management
 - `kubectl` - Kubernetes CLI
-- `task` - Task runner
+- `just` - Task runner
 - `age` - Encryption for secrets (SOPS)
 
 ### Installation
@@ -53,12 +53,12 @@ curl https://mise.run | sh
 mise trust
 mise install
 
-task init
+just init
 ```
 
 **2. Configure your cluster**
 
-Edit `cluster.yaml` and `nodes.yaml` with your:
+Edit `cluster.toml` with your:
 - Node IP addresses and hostnames
 - Cloudflare domain and tunnel credentials
 - Network settings (gateway, DNS servers)
@@ -66,7 +66,7 @@ Edit `cluster.yaml` and `nodes.yaml` with your:
 **3. Generate manifests**
 
 ```sh
-task configure --yes
+just configure
 ```
 
 Generates Kubernetes and Talos configuration from templates.
@@ -74,7 +74,7 @@ Generates Kubernetes and Talos configuration from templates.
 **4. Bootstrap Talos cluster**
 
 ```sh
-task bootstrap:talos
+just bootstrap bootstrap-talos
 
 git add -A
 git commit -m "chore: add encrypted secrets"
@@ -84,7 +84,7 @@ git push
 **5. Install applications**
 
 ```sh
-task bootstrap:apps
+just bootstrap bootstrap-apps
 
 kubectl get pods --all-namespaces --watch
 ```
@@ -99,7 +99,7 @@ kubectl get pods -A
 
 ## 💡 Why This Project?
 
-**Template-Driven Configuration** - Change settings in `cluster.yaml`, regenerate all configs with `task configure`. Never manually edit generated files.
+**Template-Driven Configuration** - Change settings in `cluster.toml`, regenerate all configs with `just configure`. Never manually edit generated files.
 
 **Encrypted Secrets** - All secrets encrypted with SOPS (age encryption). Safe to commit to public GitHub. Flux decrypts automatically in-cluster.
 
@@ -121,20 +121,20 @@ kubectl get pods -A
 
 ```bash
 # Cluster status
-task ops:status
-task ops:pod-errors
-task ops:monitoring-status
+just ops status
+just ops pod-errors
+just ops monitoring-status
 
 # Application management
-task ops:logs -- <app-name> [namespace]
-task ops:restart -- <app-name> [namespace]
-task ops:describe -- <type> <name> [namespace]
+just ops logs <app-name> [namespace]
+just ops restart <app-name> [namespace]
+just ops describe <type> <name> [namespace]
 
-# Storage
-task storage:backup-status
-task storage:pvc-usage
-task storage:longhorn-status
-task storage:restore-pvc -- <namespace> <pvc-name> <capacity>
+# Storage & Backup
+just ops backup-status
+just ops pvc-usage
+just ops longhorn-status
+just ops restore-pvc <namespace> <pvc-name> <capacity>
 ```
 
 ---

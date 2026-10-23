@@ -17,7 +17,7 @@ This repository uses a **template-driven SOPS encryption pipeline** to manage al
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  cluster.yaml (gitignored, plaintext)                           │
+│  cluster.toml (gitignored, plaintext)                           │
 │  - All passwords, tokens, API keys defined here                 │
 │  - Never committed to git                                       │
 └────────────────────┬────────────────────────────────────────────┘
@@ -25,14 +25,14 @@ This repository uses a **template-driven SOPS encryption pipeline** to manage al
                      ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  templates/config/*/secret.sops.yaml.j2                         │
-│  - Jinja2 templates reference cluster.yaml variables            │
+│  - Jinja2 templates reference cluster.toml variables            │
 │  - Pattern: "#{ variable_name }#"                               │
 └────────────────────┬────────────────────────────────────────────┘
                      │
-                     ▼ task configure --yes
+                     ▼ just configure
 ┌─────────────────────────────────────────────────────────────────┐
 │  makejinja (template rendering)                                 │
-│  - Reads cluster.yaml + nodes.yaml                              │
+│  - Reads cluster.toml                                           │
 │  - Renders 386+ templates into kubernetes/ manifests            │
 └────────────────────┬────────────────────────────────────────────┘
                      │
@@ -72,12 +72,12 @@ This repository uses a **template-driven SOPS encryption pipeline** to manage al
 
 ### ✅ Implemented
 
-1. **Gitignored plaintext:** `cluster.yaml`, `nodes.yaml`, and `age.key` are in `.gitignore`
+1. **Gitignored plaintext:** `cluster.toml` and `age.key` are in `.gitignore`
 2. **Encryption at rest:** All secrets in git repository are SOPS-encrypted
 3. **Age encryption:** Modern, simple encryption (not PGP)
 4. **Encrypted regex:** Only `data` and `stringData` fields encrypted (metadata readable)
 5. **Secret scoping:** Each app has its own Secret resource (least privilege)
-6. **Template-driven:** Single source of truth (cluster.yaml) for all secrets
+6. **Template-driven:** Single source of truth (cluster.toml) for all secrets
 
 ### 🔒 Additional Recommendations
 
@@ -93,8 +93,7 @@ This repository uses a **template-driven SOPS encryption pipeline** to manage al
 ### Gitignored Files (Never Commit)
 
 ```
-/cluster.yaml                    # Plaintext configuration (secrets defined here)
-/nodes.yaml                      # Node-specific configuration
+/cluster.toml                    # Plaintext configuration (secrets defined here)
 /age.key                         # SOPS age private key (decrypt secrets)
 ```
 
@@ -104,7 +103,7 @@ This repository uses a **template-driven SOPS encryption pipeline** to manage al
 templates/config/kubernetes/apps/<namespace>/<app>/app/
 ├── helmrelease.yaml.j2          # Main app deployment
 ├── kustomization.yaml.j2        # Kustomize overlay
-├── secret.sops.yaml.j2          # Secret template (references cluster.yaml)
+├── secret.sops.yaml.j2          # Secret template (references cluster.toml)
 └── servicemonitor.yaml.j2       # Prometheus monitoring
 ```
 
@@ -137,10 +136,10 @@ stringData:
   admin-password: "#{ grafana_admin_password }#"
 ```
 
-**cluster.yaml:**
+**cluster.toml:**
 
-```yaml
-grafana_admin_password: "<generated-password>"
+```toml
+grafana_admin_password = "<generated-password>"
 ```
 
 **Generated (encrypted):** `kubernetes/apps/observability/grafana/app/secret.sops.yaml`
@@ -179,11 +178,11 @@ stringData:
   server-private-key: "#{ wg_easy_server_private_key }#"
 ```
 
-**cluster.yaml:**
+**cluster.toml:**
 
-```yaml
-wg_easy_admin_password: "<generated-password>"
-wg_easy_server_private_key: "<wireguard-private-key>"
+```toml
+wg_easy_admin_password = "<generated-password>"
+wg_easy_server_private_key = "<wireguard-private-key>"
 ```
 
 ### Pattern 3: Backup Secrets (Volsync)
@@ -203,12 +202,12 @@ stringData:
   AWS_SECRET_ACCESS_KEY: "#{ volsync_s3_secret_key }#"
 ```
 
-**cluster.yaml:**
+**cluster.toml:**
 
-```yaml
-volsync_restic_password: "<restic-encryption-password>"
-volsync_s3_access_key: "<s3-access-key>"
-volsync_s3_secret_key: "<s3-secret-key>"
+```toml
+volsync_restic_password = "<restic-encryption-password>"
+volsync_s3_access_key = "<s3-access-key>"
+volsync_s3_secret_key = "<s3-secret-key>"
 ```
 
 ### Pattern 4: Secret Reference in HelmRelease
@@ -251,18 +250,18 @@ spec:
 
 **Example:** Adding a new app "myapp" that needs an API key
 
-#### 1. Add secret to cluster.yaml
+#### 1. Add secret to cluster.toml
 
 ```bash
-vi cluster.yaml
+vi cluster.toml
 ```
 
 Add:
 
-```yaml
+```toml
 # -- MyApp API key for external service integration
 #    (REQUIRED for MyApp)
-myapp_api_key: "<generate-with-openssl-rand>"
+myapp_api_key = "<generate-with-openssl-rand>"
 ```
 
 #### 2. Create secret template
@@ -323,7 +322,7 @@ spec:
 
 ```bash
 # Regenerate all manifests (includes SOPS encryption)
-task configure --yes
+just configure
 
 # Verify encryption worked
 cat kubernetes/apps/default/myapp/app/secret.sops.yaml | grep "ENC\["
@@ -350,22 +349,22 @@ NEW_PASSWORD=$(openssl rand -base64 20)
 echo "New password: $NEW_PASSWORD"
 ```
 
-#### 2. Update cluster.yaml
+#### 2. Update cluster.toml
 
 ```bash
-vi cluster.yaml
+vi cluster.toml
 ```
 
 Replace old password:
 
-```yaml
-grafana_admin_password: "<new-password-here>"
+```toml
+grafana_admin_password = "<new-password-here>"
 ```
 
 #### 3. Regenerate manifests
 
 ```bash
-task configure --yes
+just configure
 ```
 
 #### 4. Verify encryption
@@ -484,7 +483,7 @@ SOPS_AGE_KEY_FILE=/path/to/backup/age.key \
 
 ### Pattern: Auto-Generated Secrets
 
-Some secrets are generated by Python functions, not defined in cluster.yaml:
+Some secrets are generated by Python functions, not defined in cluster.toml:
 
 **Function:** `github_push_token()`
 
@@ -506,12 +505,12 @@ stringData:
 
 Multiple apps share the same secret (e.g., Volsync backup credentials):
 
-**cluster.yaml:**
+**cluster.toml:**
 
-```yaml
-volsync_restic_password: "<shared-across-all-apps>"
-volsync_s3_access_key: "<shared-s3-access-key>"
-volsync_s3_secret_key: "<shared-s3-secret-key>"
+```toml
+volsync_restic_password = "<shared-across-all-apps>"
+volsync_s3_access_key = "<shared-s3-access-key>"
+volsync_s3_secret_key = "<shared-s3-secret-key>"
 ```
 
 **28 apps reference these:**
@@ -601,13 +600,13 @@ makejinja error: variable 'myapp_api_key' is undefined
 
 **Diagnosis:**
 ```bash
-# Check if variable exists in cluster.yaml
-grep myapp_api_key cluster.yaml
+# Check if variable exists in cluster.toml
+grep myapp_api_key cluster.toml
 ```
 
 **Fix:**
-1. Add missing variable to `cluster.yaml`
-2. Run `task configure --yes` again
+1. Add missing variable to `cluster.toml`
+2. Run `just configure` again
 
 ### Issue: Secret Not Encrypted
 
@@ -624,7 +623,7 @@ cat .sops.yaml
 
 **Fix:**
 1. Ensure filename ends with `.sops.yaml` (not just `.yaml`)
-2. Run `task configure --yes` to re-encrypt
+2. Run `just configure` to re-encrypt
 3. Verify encryption: `grep "ENC\[" kubernetes/apps/*/app/secret.sops.yaml`
 
 ---
@@ -670,7 +669,7 @@ cat .sops.yaml
 1. **Never commit plaintext secrets:**
    ```bash
    # ❌ Bad - will leak in git history
-   git add cluster.yaml
+   git add cluster.toml
    git add age.key
    ```
 
@@ -691,7 +690,7 @@ cat .sops.yaml
    kubectl create secret generic myapp-secret --from-literal=key=value
    
    # ✅ Good - use template system
-   task configure --yes
+   just configure
    ```
 
 4. **Never share age.key insecurely:**

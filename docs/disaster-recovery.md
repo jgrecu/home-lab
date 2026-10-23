@@ -103,19 +103,19 @@ Manual restore lets you:
 
 ## Manual Restore Procedures
 
-### Quick Restore (Using Taskfile)
+### Quick Restore (Using just)
 
-**Simplest method** - Use the provided task:
+**Simplest method** - Use the provided command:
 
 ```bash
 # Syntax
-task storage:restore-pvc -- <namespace> <pvc-name> <capacity>
+just ops restore-pvc <namespace> <pvc-name> <capacity>
 
 # Examples
-task storage:restore-pvc -- forgejo forgejo-data 20Gi
-task storage:restore-pvc -- entertainment immich-db 10Gi
-task storage:restore-pvc -- cloud nextcloud-html 10Gi
-task storage:restore-pvc -- default homepage 1Gi
+just ops restore-pvc forgejo forgejo-data 20Gi
+just ops restore-pvc entertainment immich-db 10Gi
+just ops restore-pvc cloud nextcloud-html 10Gi
+just ops restore-pvc default homepage 1Gi
 ```
 
 **What the task does**:
@@ -221,7 +221,7 @@ kubectl logs -n <namespace> -l app.kubernetes.io/name=<app-name> -f
 4. **Restore PVCs**:
    ```bash
    # Application data
-   task storage:restore-pvc -- forgejo forgejo-data 20Gi
+   just ops restore-pvc forgejo forgejo-data 20Gi
    ```
 5. **Restore database** (if applicable):
    ```bash
@@ -261,7 +261,7 @@ kubectl logs -n <namespace> -l app.kubernetes.io/name=<app-name> -f
 5. **Delete corrupt PVC and restore**:
    ```bash
    kubectl delete pvc -n forgejo forgejo-data
-   task storage:restore-pvc -- forgejo forgejo-data 20Gi
+   just ops restore-pvc forgejo forgejo-data 20Gi
    ```
 
 **Total Time**: 15-30 minutes  
@@ -289,7 +289,7 @@ kubectl exec -n entertainment immich-postgres-1 -- \
 If Immich DB PVC is backed up by Volsync:
 
 ```bash
-task storage:restore-pvc -- entertainment immich-db 10Gi
+just ops restore-pvc entertainment immich-db 10Gi
 ```
 
 **Total Time**: 30-60 minutes  
@@ -311,7 +311,7 @@ This is the **full disaster recovery** scenario.
 2. **Bootstrap SeaweedFS** (if NAS survived):
    ```bash
    # SeaweedFS data on NAS is intact, just reconnect
-   task storage:bootstrap-seaweedfs
+   just ops bootstrap-seaweedfs
    ```
 
 3. **Deploy all apps via Flux**:
@@ -324,15 +324,15 @@ This is the **full disaster recovery** scenario.
 5. **Restore all PVCs** (in order of dependencies):
    ```bash
    # Core services first
-   task storage:restore-pvc -- default homepage 1Gi
-   task storage:restore-pvc -- observability grafana 1Gi
+   just ops restore-pvc default homepage 1Gi
+   just ops restore-pvc observability grafana 1Gi
 
    # Applications
-   task storage:restore-pvc -- forgejo forgejo-data 20Gi
-   task storage:restore-pvc -- cloud nextcloud-html 10Gi
-   task storage:restore-pvc -- entertainment immich-db 10Gi
-   task storage:restore-pvc -- entertainment kavita-config 2Gi
-   task storage:restore-pvc -- home-automation home-assistant-config 5Gi
+   just ops restore-pvc forgejo forgejo-data 20Gi
+   just ops restore-pvc cloud nextcloud-html 10Gi
+   just ops restore-pvc entertainment immich-db 10Gi
+   just ops restore-pvc entertainment kavita-config 2Gi
+   just ops restore-pvc home-automation home-assistant-config 5Gi
    
    # Databases will auto-recover from CNPG backups in SeaweedFS
    ```
@@ -585,25 +585,25 @@ kubectl exec -n storage seaweedfs-0 -- weed shell -master=localhost:9333 \
 
 ```bash
 # Homepage
-task storage:restore-pvc -- default homepage 1Gi
+just ops restore-pvc default homepage 1Gi
 
 # Grafana
-task storage:restore-pvc -- observability grafana 1Gi
+just ops restore-pvc observability grafana 1Gi
 
 # Home Assistant
-task storage:restore-pvc -- home-automation home-assistant-config 5Gi
+just ops restore-pvc home-automation home-assistant-config 5Gi
 
 # Nextcloud (config only, not user data)
-task storage:restore-pvc -- cloud nextcloud-html 10Gi
+just ops restore-pvc cloud nextcloud-html 10Gi
 
 # Forgejo
-task storage:restore-pvc -- forgejo forgejo-data 20Gi
+just ops restore-pvc forgejo forgejo-data 20Gi
 
 # Immich (PostgreSQL DB PVC)
-task storage:restore-pvc -- entertainment immich-db 10Gi
+just ops restore-pvc entertainment immich-db 10Gi
 
 # Kavita
-task storage:restore-pvc -- entertainment kavita-config 2Gi
+just ops restore-pvc entertainment kavita-config 2Gi
 ```
 
 ### Verification Commands
@@ -628,7 +628,7 @@ kubectl port-forward -n <namespace> svc/<service> 8080:80
 # Port-forward to SeaweedFS S3
 kubectl port-forward -n storage svc/seaweedfs-s3 8333:8333
 
-# Export credentials (get from cluster.yaml or SeaweedFS bootstrap output)
+# Export credentials (get from cluster.toml or SeaweedFS bootstrap output)
 export AWS_ACCESS_KEY_ID="your-key"
 export AWS_SECRET_ACCESS_KEY="your-secret"
 
@@ -645,7 +645,7 @@ aws s3 ls s3://cnpg-backups/ --recursive --endpoint-url http://localhost:8333
 
 ✅ **Backups exist** - Volsync, CNPG, and Longhorn all back up to SeaweedFS  
 ⚠️ **Restore is manual** - You must trigger restoration explicitly  
-🎯 **Use the task** - `task storage:restore-pvc -- <namespace> <pvc> <size>`  
+🎯 **Use the task** - `just ops restore-pvc <namespace> <pvc> <size>`  
 📚 **Test regularly** - Practice restores quarterly  
 🛡️ **Prevent accidents** - Use labels, aliases, and dry-runs  
 ⏱️ **Time to recovery** - Most scenarios: 10-30 minutes  

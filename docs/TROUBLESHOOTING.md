@@ -22,7 +22,7 @@ This guide provides diagnostic procedures and solutions for common issues in the
 
 ```bash
 # Overall cluster status
-task status
+just ops status
 
 # Or manual check
 kubectl get nodes
@@ -425,7 +425,7 @@ pod-security.kubernetes.io/audit: baseline
 pod-security.kubernetes.io/warn: baseline
 
 # 3. Regenerate manifests
-task configure --yes
+just configure
 
 # 4. Commit changes
 git add -A
@@ -590,7 +590,7 @@ kubectl -n <namespace> logs -l app.kubernetes.io/name=volsync --tail=100
    # Verify S3 secret
    kubectl -n <namespace> get secret volsync-restic-secret -o yaml
    
-   # Re-create if needed (from cluster.yaml values)
+    # Re-create if needed (from cluster.toml values)
    ```
 
 ---
@@ -874,7 +874,7 @@ kubectl -n volsync-system logs -l control-plane=volsync --tail=100
    # Check secret exists
    kubectl -n <namespace> get secret volsync-restic-secret
    
-   # Re-create from cluster.yaml values
+   # Re-create from cluster.toml values
    ```
 
 2. **S3 endpoint unreachable:**
@@ -928,8 +928,8 @@ kubectl -n database-system logs <backup-pod-name>
    # Check backup secret
    kubectl -n database-system get secret <cluster-name>-pgbackrest-secrets
    
-   # Re-create from cluster.yaml values
-   ```
+    # Re-create from cluster.toml values
+    ```
 
 2. **Storage full:**
    ```bash
@@ -1222,7 +1222,7 @@ kubectl edit deployment myapp
 
 # DO this instead:
 # 1. Edit templates/config/kubernetes/apps/<namespace>/<app>/helmrelease.yaml.j2
-# 2. Run: task configure --yes
+# 2. Run: just configure
 # 3. Commit and push
 # 4. Flux will reconcile automatically
 ```
@@ -1321,7 +1321,7 @@ If you've tried the above steps and still cannot resolve the issue:
 
 ```bash
 # Cluster health
-task status
+just ops status
 kubectl get nodes
 flux get kustomizations -A
 
@@ -1356,7 +1356,7 @@ talosctl -n <node-ip> logs <service>
 **Remember:** Most issues in this GitOps cluster are resolved by:
 1. Identifying the problem
 2. Fixing the template in `templates/config/`
-3. Running `task configure --yes`
+3. Running `just configure`
 4. Committing and pushing
 5. Letting Flux reconcile
 

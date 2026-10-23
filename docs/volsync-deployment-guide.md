@@ -11,37 +11,34 @@ This guide walks you through deploying Volsync for automated PVC backups to Seaw
 
 ## Step 1: Bootstrap SeaweedFS with Volsync Bucket
 
-The `task storage:bootstrap-seaweedfs` command now automatically creates the `volsync-backups` bucket.
+The `just ops bootstrap-seaweedfs` command now automatically creates the `volsync-backups` bucket.
 
 ```bash
-# Run the bootstrap task
-task storage:bootstrap-seaweedfs
+# Run the bootstrap command
+just ops bootstrap-seaweedfs
 ```
 
 This will:
 - Create `volsync-backups` bucket in SeaweedFS
 - Generate S3 access keys (if not exists)
 - Grant permissions to the key
-- Update `cluster.yaml` with credentials
+- Update `cluster.toml` with credentials
 
-## Step 2: Add Volsync Configuration to cluster.yaml
+## Step 2: Add Volsync Configuration to cluster.toml
 
-Edit `cluster.yaml` and add the Volsync section (if not already present):
+Edit `cluster.toml` and add the Volsync section (if not already present):
 
-```yaml
-# cluster.yaml
+```toml
+# cluster.toml
 
 # ... existing config ...
 
 # Volsync backup configuration
-volsync:
-  # Generate a secure Restic password
-  # openssl rand -base64 32
-  restic_password: ""  # Will be encrypted by SOPS
+volsync_restic_password = ""  # Will be encrypted by SOPS
 
-  # S3 credentials (set by bootstrap-seaweedfs task)
-  s3_access_key: ""     # Set by bootstrap-seaweedfs
-  s3_secret_key: ""     # Set by bootstrap-seaweedfs, will be encrypted
+# S3 credentials (set by bootstrap-seaweedfs command)
+volsync_s3_access_key = ""    # Set by bootstrap-seaweedfs
+volsync_s3_secret_key = ""    # Set by bootstrap-seaweedfs, will be encrypted
 ```
 
 ### Generate Restic Password
@@ -50,15 +47,14 @@ volsync:
 # Generate a secure password for Restic encryption
 openssl rand -base64 32
 
-# Copy the output and paste it into cluster.yaml under volsync.restic_password
+# Copy the output and paste it into cluster.toml as volsync_restic_password
 ```
 
 **Example:**
-```yaml
-volsync:
-  restic_password: "xK8vQ2mP9nL7sJ5hF3tR6wE1yU4iO0aZ2cB8dN5gH7j="
-  s3_access_key: "GK1234567890abcdef"
-  s3_secret_key: "secretkeythatwassetbytheboostrapscript"
+```toml
+volsync_restic_password = "your-generated-restic-password-here"
+volsync_s3_access_key = "auto-populated-by-bootstrap"
+volsync_s3_secret_key = "auto-populated-by-bootstrap"
 ```
 
 ## Step 3: Update Kustomization Files
@@ -123,11 +119,11 @@ resources:
 ```bash
 # Regenerate all Kubernetes manifests from templates
 # This will encrypt secrets with SOPS automatically
-task configure --yes
+just configure
 ```
 
 This will:
-- Render all templates with your cluster.yaml values
+- Render all templates with your cluster.toml values
 - Encrypt all `*.sops.yaml` files with your age key
 - Validate manifests with kubeconform
 
@@ -320,10 +316,10 @@ kubectl logs -n entertainment -l volsync.backube/replicationsource=immich-db-bac
 **Solution**:
 ```bash
 # Re-run bootstrap to grant permissions
-task storage:bootstrap-seaweedfs
+just ops bootstrap-seaweedfs
 
 # Regenerate manifests
-task configure --yes
+just configure
 
 # Force secret recreation
 kubectl delete secret immich-db-restic-secret -n entertainment

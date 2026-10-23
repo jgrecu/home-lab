@@ -32,10 +32,10 @@ Prometheus alerts will notify on:
 
 ```bash
 # Quick cluster status
-task ops:status
+just ops status
 
 # Check for failed pods
-task ops:pod-errors
+just ops pod-errors
 
 # Review recent warning events
 kubectl get events -A --field-selector type=Warning --sort-by='.lastTimestamp' | tail -20
@@ -47,7 +47,7 @@ kubectl get events -A --field-selector type=Warning --sort-by='.lastTimestamp' |
 
 **Check Volsync backups are running:**
 ```bash
-task storage:backup-status
+just ops backup-status
 ```
 
 **Expected:** All ReplicationSources show recent `LAST_SYNC` timestamps (within 24 hours)
@@ -106,7 +106,7 @@ kubectl top pods -A --sort-by=cpu | head -20     # Top CPU consumers
 
 **Check PVC usage:**
 ```bash
-task storage:pvc-usage
+just ops pvc-usage
 ```
 
 **Actions if resource pressure detected:**
@@ -194,7 +194,7 @@ Always prefer GitOps approach (update HelmRelease template, commit, push).
 vim templates/config/kubernetes/apps/<namespace>/<app>/helmrelease.yaml.j2
 
 # 2. Regenerate manifests
-task configure --yes
+just configure
 
 # 3. Commit changes
 git add -A
@@ -240,7 +240,7 @@ talosctl reboot --nodes <node-ip>
 **Check backup integrity monthly:**
 ```bash
 # List all backups
-task storage:backup-status
+just ops backup-status
 
 # Verify backup size is reasonable (not 0 bytes)
 kubectl get replicationsource -A -o json | jq -r '.items[] | 
@@ -272,7 +272,7 @@ restic:
 
 **Check volume health:**
 ```bash
-task storage:longhorn-status
+just ops longhorn-status
 ```
 
 **Manually trigger replica rebuild** (if degraded):
@@ -391,7 +391,7 @@ kubectl port-forward -n observability svc/kube-prometheus-stack-prometheus 9090:
 
 **Disaster recovery procedure:**
 1. Follow `docs/disaster-recovery.md`
-2. Bootstrap new Talos cluster: `task bootstrap:talos`
+2. Bootstrap new Talos cluster: `just bootstrap bootstrap-talos`
 3. Restore from Git: Flux will reconcile all apps
 4. Restore PVCs from Volsync backups: `docs/volsync-restore-procedures.md`
 
@@ -399,7 +399,7 @@ kubectl port-forward -n observability svc/kube-prometheus-stack-prometheus 9090:
 
 **If application data is corrupted:**
 1. Scale down application: `kubectl scale deployment <name> -n <namespace> --replicas=0`
-2. Restore PVC from backup: `task storage:restore-pvc -- <namespace> <pvc-name> <capacity>`
+2. Restore PVC from backup: `just ops restore-pvc <namespace> <pvc-name> <capacity>`
 3. Scale up application: `kubectl scale deployment <name> -n <namespace> --replicas=1`
 4. Verify data integrity
 

@@ -15,13 +15,13 @@ Documentation for the Talos Lenovo ThinkCentre M900 home lab cluster.
 
 ```bash
 # 1. Bootstrap SeaweedFS S3 (creates volsync-backups bucket)
-task storage:bootstrap-seaweedfs
+just ops bootstrap-seaweedfs
 
-# 2. Add Volsync config to cluster.yaml
-# Edit cluster.yaml and add volsync.restic_password
+# 2. Add Volsync config to cluster.toml
+# Edit cluster.toml and add volsync.restic_password
 
 # 3. Regenerate manifests
-task configure --yes
+just configure
 
 # 4. Commit and push
 git add . && git commit -m "feat(volsync): add automated backups" && git push

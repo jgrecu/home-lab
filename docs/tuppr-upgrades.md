@@ -200,7 +200,7 @@ vim templates/config/kubernetes/apps/system-upgrade/tuppr/policies/talosupgrade.
 # Change: version: v1.12.6
 
 # Regenerate and commit
-task configure --yes
+just configure
 git add -A
 git commit -m "rollback: revert Talos to v1.12.6"
 git push
@@ -282,7 +282,7 @@ spec:
 
 ```bash
 # Regenerate manifests
-task configure --yes
+just configure
 
 # Commit changes
 git add -A
@@ -382,7 +382,7 @@ Git Repository
 ## Current Configuration
 
 **Cluster Status** (as of last check):
-- **Running**: Talos v1.12.6, Kubernetes v1.35.3
-- **Target**: Talos v1.13.0, Kubernetes v1.36.0
+- **Running**: Talos v1.14.4, Kubernetes v1.37.1
+- **Target**: Managed automatically by Tuppr via maintenance window
 - **Next maintenance window**: Check with `kubectl describe talosupgrade cluster -n system-upgrade`
 - **Controller status**: `kubectl get pods -n system-upgrade`
