@@ -1,0 +1,102 @@
+# public.toml — e2e fixture: public repo, BGP enabled, VLAN, secureboot + encrypt_disk node
+node_cidr            = "10.10.10.0/24"
+node_default_gateway = "10.10.10.1"
+node_vlan_tag        = "100"
+node_dns_servers     = ["1.1.1.1"]
+node_ntp_servers     = ["162.159.200.123"]
+cluster_pod_cidr     = "10.42.0.0/16"
+cluster_svc_cidr     = "10.43.0.0/16"
+
+cluster_api_addr         = "10.10.10.254"
+cluster_api_tls_sans     = ["example.com"]
+cluster_gateway_addr     = "10.10.10.252"
+cluster_dns_gateway_addr = "10.10.10.253"
+transmission_peer_addr   = "10.10.10.250"
+wg_easy_vpn_addr         = "10.10.10.249"
+wg_easy_admin_password   = "ci-fake-password"
+wg_easy_external_host    = "vpn.example.com"
+wg_easy_server_private_key = "ci-fake-wg-key"
+pihole_dns_addr          = "10.10.10.248"
+pihole_admin_password    = "ci-fake-password"
+cloudflare_gateway_addr  = "10.10.10.251"
+
+cloudflare_domain = "example.com"
+cloudflare_token  = "ci-fake-cloudflare-token"
+
+cilium_loadbalancer_mode = "dsr"
+cilium_bgp_router_addr   = "10.10.1.1"
+cilium_bgp_router_asn    = "64513"
+cilium_bgp_node_asn      = "64514"
+
+repository_name        = "jgrecu/home-lab"
+repository_branch      = "main"
+repository_visibility  = "public"
+grafana_admin_password = "ci-fake-password"
+
+nfs_server_addr    = "10.10.10.50"
+nfs_server_path    = "/nfs"
+nfs_media_path     = "/videos"
+nfs_photos_path    = "/immich"
+nfs_books_path     = "/books"
+nfs_seaweedfs_path = "/seaweedfs"
+nfs_nextcloud_path = "/nextcloud"
+nextcloud_admin_password = "ci-fake-password"
+
+forgejo_admin_email    = "admin@example.com"
+forgejo_admin_password = "ci-fake-password"
+forgejo_runner_secret  = "ci-fake-runner-secret"
+
+linkding_admin_password    = "ci-fake-password"
+linkding_healthcheck_token = "ci-fake-token"
+
+woodpecker_admin_user          = "admin"
+woodpecker_oauth_client_id     = "ci-fake-client-id"
+woodpecker_oauth_client_secret = "ci-fake-client-secret"
+woodpecker_agent_secret        = "ci-fake-agent-secret"
+
+radarr_api_key           = "ci-fake-api-key"
+recyclarr_radarr_api_key = "ci-fake-api-key"
+sonarr_api_key           = "ci-fake-api-key"
+recyclarr_sonarr_api_key = "ci-fake-api-key"
+prowlarr_api_key         = "ci-fake-api-key"
+bazarr_api_key           = "ci-fake-api-key"
+sabnzbd_api_key          = "ci-fake-api-key"
+
+grimmory_mariadb_root_password = "ci-fake-password"
+grimmory_mariadb_password      = "ci-fake-password"
+
+hae_mongo_password = "ci-fake-password"
+hae_read_token     = "sk-ci-fake"
+hae_write_token    = "sk-ci-fake"
+
+volsync_restic_password = "ci-fake-restic-password"
+volsync_s3_access_key   = "ci-fake-s3-key"
+volsync_s3_secret_key   = "ci-fake-s3-secret"
+
+seaweedfs_s3_access_key_id     = "ci-fake-s3-key"
+seaweedfs_s3_secret_access_key = "ci-fake-s3-secret"
+
+r2_access_key_id     = "ci-fake-r2-key"
+r2_secret_access_key = "ci-fake-r2-secret"
+r2_endpoint          = "https://ci-fake.r2.cloudflarestorage.com"
+r2_bucket            = "ci-fake-bucket"
+
+[[nodes]]
+name         = "k8s-0"
+address      = "10.10.10.100"
+controller   = true
+disk         = "/dev/sdfake"
+mac_addr     = "00:00:00:00:00:00"
+schematic_id = "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba"
+
+[[nodes]]
+name           = "k8s-1"
+address        = "10.10.10.101"
+controller     = false
+disk           = "/dev/sdfake"
+mac_addr       = "00:00:00:00:00:01"
+schematic_id   = "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba"
+mtu            = 1500
+secureboot     = true
+encrypt_disk   = true
+kernel_modules = ["nvidia", "nvidia_uvm"]

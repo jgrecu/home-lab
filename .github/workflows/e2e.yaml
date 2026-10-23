@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: "e2e"
 
 on:
@@ -12,10 +13,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   configure:
-    name: configure
+    name: configure (${{ matrix.config-files }})
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -25,6 +30,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup mise
         uses: jdx/mise-action@8418fedb1110381a0d3ba51a7a415d7c1b884550 # v5.2.2
@@ -33,38 +40,26 @@ jobs:
         with:
           cache: false
 
-      - name: Run init task
-        run: task init
+      - name: Run init
+        run: just init
 
       - name: Prepare files
         run: |
-          cp ./.github/tests/${{ matrix.config-files }}.yaml cluster.yaml
-          cp ./.github/tests/nodes.yaml nodes.yaml
+          cp ./.github/tests/${{ matrix.config-files }}.toml cluster.toml
           echo '{"AccountTag":"fake","TunnelSecret":"fake","TunnelID":"fake"}' > cloudflare-tunnel.json
           touch kubeconfig
 
-      - name: Run configure task
-        run: task configure --yes
+      - name: Run configure
+        run: just configure
 
-      - name: Run generate talconfig task
-        run: |
-          FILENAME=talos/talsecret.sops.yaml
-          talhelper gensecret | sops --filename-override $FILENAME --encrypt /dev/stdin > $FILENAME
-          task talos:generate-config
+      - name: Dry run bootstrap talos
+        run: just --dry-run bootstrap bootstrap-talos
 
-      - name: Run flux-local test
-        uses: docker://ghcr.io/allenporter/flux-local:v8.4.0@sha256:c0be852e30f299ce6a220cc992b0c21a2a0b0684cc17713b9d718e18d9c8beff
-        with:
-          args: test --enable-helm --all-namespaces --path /github/workspace/kubernetes/flux/cluster -v
+      - name: Dry run bootstrap apps
+        run: just --dry-run bootstrap bootstrap-apps
 
-      - name: Dry run bootstrap talos task
-        run: task bootstrap:talos --dry
+      - name: Run reset
+        run: yes | just template reset
 
-      - name: Dry run bootstrap apps task
-        run: task bootstrap:apps --dry
-
-      - name: Run reset task
-        run: task template:reset --yes
-
-      - name: Run cleanup task
-        run: task template:tidy --yes
+      - name: Run tidy
+        run: yes | just template tidy

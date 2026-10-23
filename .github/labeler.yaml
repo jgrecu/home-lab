@@ -19,7 +19,11 @@ area/kubernetes:
 area/mise:
   - changed-files:
       - any-glob-to-any-file:
-          - .mise.toml
+          - .mise/**/*
+area/ops:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ops/**/*
 area/renovate:
   - changed-files:
       - any-glob-to-any-file:
@@ -32,12 +36,13 @@ area/talos:
   - changed-files:
       - any-glob-to-any-file:
           - talos/**/*
-area/taskfile:
-  - changed-files:
-      - any-glob-to-any-file:
-          - .taskfiles/**/*
-          - Taskfile.yaml
 area/templates:
   - changed-files:
       - any-glob-to-any-file:
           - templates/**/*
+          - justfile
+          - "*/mod.just"
+          - makejinja.toml
+          - cluster.sample.toml
+          - cluster.schema.json
+          - pyproject.toml
