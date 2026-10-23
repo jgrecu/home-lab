@@ -7,7 +7,9 @@
 /github-deploy.key
 /github-deploy.key.pub
 /github-push-token.txt
-# Template config files
+# Template config files (contain secrets — use cluster.sample.toml as reference)
+/cluster.toml
+# Legacy names kept for safety (these files are no longer used)
 /cluster.yaml
 /nodes.yaml
 # Kubernetes
@@ -26,7 +28,6 @@ dist/
 build/
 # Misc.
 .private/
-.task/
 .playwright-mcp/
 .venv/
 .DS_Store

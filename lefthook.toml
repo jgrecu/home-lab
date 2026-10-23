@@ -1,0 +1,13 @@
+[pre-commit]
+parallel = true
+
+[pre-commit.commands.gitleaks]
+run = "gitleaks protect --staged --no-banner"
+
+[pre-commit.commands.sops-check]
+glob = "**/*.sops.yaml"
+run = "bash -c 'for f in {staged_files}; do grep -q \"sops:\" \"$f\" || { echo \"ERROR: $f is not encrypted with SOPS\" >&2; exit 1; }; done'"
+
+[pre-commit.commands.shellcheck]
+glob = "**/*.sh"
+run = "shellcheck --severity=warning {staged_files}"

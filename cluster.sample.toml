@@ -1,0 +1,269 @@
+# cluster.sample.toml — copy this to cluster.toml and fill in your values
+# Run 'just init' to do this automatically.
+#
+# NEVER commit cluster.toml — it contains secrets encrypted by SOPS
+# but the raw values are sensitive. It is gitignored.
+#
+# Template variables use flat keys (no TOML sections) so that Jinja2 templates
+# can reference them directly as #{ variable_name }#.
+
+# ============================================================================
+# Network Configuration
+# ============================================================================
+
+# The network CIDR for the nodes. (REQUIRED)
+# e.g. "192.168.1.0/24"
+node_cidr = "192.168.1.0/24"
+
+# DNS servers for the cluster. (OPTIONAL — defaults to Cloudflare 1.1.1.1 / 1.0.0.1)
+# node_dns_servers = ["1.1.1.1", "1.0.0.1"]
+
+# NTP servers for the cluster. (OPTIONAL — defaults to Cloudflare NTP)
+# node_ntp_servers = ["162.159.200.1", "162.159.200.123"]
+
+# Default gateway for the nodes. (OPTIONAL — defaults to first IP in node_cidr)
+# node_default_gateway = ""
+
+# VLAN tag for Talos nodes. (ADVANCED/OPTIONAL)
+# node_vlan_tag = ""
+
+# ============================================================================
+# Cluster Addresses — all must be unused IPs within node_cidr
+# ============================================================================
+
+# IP address for the Kubernetes API server VIP. (REQUIRED)
+cluster_api_addr = "192.168.1.55"
+
+# Additional SANs for the Kube API cert. (OPTIONAL)
+# cluster_api_tls_sans = ["mycluster.example.com"]
+
+# Pod CIDR — must NOT overlap with node_cidr. (OPTIONAL — default: 10.42.0.0/16)
+# cluster_pod_cidr = ""
+
+# Service CIDR — must NOT overlap with node_cidr. (OPTIONAL — default: 10.43.0.0/16)
+# cluster_svc_cidr = ""
+
+# Load balancer IP for k8s-gateway (split-DNS for internal services). (REQUIRED)
+cluster_dns_gateway_addr = "192.168.1.56"
+
+# Load balancer IP for the internal Envoy gateway. (REQUIRED)
+cluster_gateway_addr = "192.168.1.57"
+
+# Load balancer IP for Transmission peer port. (REQUIRED for Transmission)
+transmission_peer_addr = "192.168.1.58"
+
+# Load balancer IP for WireGuard Easy VPN. (REQUIRED for WireGuard)
+wg_easy_vpn_addr = "192.168.1.59"
+
+# WireGuard Easy admin password for web UI. (REQUIRED for WireGuard)
+wg_easy_admin_password = ""
+
+# External hostname for WireGuard clients. (REQUIRED for WireGuard)
+wg_easy_external_host = "vpn.example.com"
+
+# WireGuard server private key — extract from existing wg0.conf for migration. (REQUIRED)
+wg_easy_server_private_key = ""
+
+# Load balancer IP for Pi-hole DNS server. (REQUIRED for Pi-hole)
+pihole_dns_addr = "192.168.1.60"
+
+# Pi-hole admin dashboard password. (REQUIRED for Pi-hole)
+pihole_admin_password = "ChangeMe-SecurePassword123!"
+
+# Load balancer IP for the external Cloudflare Tunnel gateway. (REQUIRED)
+cloudflare_gateway_addr = "192.168.1.61"
+
+# ============================================================================
+# Cloudflare Configuration
+# ============================================================================
+
+# Your Cloudflare domain. (REQUIRED)
+cloudflare_domain = "example.com"
+
+# Cloudflare API token with Zone:DNS:Edit and Account:Cloudflare Tunnel:Read. (REQUIRED)
+cloudflare_token = "your-cloudflare-api-token-here"
+
+# ============================================================================
+# Cilium CNI Configuration
+# ============================================================================
+
+# Load balancer mode for Cilium. (OPTIONAL — default: "dsr")
+# Accepted values: "dsr" or "snat"
+cilium_loadbalancer_mode = "dsr"
+
+# BGP router IP address. (OPTIONAL — for BGP peering)
+# cilium_bgp_router_addr = ""
+# cilium_bgp_router_asn  = ""
+# cilium_bgp_node_asn    = ""
+
+# ============================================================================
+# Repository Configuration
+# ============================================================================
+
+# GitHub repository (owner/name). (REQUIRED)
+repository_name = "your-github-username/your-repo-name"
+
+# Repository branch. (OPTIONAL — default: "main")
+# repository_branch = ""
+
+# Repository visibility. (OPTIONAL — default: "public")
+# repository_visibility = ""
+
+# Grafana admin password. (REQUIRED)
+grafana_admin_password = "ChangeMe-SecurePassword123!"
+
+# ============================================================================
+# NFS Storage Configuration
+# ============================================================================
+
+# IP address of your NFS server / NAS. (REQUIRED if using NFS storage)
+nfs_server_addr = "192.168.1.100"
+
+# NFS export paths. (REQUIRED for respective apps)
+nfs_server_path   = "/nfs"
+nfs_media_path    = "/videos"
+nfs_photos_path   = "/immich"
+nfs_books_path    = "/books"
+nfs_seaweedfs_path = "/seaweedfs"
+nfs_nextcloud_path = "/nextcloud"
+
+# ============================================================================
+# Forgejo Configuration
+# ============================================================================
+
+# Forgejo admin account. (REQUIRED)
+forgejo_admin_email    = "admin@example.com"
+forgejo_admin_password = ""
+
+# Forgejo Actions runner registration token — obtain from Forgejo UI after first deploy.
+# Site Administration → Runners → New runner token
+forgejo_runner_secret = ""
+
+# ============================================================================
+# Linkding Configuration
+# ============================================================================
+
+# Initial admin password (set on first boot only). Generate: openssl rand -base64 16
+linkding_admin_password = ""
+
+# API token for the healthcheck CronJob — obtain from Linkding after first deploy.
+linkding_healthcheck_token = ""
+
+# ============================================================================
+# Woodpecker CI Configuration
+# ============================================================================
+
+# Must match the Forgejo admin username.
+woodpecker_admin_user = "admin"
+
+# OAuth2 application credentials — create in Forgejo: Site Administration → Applications
+# Redirect URI: https://woodpecker.${cloudflare_domain}/authorize
+woodpecker_oauth_client_id     = ""
+woodpecker_oauth_client_secret = ""
+
+# Agent secret for server-agent authentication. Generate: openssl rand -hex 32
+woodpecker_agent_secret = ""
+
+# ============================================================================
+# Media Stack Configuration (Radarr / Sonarr / Prowlarr / Bazarr / SABnzbd)
+# ============================================================================
+
+# API keys — obtain from each app's Settings → General → API Key after first deploy.
+radarr_api_key          = ""
+recyclarr_radarr_api_key = ""
+sonarr_api_key          = ""
+recyclarr_sonarr_api_key = ""
+prowlarr_api_key        = ""
+bazarr_api_key          = ""
+sabnzbd_api_key         = ""
+
+# ============================================================================
+# Grimmory Configuration
+# ============================================================================
+
+# MariaDB passwords. Generate: openssl rand -base64 16
+grimmory_mariadb_root_password = ""
+grimmory_mariadb_password      = ""
+
+# ============================================================================
+# Health Auto Export Configuration
+# ============================================================================
+
+# MongoDB password. Generate: openssl rand -base64 16
+hae_mongo_password = ""
+
+# API tokens for Grafana (read) and iOS app (write). Generate: echo "sk-$(openssl rand -hex 16)"
+hae_read_token  = ""
+hae_write_token = ""
+
+# ============================================================================
+# Volsync Backup Configuration
+# ============================================================================
+
+# Restic encryption password. Generate: openssl rand -base64 32
+volsync_restic_password = ""
+
+# S3 credentials for SeaweedFS — auto-populated by: just ops bootstrap-seaweedfs
+volsync_s3_access_key = ""
+volsync_s3_secret_key = ""
+
+# ============================================================================
+# SeaweedFS S3 Configuration
+# ============================================================================
+
+# Populated automatically by: just ops bootstrap-seaweedfs
+seaweedfs_s3_access_key_id     = ""
+seaweedfs_s3_secret_access_key = ""
+
+# ============================================================================
+# Cloudflare R2 Offsite Backup
+# ============================================================================
+
+r2_access_key_id  = ""
+r2_secret_access_key = ""
+r2_endpoint       = ""
+r2_bucket         = ""
+
+# ============================================================================
+# Nodes — one [[nodes]] block per cluster node
+# ============================================================================
+#
+# Required fields per node:
+#   name          — hostname, must match [a-z0-9-]+
+#   address       — static IP within node_cidr
+#   controller    — true for control-plane nodes
+#   disk          — device path (talosctl get disks -n <ip> --insecure)
+#   mac_addr      — primary NIC MAC (talosctl get links -n <ip> --insecure)
+#   schematic_id  — from https://factory.talos.dev/
+#
+# Optional fields:
+#   mtu           — MTU for the NIC (default: 1500)
+#   secureboot    — SecureBoot on UEFI (default: false)
+#   encrypt_disk  — TPM-based FDE (default: false)
+#   kernel_modules — e.g. ["nvidia", "nvidia_uvm"] for GPU nodes
+#   media_node    — label node for download apps (default: false)
+
+[[nodes]]
+name         = "node-ctrl-01"
+address      = "192.168.1.50"
+controller   = true
+disk         = "/dev/sda"
+mac_addr     = "00:00:00:00:00:00"
+schematic_id = "your-schematic-id-from-factory-talos-dev"
+
+[[nodes]]
+name         = "node-worker-01"
+address      = "192.168.1.51"
+controller   = false
+disk         = "/dev/sda"
+mac_addr     = "00:00:00:00:00:01"
+schematic_id = "your-schematic-id-from-factory-talos-dev"
+media_node   = true
+
+[[nodes]]
+name         = "node-worker-02"
+address      = "192.168.1.52"
+controller   = false
+disk         = "/dev/sda"
+mac_addr     = "00:00:00:00:00:02"
+schematic_id = "your-schematic-id-from-factory-talos-dev"
