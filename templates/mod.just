@@ -41,10 +41,13 @@ configure:
         echo "Error: cloudflare-tunnel.json not found. See README." >&2
         exit 1
     fi
+
     echo "==> Validating cluster.toml..."
     cd "{{REPO_ROOT}}" && uv run python templates/scripts/validate.py cluster.toml
+
     echo "==> Rendering templates..."
     cd "{{REPO_ROOT}}" && PYTHONDONTWRITEBYTECODE=1 uv run makejinja
+
     echo "==> Encrypting secrets..."
     while IFS= read -r -d '' secret_file; do
         if [[ "$(sops filestatus "$secret_file" | jq -r ".encrypted")" == "false" ]]; then
@@ -52,11 +55,32 @@ configure:
             echo "  ✓ Encrypted $secret_file"
         fi
     done < <(find "{{BOOTSTRAP_DIR}}" "{{KUBERNETES_DIR}}" "{{TALOS_DIR}}" -type f -name "*.sops.*" -print0 2>/dev/null)
+
     echo "==> Validating Kubernetes manifests..."
-    bash "{{TEMPLATE_DIR}}/scripts/kubeconform.sh" "{{KUBERNETES_DIR}}"
+    kubeconform_args=(
+        "-strict"
+        "-ignore-missing-schemas"
+        "-skip" "Gateway,HTTPRoute,Secret,TalosUpgrade,KubernetesUpgrade"
+        "-schema-location" "default"
+        "-schema-location" "https://kubernetes-schemas.pages.dev/{{{{.Group}}}}/{{{{.ResourceKind}}}}_{{{{.ResourceAPIVersion}}}}.json"
+        "-verbose"
+    )
+    kustomize_args=("--load-restrictor=LoadRestrictionsNone")
+
+    find "{{KUBERNETES_DIR}}/flux" -maxdepth 1 -type f -name '*.yaml' -print0 \
+        | while IFS= read -r -d '' f; do kubeconform "${kubeconform_args[@]}" "$f"; done
+
+    find "{{KUBERNETES_DIR}}/flux" "{{KUBERNETES_DIR}}/apps" -type f -name 'kustomization.yaml' -print0 \
+        | while IFS= read -r -d '' f; do
+            dir="${f%kustomization.yaml}"
+            echo "--- validating $dir"
+            kustomize build "$dir" "${kustomize_args[@]}" | kubeconform "${kubeconform_args[@]}"
+          done
+
     echo "==> Validating Talos configuration..."
     VALIDATE_DIR=$(mktemp -d)
     cd "{{TALOS_DIR}}" && topf render --output "$VALIDATE_DIR" && rm -rf "$VALIDATE_DIR"
+
     echo "✓ configure complete"
 
 # Gather common resources from the cluster for debugging
@@ -94,40 +118,3 @@ reset:
     rm -rf "{{KUBERNETES_DIR}}"
     rm -rf "{{TALOS_DIR}}"
     rm -f  "{{REPO_ROOT}}/.sops.yaml"
-
-# [private] Render Jinja2 templates into kubernetes/ bootstrap/ talos/
-[private]
-_render-configs:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    if [[ ! -f "{{REPO_ROOT}}/cluster.toml" ]]; then
-        echo "Error: cluster.toml not found. Run 'just init' first." >&2
-        exit 1
-    fi
-    if [[ ! -f "{{REPO_ROOT}}/cloudflare-tunnel.json" ]]; then
-        echo "Error: cloudflare-tunnel.json not found. See README." >&2
-        exit 1
-    fi
-    cd "{{REPO_ROOT}}" && PYTHONDONTWRITEBYTECODE=1 uv run makejinja
-
-# [private] Encrypt any unencrypted *.sops.* files with SOPS
-[private]
-_encrypt-secrets:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    while IFS= read -r -d '' secret_file; do
-        if [[ "$(sops filestatus "$secret_file" | jq -r ".encrypted")" == "false" ]]; then
-            sops --encrypt --in-place "$secret_file"
-            echo "✓ Encrypted $secret_file"
-        fi
-    done < <(find "{{BOOTSTRAP_DIR}}" "{{KUBERNETES_DIR}}" "{{TALOS_DIR}}" -type f -name "*.sops.*" -print0 2>/dev/null)
-
-# [private] Validate Kubernetes manifests with kubeconform
-[private]
-_validate-kubernetes:
-    bash "{{TEMPLATE_DIR}}/scripts/kubeconform.sh" "{{KUBERNETES_DIR}}"
-
-# [private] Validate Talos configuration with talhelper
-[private]
-_validate-talos:
-    talhelper validate talconfig "{{TALOS_DIR}}/talconfig.yaml"
