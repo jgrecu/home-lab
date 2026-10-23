@@ -1,16 +1,22 @@
-machine:
-  network:
-    interfaces:
-      - deviceSelector:
-          hardwareAddr: "{{ .Node.Data.macAddr }}"
-        dhcp: false
-        addresses:
-          - "{{ .Node.IP }}/{{ .Data.nodeCidrPrefix }}"
-        routes:
-          - gateway: "{{ .Data.nodeGateway }}"
-            network: 0.0.0.0/0
-        mtu: {{ .Node.Data.mtu }}
-        {{- if eq .Node.Role "control-plane" }}
-        vip:
-          ip: "{{ .Data.clusterApiAddr }}"
-        {{- end }}
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: ethSel0
+selector:
+  match: glob("{{ .Node.Data.macAddr }}", mac(link.hardware_addr))
+---
+apiVersion: v1alpha1
+kind: LinkConfig
+name: ethSel0
+addresses:
+  - address: {{ .Node.IP }}/{{ .Data.nodeCidrPrefix }}
+mtu: {{ .Node.Data.mtu }}
+routes:
+  - gateway: {{ .Data.nodeGateway }}
+{{- if eq .Node.Role "control-plane" }}
+---
+apiVersion: v1alpha1
+kind: Layer2VIPConfig
+link: ethSel0
+name: {{ .Data.clusterApiAddr }}
+{{- end }}

@@ -1,3 +1,4 @@
+#:schema ./cluster.schema.json
 # cluster.sample.toml — copy this to cluster.toml and fill in your values
 # Run 'just init' to do this automatically.
 #
@@ -126,6 +127,7 @@ nfs_photos_path   = "/immich"
 nfs_books_path    = "/books"
 nfs_seaweedfs_path = "/seaweedfs"
 nfs_nextcloud_path = "/nextcloud"
+nextcloud_admin_password = ""
 
 # ============================================================================
 # Forgejo Configuration

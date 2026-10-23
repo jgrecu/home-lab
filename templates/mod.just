@@ -41,6 +41,8 @@ configure:
         echo "Error: cloudflare-tunnel.json not found. See README." >&2
         exit 1
     fi
+    echo "==> Validating cluster.toml..."
+    cd "{{REPO_ROOT}}" && uv run python templates/scripts/validate.py cluster.toml
     echo "==> Rendering templates..."
     cd "{{REPO_ROOT}}" && PYTHONDONTWRITEBYTECODE=1 uv run makejinja
     echo "==> Encrypting secrets..."
@@ -82,6 +84,7 @@ tidy:
     mv "{{REPO_ROOT}}/uv.lock" "$TIDY_FOLDER/uv.lock"
     mv "{{REPO_ROOT}}/cluster.toml" "$TIDY_FOLDER/cluster.toml"
     mv "{{REPO_ROOT}}/cluster.sample.toml" "$TIDY_FOLDER/cluster.sample.toml"
+    mv "{{REPO_ROOT}}/cluster.schema.json" "$TIDY_FOLDER/cluster.schema.json" 2>/dev/null || true
     echo "✓ Template files archived to $TIDY_FOLDER"
 
 # Remove all generated (templated) files and directories

@@ -1,0 +1,52 @@
+{
+  "$defs": {
+    "NodeConfig": {
+      "properties": {
+        "name": {
+          "description": "Node hostname (lowercase, alphanumeric, hyphens)",
+          "title": "Name",
+          "type": "string"
+        },
+        "address": {
+          "description": "Static IP address (must be within node_cidr)",
+          "title": "Address",
+          "type": "string"
+        },
+        "controller": {
+          "description": "True if this is a control-plane node",
+          "title": "Controller",
+          "type": "boolean"
+        },
+        "disk": {
+          "description": "Disk path (/dev/...) or serial number for disk selection",
+          "title": "Disk",
+          "type": "string"
+        },
+        "mac_addr": {
+... (539 lines omitted)
+    "sonarr_api_key",
+    "recyclarr_sonarr_api_key",
+    "prowlarr_api_key",
+    "bazarr_api_key",
+    "sabnzbd_api_key",
+    "grimmory_mariadb_root_password",
+    "grimmory_mariadb_password",
+    "hae_mongo_password",
+    "hae_read_token",
+    "hae_write_token",
+    "volsync_restic_password",
+    "volsync_s3_access_key",
+    "volsync_s3_secret_key",
+    "seaweedfs_s3_access_key_id",
+    "seaweedfs_s3_secret_access_key",
+    "r2_access_key_id",
+    "r2_secret_access_key",
+    "r2_endpoint",
+    "r2_bucket",
+    "nodes"
+  ],
+  "title": "cluster.toml \u2014 homelab cluster configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
+[see remaining: tail -n +26 "$HOME/Library/Application Support/rtk/tee/1792750004_uv-run-stdout.log"]

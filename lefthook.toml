@@ -11,3 +11,7 @@ run = "bash -c 'for f in {staged_files}; do grep -q \"sops:\" \"$f\" || { echo \
 [pre-commit.commands.shellcheck]
 glob = "**/*.sh"
 run = "shellcheck --severity=warning {staged_files}"
+
+[pre-commit.commands.zizmor]
+glob = ".github/workflows/*.{yml,yaml}"
+run = "zizmor {staged_files}"
