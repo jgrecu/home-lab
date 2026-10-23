@@ -70,17 +70,7 @@ debug:
 # Archive all template-related files after initial cluster setup is complete
 [confirm("All template-related config will be archived... continue?")]
 [doc("One-way archive of template tooling under .private/<ts>/ (run after configure works)")]
-tidy:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    TIDY_FOLDER=".private/$(date +%s)"
-    mkdir -p "$TIDY_FOLDER"
-    gsed -i 's/(\.\.j2)\?//g' .renovaterc.json5 2>/dev/null || \
-        sed -i 's/(\.\.j2)\?//g' .renovaterc.json5
-    mv "{{TEMPLATE_DIR}}" "$TIDY_FOLDER/templates"
-    mv makejinja.toml pyproject.toml uv.lock cluster.toml cluster.sample.toml "$TIDY_FOLDER/"
-    mv cluster.schema.json "$TIDY_FOLDER/" 2>/dev/null || true
-    just log info "archived" path "$TIDY_FOLDER"
+tidy: tidy-preconditions tidy-strip && tidy-archive
 
 # Remove all generated (templated) files and directories
 [confirm("Remove all templated files and directories... continue?")]
@@ -178,3 +168,37 @@ doctor-check label path:
         just log error "missing" file "{{label}}"
         exit 1
     fi
+
+# ─── Tidy helpers ────────────────────────────────────────────────────────────
+
+# Verify all required files exist before archiving
+[private]
+tidy-preconditions:
+    test -d "{{TEMPLATE_DIR}}"
+    test -f makejinja.toml
+    test -f cluster.toml
+    test -f cluster.sample.toml
+    test -f cluster.schema.json
+    test -f pyproject.toml
+    test -f uv.lock
+    test -f justfile
+    test -f .renovaterc.json5
+
+# Strip template-specific content from tracked files before archiving
+[private]
+tidy-strip:
+    sd '\..\.j2'                        '' .renovaterc.json5
+    sd -A '(?ms)^# === template ===$.*' '' justfile
+
+# Move all template tooling to .private/<timestamp>/
+[private]
+tidy-archive:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    TIDY_FOLDER=".private/$(date +%s)"
+    mkdir -p "$TIDY_FOLDER"
+    mv "{{TEMPLATE_DIR}}" "$TIDY_FOLDER/templates"
+    mv makejinja.toml pyproject.toml uv.lock "$TIDY_FOLDER/"
+    mv cluster.toml cluster.sample.toml "$TIDY_FOLDER/"
+    mv cluster.schema.json "$TIDY_FOLDER/" 2>/dev/null || true
+    just log info "archived" path "$TIDY_FOLDER"

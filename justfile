@@ -9,19 +9,25 @@ export TALOSCONFIG       := justfile_directory() + "/talos/talosconfig"
 
 mod bootstrap "bootstrap"
 mod talos "talos"
-mod template "templates"
 mod ops "ops"
 
 # List all available recipes
 default:
     @just --list
 
-# Shared structured log helper (used by template::doctor)
+# Shared structured log helper (used by template::doctor and ops::*)
 [private]
 log lvl msg *args:
     gum log -t rfc3339 -s -l "{{lvl}}" "{{msg}}" {{args}}
 
-# ─── Top-level shortcuts ──────────────────────────────────────────────────────
+# Force Flux to pull in changes from your Git repository
+[doc("Force Flux to reconcile from git")]
+reconcile:
+    flux --namespace flux-system reconcile kustomization flux-system --with-source
+
+# === template ===
+
+mod template "templates"
 
 # Pre-flight check: verify all required files exist and cluster.toml is valid
 [doc("Pre-flight check — verify required files and validate cluster.toml")]
@@ -43,8 +49,3 @@ init:
 [doc("Regenerate cluster.schema.json (run after changing validate.py)")]
 schema:
     just template schema
-
-# Force Flux to pull in changes from your Git repository
-[doc("Force Flux to reconcile from git")]
-reconcile:
-    flux --namespace flux-system reconcile kustomization flux-system --with-source

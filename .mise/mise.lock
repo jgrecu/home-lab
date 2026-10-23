@@ -906,6 +906,40 @@ url = "https://github.com/evilmartians/lefthook/releases/download/v2.2.2/lefthoo
 url_api = "https://api.github.com/repos/evilmartians/lefthook/releases/assets/636518867"
 provenance = "github-attestations"
 
+[[tools.sd]]
+version = "1.0.0"
+backend = "aqua:chmln/sd"
+specifiers = ["1.0.0"]
+
+[tools.sd."platforms.linux-arm64"]
+url = "https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/chmln/sd/releases/assets/134463461"
+
+[tools.sd."platforms.linux-arm64-musl"]
+url = "https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/chmln/sd/releases/assets/134463461"
+
+[tools.sd."platforms.linux-x64"]
+url = "https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/chmln/sd/releases/assets/134463344"
+
+[tools.sd."platforms.linux-x64-musl"]
+url = "https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/chmln/sd/releases/assets/134463437"
+
+[tools.sd."platforms.macos-arm64"]
+checksum = "blake3:6b94f3ccef4e6904a250ffc19f163bfe0e45f2635cfe02155aa52cac5397ef41"
+url = "https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/chmln/sd/releases/assets/134463380"
+
+[tools.sd."platforms.macos-x64"]
+url = "https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/chmln/sd/releases/assets/134463392"
+
+[tools.sd."platforms.windows-x64"]
+url = "https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/chmln/sd/releases/assets/134463615"
+
 [[tools.uv]]
 version = "0.13.5"
 backend = "aqua:astral-sh/uv"
