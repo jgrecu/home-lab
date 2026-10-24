@@ -38,7 +38,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 "aqua:yannh/kubeconform" = "0.8.0"
 
 # Talos tools — topf replaces talhelper (archived Aug 2026)
-"github:postfinance/topf" = "v0.6.1"
+"github:postfinance/topf" = "v0.6.2"
 "aqua:siderolabs/talos" = "1.14.4"
 
 # Infrastructure tools
@@ -47,7 +47,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 "aqua:getsops/sops" = "3.13.3"
 
 # CLI utilities
-"aqua:cli/cli" = "2.103.0"
+"aqua:cli/cli" = "2.103.2"
 "aqua:jqlang/jq" = "1.8.1"
 "aqua:mikefarah/yq" = "4.54.1"
 
