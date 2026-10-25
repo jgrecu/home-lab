@@ -49,7 +49,15 @@ jobs:
           echo '{"AccountTag":"fake","TunnelSecret":"fake","TunnelID":"fake"}' > cloudflare-tunnel.json
           touch kubeconfig
 
+      - name: Prepare Talos test secrets
+        run: |
+          umask 077
+          talosctl gen secrets -o "$RUNNER_TEMP/talos-secrets.yaml"
+          yq '.secretsPath = strenv(RUNNER_TEMP) + "/talos-secrets.yaml"' talos/topf.yaml > talos/topf-ci.yaml
+
       - name: Run configure
+        env:
+          TOPFCONFIG: topf-ci.yaml
         run: just --yes configure
 
       - name: Dry run bootstrap talos
