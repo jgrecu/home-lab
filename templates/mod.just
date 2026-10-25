@@ -201,4 +201,4 @@ tidy-archive:
     mv makejinja.toml pyproject.toml uv.lock "$TIDY_FOLDER/"
     mv cluster.toml cluster.sample.toml "$TIDY_FOLDER/"
     mv cluster.schema.json "$TIDY_FOLDER/" 2>/dev/null || true
-    just log info "archived" path "$TIDY_FOLDER"
+    gum log -t rfc3339 -s -l info "archived" path "$TIDY_FOLDER"
