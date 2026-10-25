@@ -70,4 +70,4 @@ jobs:
         run: yes | just template reset
 
       - name: Run tidy
-        run: yes | just template tidy
+        run: just --yes --justfile templates/mod.just tidy
