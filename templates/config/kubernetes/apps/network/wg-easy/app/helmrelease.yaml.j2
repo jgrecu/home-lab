@@ -17,31 +17,9 @@ spec:
         type: deployment
         strategy: Recreate
         initContainers:
-          # Flip the iptables alternative inside the wg-easy Alpine image from
-          # legacy → nft backend BEFORE the app starts. wg-easy's own PostUp/PostDown
-          # hooks call iptables, which then transparently go through nft_compat to
-          # nftables. This fixes the crash on Talos (no legacy iptables kernel modules).
-          # Must run before nftables-setup so the nat table exists when wg-easy fires.
-          iptables-nft-backend:
-            image:
-              repository: ghcr.io/wg-easy/wg-easy
-              tag: 15.5.0
-            command:
-              - /bin/sh
-              - -c
-              - |
-                update-alternatives --install /usr/sbin/iptables iptables /usr/sbin/iptables-nft 20 \
-                  --slave /usr/sbin/iptables-restore iptables-restore /usr/sbin/iptables-nft-restore \
-                  --slave /usr/sbin/iptables-save iptables-save /usr/sbin/iptables-nft-save
-                update-alternatives --install /usr/sbin/ip6tables ip6tables /usr/sbin/ip6tables-nft 20 \
-                  --slave /usr/sbin/ip6tables-restore ip6tables-restore /usr/sbin/ip6tables-nft-restore \
-                  --slave /usr/sbin/ip6tables-save ip6tables-save /usr/sbin/ip6tables-nft-save
-                echo "iptables backend switched to nft:"
-                iptables --version
-            securityContext:
-              privileged: true
-          # Pre-seed nftables rules so the nat/filter tables exist when wg-easy
-          # fires its own iptables PostUp hook (which goes via nft_compat now)
+          # Pre-seed nftables tables/chains so they exist when wg-easy fires its PostUp hook.
+          # The WG_POST_UP env var below uses native nft commands, but having the tables
+          # pre-created avoids race conditions on the first boot.
           nftables-setup:
             image:
               repository: alpine
@@ -84,6 +62,25 @@ spec:
               INIT_IPV4_CIDR: "10.8.0.0/24"
               # Route all traffic through VPN (disable split-tunnel)
               INIT_ALLOWED_IPS: "0.0.0.0/0"
+              # Override wg-quick's iptables PostUp/PostDown hooks with native nftables.
+              # Talos Linux does not load legacy iptables kernel modules — only nftables.
+              # wg-easy v15.5.0 calls wg-quick internally which uses iptables → crashes.
+              # These env vars replace the default hooks entirely with nft commands.
+              # {{ipv4Cidr}}=10.8.0.0/24, {{ipv6Cidr}}=fdcc:ad94:bacf:61a4::cafe:0/112,
+              # {{device}}=eth0, {{port}}=51820, {{uiPort}}=51821
+              WG_POST_UP: >-
+                nft add table inet wg_table;
+                nft add chain inet wg_table prerouting { type nat hook prerouting priority 100 \; };
+                nft add chain inet wg_table postrouting { type nat hook postrouting priority 100 \; };
+                nft add rule inet wg_table postrouting ip saddr 10.8.0.0/24 oifname eth0 masquerade;
+                nft add rule inet wg_table postrouting ip6 saddr fdcc:ad94:bacf:61a4::cafe:0/112 oifname eth0 masquerade;
+                nft add chain inet wg_table input { type filter hook input priority 0 \; policy accept \; };
+                nft add rule inet wg_table input udp dport 51820 accept;
+                nft add rule inet wg_table input tcp dport 51821 accept;
+                nft add chain inet wg_table forward { type filter hook forward priority 0 \; policy accept \; };
+                nft add rule inet wg_table forward iifname "wg0" accept;
+                nft add rule inet wg_table forward oifname "wg0" accept;
+              WG_POST_DOWN: "nft delete table inet wg_table"
             probes:
               liveness:
                 enabled: true
