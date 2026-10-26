@@ -17,7 +17,31 @@ spec:
         type: deployment
         strategy: Recreate
         initContainers:
-          # Set up nftables rules before WireGuard starts
+          # Flip the iptables alternative inside the wg-easy Alpine image from
+          # legacy → nft backend BEFORE the app starts. wg-easy's own PostUp/PostDown
+          # hooks call iptables, which then transparently go through nft_compat to
+          # nftables. This fixes the crash on Talos (no legacy iptables kernel modules).
+          # Must run before nftables-setup so the nat table exists when wg-easy fires.
+          iptables-nft-backend:
+            image:
+              repository: ghcr.io/wg-easy/wg-easy
+              tag: 15.5.0
+            command:
+              - /bin/sh
+              - -c
+              - |
+                update-alternatives --install /usr/sbin/iptables iptables /usr/sbin/iptables-nft 20 \
+                  --slave /usr/sbin/iptables-restore iptables-restore /usr/sbin/iptables-nft-restore \
+                  --slave /usr/sbin/iptables-save iptables-save /usr/sbin/iptables-nft-save
+                update-alternatives --install /usr/sbin/ip6tables ip6tables /usr/sbin/ip6tables-nft 20 \
+                  --slave /usr/sbin/ip6tables-restore ip6tables-restore /usr/sbin/ip6tables-nft-restore \
+                  --slave /usr/sbin/ip6tables-save ip6tables-save /usr/sbin/ip6tables-nft-save
+                echo "iptables backend switched to nft:"
+                iptables --version
+            securityContext:
+              privileged: true
+          # Pre-seed nftables rules so the nat/filter tables exist when wg-easy
+          # fires its own iptables PostUp hook (which goes via nft_compat now)
           nftables-setup:
             image:
               repository: alpine
