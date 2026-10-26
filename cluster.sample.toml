@@ -227,6 +227,18 @@ r2_endpoint       = ""
 r2_bucket         = ""
 
 # ============================================================================
+# Vault Configuration
+# ============================================================================
+
+# No application secrets required in cluster.toml — Vault manages its own
+# credentials. After first deploy, initialise and unseal manually:
+#
+#   kubectl -n vault exec -it vault-0 -- vault operator init
+#   kubectl -n vault exec -it vault-0 -- vault operator unseal   # repeat 3×
+#
+# The root token and unseal keys are printed once — store them securely.
+
+# ============================================================================
 # Nodes — one [[nodes]] block per cluster node
 # ============================================================================
 #

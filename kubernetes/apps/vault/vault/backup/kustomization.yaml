@@ -1,0 +1,50 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+components:
+  - ../../../../components/volsync
+resources:
+  - ./secret.sops.yaml
+  - ./secret-r2.sops.yaml
+patches:
+  - target:
+      kind: ReplicationSource
+      name: volsync-local
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: vault-data-backup
+      - op: replace
+        path: /metadata/namespace
+        value: vault
+      - op: replace
+        path: /spec/sourcePVC
+        value: vault-data
+      - op: replace
+        path: /spec/trigger/schedule
+        value: "0 3 * * *"
+      - op: replace
+        path: /spec/restic/repository
+        value: vault-data-restic-secret
+      - op: replace
+        path: /spec/restic/capacity
+        value: 2Gi
+  - target:
+      kind: ReplicationSource
+      name: volsync-r2
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: vault-data-backup-r2
+      - op: replace
+        path: /metadata/namespace
+        value: vault
+      - op: replace
+        path: /spec/sourcePVC
+        value: vault-data
+      - op: replace
+        path: /spec/restic/repository
+        value: vault-data-r2-restic-secret
+      - op: replace
+        path: /spec/restic/capacity
+        value: 2Gi
