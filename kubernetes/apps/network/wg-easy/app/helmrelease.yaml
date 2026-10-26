@@ -12,6 +12,10 @@ spec:
   values:
     controllers:
       wg-easy:
+        # Recreate strategy required: RWO PVC can only be mounted by one pod at a time.
+        # Rolling update would leave the old pod holding the PVC while the new one waits → timeout.
+        type: deployment
+        strategy: Recreate
         initContainers:
           # Set up nftables rules before WireGuard starts
           nftables-setup:
