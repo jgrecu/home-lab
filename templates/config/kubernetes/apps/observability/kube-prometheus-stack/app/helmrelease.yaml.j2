@@ -40,7 +40,7 @@ spec:
               accessModes: [ReadWriteOnce]
               resources:
                 requests:
-                  storage: 20Gi
+                  storage: 40Gi
         # Pick up ALL ServiceMonitors and PodMonitors in the cluster,
         # not just the ones created by this chart. This lets every app
         # add its own monitoring without changing the Prometheus config.
