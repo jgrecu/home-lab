@@ -71,6 +71,9 @@ spec:
     kube-state-metrics:
       extraArgs:
         - --custom-resource-state-config-file=/etc/customresourcestate/flux.yaml
+      prometheus:
+        monitor:
+          honorTimestamps: false
       volumeMounts:
         - name: customresourcestate-config
           mountPath: /etc/customresourcestate
