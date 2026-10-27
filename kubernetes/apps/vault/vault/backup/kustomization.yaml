@@ -19,7 +19,7 @@ patches:
         value: vault
       - op: replace
         path: /spec/sourcePVC
-        value: vault-data
+        value: data-vault-0
       - op: replace
         path: /spec/trigger/schedule
         value: "0 3 * * *"
@@ -41,7 +41,7 @@ patches:
         value: vault
       - op: replace
         path: /spec/sourcePVC
-        value: vault-data
+        value: data-vault-0
       - op: replace
         path: /spec/restic/repository
         value: vault-data-r2-restic-secret
