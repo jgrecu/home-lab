@@ -9,7 +9,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 
 [tools]
 # Python tooling — uv manages makejinja and pytest via pyproject.toml
-"uv" = "0.13.5"
+"uv" = "0.13.6"
 
 # Task runner
 "just" = "1.59.0"
@@ -39,7 +39,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 
 # Talos tools — topf replaces talhelper (archived Aug 2026)
 "github:postfinance/topf" = "v0.6.2"
-"aqua:siderolabs/talos" = "1.14.4"
+"aqua:siderolabs/talos" = "1.14.5"
 
 # Infrastructure tools
 "aqua:cloudflare/cloudflared" = "2026.10.4"
@@ -47,7 +47,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 "aqua:getsops/sops" = "3.13.3"
 
 # CLI utilities
-"aqua:cli/cli" = "2.103.2"
+"aqua:cli/cli" = "2.103.3"
 "aqua:jqlang/jq" = "1.8.1"
 "aqua:mikefarah/yq" = "4.54.1"
 
