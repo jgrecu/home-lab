@@ -29,7 +29,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 "zizmor" = "1.31.1"
 
 # Kubernetes tools
-"aqua:cilium/cilium-cli" = "0.20.1"
+"aqua:cilium/cilium-cli" = "0.20.2"
 "aqua:fluxcd/flux2" = "2.10.0"
 "aqua:helm/helm" = "4.3.1"
 "aqua:helmfile/helmfile" = "1.8.2"
