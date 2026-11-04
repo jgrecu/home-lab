@@ -9,7 +9,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 
 [tools]
 # Python tooling — uv manages makejinja and pytest via pyproject.toml
-"uv" = "0.13.6"
+"uv" = "0.13.7"
 
 # Task runner
 "just" = "1.59.0"
