@@ -16,7 +16,7 @@ spec:
             image:
               repository: ghcr.io/hotio/seerr
               # renovate: datasource=docker depName=ghcr.io/hotio/seerr versioning=loose
-              tag: release-3.4.1
+              tag: release-3.5.1
             env:
               TZ: "Europe/Madrid"
               PUID: "1000"
