@@ -14,13 +14,11 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/hotio/seerr
-              # renovate: datasource=docker depName=ghcr.io/hotio/seerr versioning=loose
-              tag: release-3.5.1
+              repository: ghcr.io/seerr-team/seerr
+              # renovate: datasource=docker depName=ghcr.io/seerr-team/seerr
+              tag: v3.5.1
             env:
               TZ: "Europe/Madrid"
-              PUID: "1000"
-              PGID: "1000"
             probes:
               liveness: &probes
                 enabled: true
