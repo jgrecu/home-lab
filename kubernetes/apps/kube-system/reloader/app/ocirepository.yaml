@@ -9,5 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
+    # renovate: datasource=docker depName=ghcr.io/stakater/charts/reloader
     tag: 2.2.19
   url: oci://ghcr.io/stakater/charts/reloader

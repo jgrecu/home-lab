@@ -9,5 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
+    # renovate: datasource=docker depName=ghcr.io/grimmory-tools/helm-charts/grimmory
     tag: 3.5.0
   url: oci://ghcr.io/grimmory-tools/helm-charts/grimmory

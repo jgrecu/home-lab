@@ -10,5 +10,6 @@ spec:
     operation: copy
   ref:
     # datasource=docker depName=ghcr.io/immich-app/immich-charts/immich
+    # renovate: datasource=docker depName=ghcr.io/immich-app/immich-charts/immich
     tag: 0.13.4
   url: oci://ghcr.io/immich-app/immich-charts/immich

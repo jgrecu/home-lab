@@ -9,5 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
+    # renovate: datasource=docker depName=ghcr.io/home-operations/charts-mirror/external-dns
     tag: 1.23.0
   url: oci://ghcr.io/home-operations/charts-mirror/external-dns
