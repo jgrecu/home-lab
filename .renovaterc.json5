@@ -100,7 +100,7 @@
         '/^lscr\\.io/linuxserver/(sonarr|radarr|prowlarr|bazarr)$/',
         '/^ghcr\\.io/recyclarr/recyclarr$/',
       ],
-      allowedVersions: '/^(?!.*-(develop|nightly)).*$/',
+      allowedVersions: '/^\\d+\\.\\d+\\.\\d+$/',
       group: {
         commitMessageTopic: '{{{groupName}}} group',
       },
