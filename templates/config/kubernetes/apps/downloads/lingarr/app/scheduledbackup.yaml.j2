@@ -1,0 +1,13 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: lingarr-postgres-weekly
+  namespace: downloads
+spec:
+  # Weekly full backup every Monday at 3 AM (6-field cron: sec min hour day month dow)
+  schedule: "0 0 3 * * 1"
+  backupOwnerReference: self
+  cluster:
+    name: lingarr-postgres
+  immediate: false
