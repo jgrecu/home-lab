@@ -26,6 +26,9 @@ patches:
       - op: replace
         path: /spec/restic/repository
         value: lingarr-config-restic-secret
+      - op: replace
+        path: /spec/restic/capacity
+        value: 1Gi
   - target:
       kind: ReplicationSource
       name: volsync-r2
@@ -42,3 +45,6 @@ patches:
       - op: replace
         path: /spec/restic/repository
         value: lingarr-config-r2-restic-secret
+      - op: replace
+        path: /spec/restic/capacity
+        value: 1Gi
