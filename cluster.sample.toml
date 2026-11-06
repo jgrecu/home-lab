@@ -140,6 +140,7 @@ forgejo_admin_password = ""
 # Forgejo Actions runner registration token — obtain from Forgejo UI after first deploy.
 # Site Administration → Runners → New runner token
 forgejo_runner_secret = ""
+forgejo_runner_uuid   = ""
 
 # ============================================================================
 # Linkding Configuration

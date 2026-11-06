@@ -86,6 +86,7 @@ class ClusterConfig(BaseModel):
     forgejo_admin_email: str
     forgejo_admin_password: str
     forgejo_runner_secret: str
+    forgejo_runner_uuid: str
 
     # ── Linkding ─────────────────────────────────────────────────────────────
     linkding_admin_password: str
