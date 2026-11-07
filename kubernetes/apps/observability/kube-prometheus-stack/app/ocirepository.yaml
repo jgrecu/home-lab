@@ -10,5 +10,5 @@ spec:
     operation: copy
   ref:
     # renovate: datasource=docker depName=ghcr.io/prometheus-community/charts/kube-prometheus-stack
-    tag: 92.21.2
+    tag: 92.22.0
   url: oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack
