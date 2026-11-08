@@ -1046,7 +1046,7 @@ data:
       },
       "timezone": "",
       "title": "Cilium v1.12 Operator Metrics",
-      "uid": "1GC0TT4Wz",
+      "uid": "1GC0TT4Wz-custom",
       "version": 1,
       "description": "Dashboard for the Cilium v1.12 (https://cilium.io/) Operator metrics"
     }
