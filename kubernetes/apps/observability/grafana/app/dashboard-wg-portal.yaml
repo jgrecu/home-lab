@@ -27,7 +27,7 @@ data:
           "type": "row"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": { "type": "prometheus", "uid": "$${datasource}" },
           "fieldConfig": {
             "defaults": {
               "color": { "mode": "thresholds" },
@@ -56,7 +56,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "count(wireguard_peer_up{job=\"network/wg-portal\"} == 1)",
               "legendFormat": "Active",
               "refId": "A"
@@ -64,7 +64,7 @@ data:
           ]
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": { "type": "prometheus", "uid": "$${datasource}" },
           "fieldConfig": {
             "defaults": {
               "color": { "mode": "thresholds" },
@@ -91,7 +91,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "count(wireguard_peer_up{job=\"network/wg-portal\"})",
               "legendFormat": "Total",
               "refId": "A"
@@ -99,7 +99,7 @@ data:
           ]
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": { "type": "prometheus", "uid": "$${datasource}" },
           "fieldConfig": {
             "defaults": {
               "color": { "mode": "thresholds" },
@@ -126,7 +126,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "sum(rate(wireguard_interface_received_bytes_total{job=\"network/wg-portal\"}[$__rate_interval]))",
               "legendFormat": "RX",
               "refId": "A"
@@ -134,7 +134,7 @@ data:
           ]
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": { "type": "prometheus", "uid": "$${datasource}" },
           "fieldConfig": {
             "defaults": {
               "color": { "mode": "thresholds" },
@@ -161,7 +161,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "sum(rate(wireguard_interface_sent_bytes_total{job=\"network/wg-portal\"}[$__rate_interval]))",
               "legendFormat": "TX",
               "refId": "A"
@@ -176,7 +176,7 @@ data:
           "type": "row"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": { "type": "prometheus", "uid": "$${datasource}" },
           "fieldConfig": {
             "defaults": {
               "color": { "mode": "thresholds" },
@@ -263,28 +263,28 @@ data:
           "type": "table",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "wireguard_peer_up{job=\"network/wg-portal\"}",
               "instant": true,
               "legendFormat": "__auto",
               "refId": "A"
             },
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "time() - wireguard_peer_last_handshake_seconds{job=\"network/wg-portal\"}",
               "instant": true,
               "legendFormat": "__auto",
               "refId": "B"
             },
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "wireguard_peer_received_bytes_total{job=\"network/wg-portal\"}",
               "instant": true,
               "legendFormat": "__auto",
               "refId": "C"
             },
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "wireguard_peer_sent_bytes_total{job=\"network/wg-portal\"}",
               "instant": true,
               "legendFormat": "__auto",
@@ -300,7 +300,7 @@ data:
           "type": "row"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": { "type": "prometheus", "uid": "$${datasource}" },
           "fieldConfig": {
             "defaults": {
               "color": { "mode": "palette-classic" },
@@ -335,7 +335,7 @@ data:
           "type": "timeseries",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "rate(wireguard_peer_received_bytes_total{job=\"network/wg-portal\"}[$__rate_interval])",
               "legendFormat": "{{name}} ({{addresses}})",
               "refId": "A"
@@ -343,7 +343,7 @@ data:
           ]
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": { "type": "prometheus", "uid": "$${datasource}" },
           "fieldConfig": {
             "defaults": {
               "color": { "mode": "palette-classic" },
@@ -378,7 +378,7 @@ data:
           "type": "timeseries",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "rate(wireguard_peer_sent_bytes_total{job=\"network/wg-portal\"}[$__rate_interval])",
               "legendFormat": "{{name}} ({{addresses}})",
               "refId": "A"
@@ -386,7 +386,7 @@ data:
           ]
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": { "type": "prometheus", "uid": "$${datasource}" },
           "fieldConfig": {
             "defaults": {
               "color": { "mode": "palette-classic" },
@@ -421,13 +421,13 @@ data:
           "type": "timeseries",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "rate(wireguard_interface_received_bytes_total{job=\"network/wg-portal\"}[$__rate_interval])",
               "legendFormat": "RX — {{interface}}",
               "refId": "A"
             },
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "rate(wireguard_interface_sent_bytes_total{job=\"network/wg-portal\"}[$__rate_interval])",
               "legendFormat": "TX — {{interface}}",
               "refId": "B"
@@ -442,7 +442,7 @@ data:
           "type": "row"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "datasource": { "type": "prometheus", "uid": "$${datasource}" },
           "fieldConfig": {
             "defaults": {
               "color": { "mode": "palette-classic" },
@@ -485,7 +485,7 @@ data:
           "type": "timeseries",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "$${datasource}" },
               "expr": "time() - wireguard_peer_last_handshake_seconds{job=\"network/wg-portal\"}",
               "legendFormat": "{{name}} ({{addresses}})",
               "refId": "A"
