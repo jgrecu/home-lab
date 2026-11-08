@@ -1,0 +1,19 @@
+---
+# PodMonitor for wg-portal built-in Prometheus metrics endpoint.
+# Uses PodMonitor (not ServiceMonitor) because the chart's metrics service
+# exposes the wrong port — we scrape the pod directly on 8787.
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: wg-portal
+  namespace: network
+  labels:
+    app.kubernetes.io/name: wg-portal
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wg-portal
+  podMetricsEndpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics

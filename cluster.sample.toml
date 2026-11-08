@@ -53,17 +53,15 @@ cluster_gateway_addr = "192.168.1.57"
 # Load balancer IP for Transmission peer port. (REQUIRED for Transmission)
 transmission_peer_addr = "192.168.1.58"
 
-# Load balancer IP for WireGuard Easy VPN. (REQUIRED for WireGuard)
-wg_easy_vpn_addr = "192.168.1.59"
+# Load balancer IP for wg-portal WireGuard VPN. (REQUIRED for WireGuard)
+wg_portal_vpn_addr = "192.168.1.59"
 
-# WireGuard Easy admin password for web UI. (REQUIRED for WireGuard)
-wg_easy_admin_password = ""
+# wg-portal admin password for web UI — minimum 16 characters. (REQUIRED for WireGuard)
+wg_portal_admin_password = ""
 
-# External hostname for WireGuard clients. (REQUIRED for WireGuard)
-wg_easy_external_host = "vpn.example.com"
-
-# WireGuard server private key — extract from existing wg0.conf for migration. (REQUIRED)
-wg_easy_server_private_key = ""
+# WireGuard server private key — copy from your existing wg-easy secret to preserve clients. (REQUIRED)
+# Generate a new one with: wg genkey
+wg_portal_server_private_key = ""
 
 # Load balancer IP for Pi-hole DNS server. (REQUIRED for Pi-hole)
 pihole_dns_addr = "192.168.1.60"

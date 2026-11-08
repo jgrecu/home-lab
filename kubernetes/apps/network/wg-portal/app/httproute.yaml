@@ -2,7 +2,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: wg-easy
+  name: wg-portal
   namespace: network
   annotations:
     gethomepage.dev/enabled: "true"
@@ -20,5 +20,5 @@ spec:
       sectionName: https
   rules:
     - backendRefs:
-        - name: wg-easy-web
-          port: 51821
+        - name: wg-portal
+          port: 8888

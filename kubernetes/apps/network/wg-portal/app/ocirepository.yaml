@@ -2,7 +2,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
-  name: wg-easy
+  name: wg-portal
   namespace: network
 spec:
   interval: 15m
@@ -10,6 +10,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    # renovate: datasource=docker depName=ghcr.io/bjw-s-labs/helm/app-template
-    tag: 5.3.0
-  url: oci://ghcr.io/bjw-s-labs/helm/app-template
+    # renovate: datasource=docker depName=ghcr.io/h44z/charts/wg-portal
+    tag: 0.7.3
+  url: oci://ghcr.io/h44z/charts/wg-portal

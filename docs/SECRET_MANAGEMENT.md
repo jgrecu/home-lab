@@ -165,24 +165,24 @@ sops:
 
 ### Pattern 2: Multi-Field Secret
 
-**Template:** `templates/config/kubernetes/apps/network/wg-easy/app/secret.sops.yaml.j2`
+**Template:** `templates/config/kubernetes/apps/network/wg-portal/app/secret.sops.yaml.j2`
 
 ```yaml
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: wg-easy-secret
+  name: wg-portal-secret
 stringData:
-  admin-password: "#{ wg_easy_admin_password }#"
-  server-private-key: "#{ wg_easy_server_private_key }#"
+  admin-password: "#{ wg_portal_admin_password }#"
+  server-private-key: "#{ wg_portal_server_private_key }#"
 ```
 
 **cluster.toml:**
 
 ```toml
-wg_easy_admin_password = "<generated-password>"
-wg_easy_server_private_key = "<wireguard-private-key>"
+wg_portal_admin_password = "<generated-password>"
+wg_portal_server_private_key = "<wireguard-private-key>"
 ```
 
 ### Pattern 3: Backup Secrets (Volsync)
@@ -411,7 +411,7 @@ kubectl rollout restart deployment grafana -n observability
 | Secret Type | Rotation Frequency | Examples |
 |-------------|-------------------|----------|
 | API Keys | Every 90 days | Radarr, Sonarr, Prowlarr, Bazarr, Cloudflare |
-| Passwords | Every 180 days | Grafana, Pi-hole, WireGuard Easy |
+| Passwords | Every 180 days | Grafana, Pi-hole, wg-portal |
 | OAuth Secrets | After team changes | Forgejo, Woodpecker |
 | Backup Encryption | Every 365 days | Volsync Restic password |
 | S3 Credentials | After access events | SeaweedFS S3 keys |

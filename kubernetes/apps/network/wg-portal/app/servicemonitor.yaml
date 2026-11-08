@@ -1,0 +1,20 @@
+---
+# ServiceMonitor for wg-portal built-in metrics
+# Scrapes WireGuard interface and peer metrics from the built-in Prometheus endpoint:
+# - wireguard_interface_* : Interface-level stats (peers, bytes, etc.)
+# - wireguard_peer_*      : Per-peer rx/tx bytes, last handshake time
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: wg-portal
+  namespace: network
+  labels:
+    app.kubernetes.io/name: wg-portal
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wg-portal-metrics
+  endpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics

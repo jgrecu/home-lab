@@ -2,11 +2,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: wg-easy
+  name: wg-portal
   namespace: flux-system
 spec:
   interval: 1h
-  path: ./kubernetes/apps/network/wg-easy/app
+  path: ./kubernetes/apps/network/wg-portal/app
   postBuild:
     substituteFrom:
       - name: cluster-secrets
