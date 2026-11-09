@@ -34,6 +34,7 @@ nextcloud_admin_password = "ci-fake-password"
 forgejo_admin_email    = "admin@example.com"
 forgejo_admin_password = "ci-fake-password"
 forgejo_runner_secret  = "ci-fake-runner-secret"
+forgejo_runner_uuid    = "ci-fake-runner-uuid"
 
 linkding_admin_password    = "ci-fake-password"
 linkding_healthcheck_token = "ci-fake-token"
