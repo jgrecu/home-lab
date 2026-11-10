@@ -58,21 +58,10 @@ nodeExporter:
 
     # kube-state-metrics exposes Kubernetes object metrics: pod status,
     # deployment replicas, PVC capacity, node conditions, etc.
-    # Also configured to expose Flux CD custom resource metrics for dashboards.
 kube-state-metrics:
-  extraArgs:
-    - --custom-resource-state-config-file=/etc/customresourcestate/flux.yaml
   prometheus:
     monitor:
       honorTimestamps: false
-  volumeMounts:
-    - name: customresourcestate-config
-      mountPath: /etc/customresourcestate
-      readOnly: true
-  volumes:
-    - name: customresourcestate-config
-      configMap:
-        name: kube-state-metrics-customresourcestate-config
   resources:
     requests:
       cpu: 15m

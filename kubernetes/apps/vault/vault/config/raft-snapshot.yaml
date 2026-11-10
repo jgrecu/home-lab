@@ -11,9 +11,6 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: vault-raft-snapshot
-  annotations:
-    # Shell below uses $VARS; keep Flux postBuild substitution away from it
-    kustomize.toolkit.fluxcd.io/substitute: disabled
 spec:
   schedule: "15 */6 * * *"
   concurrencyPolicy: Forbid
