@@ -1,12 +1,12 @@
 # 🏠 Home Lab
 
-> Self-hosted Kubernetes homelab on Lenovo ThinkCentre M900, powered by Talos Linux and Flux GitOps
+> Self-hosted Kubernetes homelab on Lenovo ThinkCentre M900, powered by Talos Linux and Argo CD GitOps
 
 A beginner-friendly homelab project demonstrating how to run your own Kubernetes cluster for self-hosting applications. Learn GitOps principles, automated deployments, and infrastructure-as-code while building a production-like environment at home.
 
 ![Talos](https://img.shields.io/badge/Talos-v1.14.4-blue?logo=talos&logoColor=white)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.37.1-blue?logo=kubernetes&logoColor=white)
-![Flux](https://img.shields.io/badge/Flux-GitOps-blue?logo=flux&logoColor=white)
+![Argo CD](https://img.shields.io/badge/Argo%20CD-GitOps-orange?logo=argo&logoColor=white)
 
 ## 🚀 What's Running
 
@@ -18,7 +18,7 @@ A beginner-friendly homelab project demonstrating how to run your own Kubernetes
 | **Networking** | Cloudflare Tunnel, ExternalDNS, Cilium, cert-manager, Pi-hole, WireGuard, Envoy Gateway |
 | **Productivity** | Nextcloud, Forgejo |
 | **Home Automation** | Home Assistant |
-| **System & GitOps** | Flux CD, Woodpecker CI, Tuppr, Renovate, Reloader, Spegel, VPA |
+| **System & GitOps** | Argo CD, Woodpecker CI, Tuppr, Renovate, Reloader, Spegel, VPA |
 
 [View full app inventory →](./kubernetes/apps/)
 
@@ -92,8 +92,8 @@ kubectl get pods --all-namespaces --watch
 **6. Verify installation**
 
 ```sh
-flux check
-flux get ks -A
+just ops status          # Argo CD Applications not Synced/Healthy, failed pods, PVCs
+kubectl -n argo-system get applications
 kubectl get pods -A
 ```
 
@@ -101,11 +101,11 @@ kubectl get pods -A
 
 **Template-Driven Configuration** - Change settings in `cluster.toml`, regenerate all configs with `just configure`. Never manually edit generated files.
 
-**Encrypted Secrets** - All secrets encrypted with SOPS (age encryption). Safe to commit to public GitHub. Flux decrypts automatically in-cluster.
+**Encrypted Secrets** - All secrets encrypted with SOPS (age encryption). Safe to commit to public GitHub. Argo CD decrypts in-cluster (ksops + helm-secrets); even the domain is only stored encrypted.
 
 **Automated Upgrades** - Tuppr handles Talos and Kubernetes upgrades safely with health checks between nodes. Maintenance windows: Sundays 02:00 UTC.
 
-**Learning Platform** - Hands-on GitOps (Flux), real Kubernetes operations (kubectl, manifests, debugging), and self-hosting applications (media, monitoring, storage).
+**Learning Platform** - Hands-on GitOps (Argo CD), real Kubernetes operations (kubectl, manifests, debugging), and self-hosting applications (media, monitoring, storage).
 
 ## 📖 Documentation
 
@@ -116,6 +116,8 @@ kubectl get pods -A
 - [Disaster Recovery](./docs/disaster-recovery.md)
 - [Volsync Backups](./docs/volsync-deployment-guide.md)
 - [Pod Security Standards](./docs/pod-security-standards.md)
+- [Secret Management (SOPS, ksops, helm-secrets)](./docs/SECRET_MANAGEMENT.md)
+- [Flux → Argo CD cut-over (2026-11-10)](./docs/argocd-cutover.md)
 
 ## 🔧 Quick Commands
 

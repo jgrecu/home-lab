@@ -6,7 +6,7 @@ All homelab apps are categorized into three resource tiers based on criticality 
 
 ## Tier 1: System-Critical Infrastructure
 
-**Apps:** cilium, coredns, metrics-server, reloader, spegel, snapshot-controller, cert-manager, flux-operator, flux-instance, envoy-gateway, cloudflare-dns, k8s-gateway
+**Apps:** cilium, coredns, metrics-server, reloader, spegel, snapshot-controller, cert-manager, argo-cd, envoy-gateway, cloudflare-dns, k8s-gateway
 
 **Resources:**
 - CPU request: 50m-200m

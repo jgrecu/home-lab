@@ -1,13 +1,13 @@
 # Secret Management Guide
 
 **Last Updated:** 2026-06-11  
-**Applies To:** Template-driven Kubernetes homelab with Flux GitOps
+**Applies To:** Template-driven Kubernetes homelab with Argo CD GitOps
 
 ---
 
 ## Overview
 
-This repository uses a **template-driven SOPS encryption pipeline** to manage all secrets. Secrets are defined in plaintext configuration files (gitignored), rendered through Jinja2 templates, encrypted with SOPS (age), and committed as encrypted YAML files that Flux can decrypt in-cluster.
+This repository uses a **template-driven SOPS encryption pipeline** to manage all secrets. Secrets are defined in plaintext configuration files (gitignored), rendered through Jinja2 templates, encrypted with SOPS (age), and committed as encrypted YAML files that Argo CD's repo-server decrypts in-cluster (ksops for manifests, helm-secrets for Helm values). The domain is treated as a secret too: it only appears in encrypted files.
 
 ---
 
@@ -39,8 +39,9 @@ This repository uses a **template-driven SOPS encryption pipeline** to manage al
                      ▼ SOPS encryption
 ┌─────────────────────────────────────────────────────────────────┐
 │  kubernetes/apps/*/secret.sops.yaml (encrypted, committed)      │
-│  - stringData fields encrypted with age                         │
-│  - Metadata remains plaintext                                   │
+│  - Secrets: data/stringData encrypted with age                 │
+│  - Domain manifests: spec + metadata encrypted                  │
+│  - values.sops.yaml: whole file encrypted                       │
 │  - Safe to commit to public git repository                      │
 └────────────────────┬────────────────────────────────────────────┘
                      │
@@ -51,11 +52,12 @@ This repository uses a **template-driven SOPS encryption pipeline** to manage al
 │  - No plaintext secrets ever committed                          │
 └────────────────────┬────────────────────────────────────────────┘
                      │
-                     ▼ Flux reconciliation
+                     ▼ Argo CD sync (webhook / 3 min poll)
 ┌─────────────────────────────────────────────────────────────────┐
-│  Flux SOPS Decryption (in-cluster)                              │
-│  - Flux has access to age private key                           │
-│  - Decrypts secrets before applying to cluster                  │
+│  Argo CD repo-server decryption (in-cluster, in memory)         │
+│  - age key from Secret argo-system/sops-age                     │
+│  - ksops: *.sops.yaml listed in a kustomize generator           │
+│  - helm-secrets: values.sops.yaml passed as Helm value file     │
 └────────────────────┬────────────────────────────────────────────┘
                      │
                      ▼
@@ -210,37 +212,32 @@ volsync_s3_access_key = "<s3-access-key>"
 volsync_s3_secret_key = "<s3-secret-key>"
 ```
 
-### Pattern 4: Secret Reference in HelmRelease
+### Pattern 4: Secret Reference in Helm values
 
-**Template:** `templates/config/kubernetes/apps/downloads/radarr/app/helmrelease.yaml.j2`
+**Template:** `templates/config/kubernetes/apps/downloads/radarr/values.yaml.j2`
+(plain Helm values of the Argo CD Application `kubernetes/argo/apps/downloads/radarr.yaml`)
 
 ```yaml
----
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
-metadata:
-  name: radarr
-spec:
-  values:
-    controllers:
-      radarr:
-        containers:
-          exportarr:
-            env:
-              PORT: "9707"
-              URL: "http://localhost:7878"
-              APIKEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: radarr-secret
-                    key: api-key
-              ENABLE_ADDITIONAL_METRICS: "true"
+controllers:
+  radarr:
+    containers:
+      exportarr:
+        env:
+          PORT: "9707"
+          URL: "http://localhost:7878"
+          APIKEY:
+            valueFrom:
+              secretKeyRef:
+                name: radarr-secret
+                key: api-key
+          ENABLE_ADDITIONAL_METRICS: "true"
 ```
 
 **Key Points:**
 - ✅ Use `secretKeyRef` to reference encrypted secrets
-- ❌ Never hardcode secrets directly in helmreleases
-- ✅ Secret name matches the template: `radarr-secret`
+- ❌ Never hardcode secrets in `values.yaml` (it is plaintext in git)
+- ✅ Values that contain the domain go to `values.sops.yaml.j2` (fully encrypted,
+  decrypted by helm-secrets); keep image tags in `values.yaml` so Renovate can update them
 
 ---
 
@@ -267,7 +264,7 @@ myapp_api_key = "<generate-with-openssl-rand>"
 #### 2. Create secret template
 
 ```bash
-vi templates/config/kubernetes/apps/default/myapp/app/secret.sops.yaml.j2
+vi templates/config/kubernetes/apps/default/myapp/config/secret.sops.yaml.j2
 ```
 
 Content:
@@ -282,40 +279,47 @@ stringData:
   api-key: "#{ myapp_api_key }#"
 ```
 
-#### 3. Add secret to kustomization
+#### 3. Add secret to the ksops generator
 
-```bash
-vi templates/config/kubernetes/apps/default/myapp/app/kustomization.yaml.j2
-```
-
-Add to resources:
+Encrypted files are **never** listed under `resources:` - ksops decrypts them:
 
 ```yaml
+# templates/config/kubernetes/apps/default/myapp/config/secret-generator.yaml.j2
+---
+apiVersion: viaduct.ai/v1
+kind: ksops
+metadata:
+  name: myapp-config-secrets
+  annotations:
+    config.kubernetes.io/function: |
+      exec:
+        path: ksops
+files:
+  - ./secret.sops.yaml
+```
+
+```yaml
+# templates/config/kubernetes/apps/default/myapp/config/kustomization.yaml.j2
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  - ./helmrelease.yaml
-  - ./secret.sops.yaml  # <-- Add this line
+generators:
+  - ./secret-generator.yaml
 ```
 
-#### 4. Reference secret in helmrelease
+#### 4. Reference secret in the Helm values
 
 ```bash
-vi templates/config/kubernetes/apps/default/myapp/app/helmrelease.yaml.j2
+vi templates/config/kubernetes/apps/default/myapp/values.yaml.j2
 ```
 
-Add secret reference:
-
 ```yaml
-spec:
-  values:
-    env:
-      MYAPP_API_KEY:
-        valueFrom:
-          secretKeyRef:
-            name: myapp-secret
-            key: api-key
+env:
+  MYAPP_API_KEY:
+    valueFrom:
+      secretKeyRef:
+        name: myapp-secret
+        key: api-key
 ```
 
 #### 5. Generate and commit
@@ -325,11 +329,11 @@ spec:
 just configure
 
 # Verify encryption worked
-cat kubernetes/apps/default/myapp/app/secret.sops.yaml | grep "ENC\["
+cat kubernetes/apps/default/myapp/config/secret.sops.yaml | grep "ENC\["
 
 # Commit encrypted secret
-git add templates/config/kubernetes/apps/default/myapp/app/
-git add kubernetes/apps/default/myapp/app/secret.sops.yaml
+git add templates/config/kubernetes/apps/default/myapp/
+git add kubernetes/apps/default/myapp/
 git commit -m "feat(myapp): add API key secret with SOPS encryption"
 git push
 ```
@@ -384,11 +388,11 @@ git commit -m "security(grafana): rotate admin password"
 git push
 ```
 
-#### 6. Wait for Flux reconciliation
+#### 6. Wait for Argo CD to sync
 
 ```bash
-# Force immediate sync
-flux reconcile kustomization grafana --with-source
+# Immediate with the GitHub webhook; otherwise within 3 minutes. Force a refresh:
+just reconcile
 
 # Verify secret updated in cluster
 kubectl get secret grafana-secret -n observability -o yaml | grep admin-password
@@ -550,23 +554,17 @@ Error: error decrypting secret: no decryption key found for recipient
 
 **Diagnosis:**
 ```bash
-# Check SOPS age key in cluster
-kubectl get secret sops-age -n flux-system -o jsonpath='{.data.age\.agekey}' | base64 -d
-
-# Compare with local age.key
-cat age.key
+# Compare the cluster age key with the local one (no output = identical)
+diff <(kubectl -n argo-system get secret sops-age -o jsonpath='{.data.age\.agekey}' | base64 -d) age.key
 ```
 
 **Fix:**
 ```bash
-# Re-create SOPS age secret in cluster
-cat age.key | kubectl create secret generic sops-age \
-  --namespace=flux-system \
-  --from-file=age.agekey=/dev/stdin \
-  --dry-run=client -o yaml | kubectl apply -f -
+# Re-apply the SOPS age secret (decrypted in memory by sops)
+sops exec-file bootstrap/sops-age.sops.yaml 'kubectl -n argo-system apply --server-side -f {}'
 
-# Restart Flux kustomize-controller
-kubectl rollout restart deployment kustomize-controller -n flux-system
+# Restart the repo-server (mounts the key at /sops-age/age.agekey)
+kubectl -n argo-system rollout restart deployment argocd-repo-server
 ```
 
 ### Issue: Secret Not Updating in Pod
@@ -584,8 +582,8 @@ kubectl exec -it myapp-pod -n namespace -- env | grep SECRET
 
 **Fix:**
 ```bash
-# Force Flux reconciliation
-flux reconcile kustomization myapp --with-source
+# Force Argo CD to re-read git and sync
+just reconcile
 
 # Restart pod to pick up new secret
 kubectl rollout restart deployment myapp -n namespace
@@ -711,7 +709,8 @@ cat .sops.yaml
 
 - [SOPS Documentation](https://github.com/getsops/sops)
 - [Age Encryption](https://github.com/FiloSottile/age)
-- [Flux SOPS Integration](https://fluxcd.io/flux/guides/mozilla-sops/)
+- [KSOPS](https://github.com/viaduct-ai/kustomize-sops)
+- [helm-secrets with Argo CD](https://github.com/jkroepke/helm-secrets/blob/main/docs/ArgoCD%20Integration.md)
 - [Kubernetes Secrets Best Practices](https://kubernetes.io/docs/concepts/security/secrets-good-practices/)
 
 ### Tools
@@ -719,7 +718,7 @@ cat .sops.yaml
 - **SOPS:** Secret encryption/decryption
 - **Age:** Modern encryption tool
 - **makejinja:** Template rendering engine
-- **Flux:** GitOps continuous delivery
+- **Argo CD:** GitOps continuous delivery (ksops + helm-secrets in the repo-server)
 
 ---
 

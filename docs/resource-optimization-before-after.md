@@ -205,7 +205,7 @@ git checkout main -- templates/config/kubernetes/apps/<namespace>/<app>/
 task configure --yes
 git commit -m "revert(<app>): rollback resource changes"
 git push
-flux reconcile kustomization cluster-apps --with-source
+just reconcile
 ```
 
 ### Full Rollback
@@ -214,7 +214,7 @@ flux reconcile kustomization cluster-apps --with-source
 # Revert entire optimization
 git revert <commit-sha>
 git push
-flux reconcile kustomization cluster-apps --with-source
+just reconcile
 ```
 
 ### Emergency Manual Override

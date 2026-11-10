@@ -7,7 +7,7 @@ This guide walks you through deploying Volsync for automated PVC backups to Seaw
 - ✅ Talos cluster running
 - ✅ Longhorn storage deployed
 - ✅ SeaweedFS S3 storage deployed
-- ✅ Flux GitOps configured
+- ✅ Argo CD GitOps configured
 
 ## Step 1: Bootstrap SeaweedFS with Volsync Bucket
 
@@ -151,7 +151,7 @@ git commit -m "feat(volsync): add automated PVC backups to SeaweedFS S3
 - Retention: 7 daily, 4 weekly, 3 monthly backups
 - Target: SeaweedFS S3 volsync-backups bucket"
 
-# Push to trigger Flux reconciliation
+# Push: the GitHub webhook triggers the Argo CD sync
 git push
 ```
 
@@ -163,8 +163,8 @@ git push
 # Watch Volsync deployment
 kubectl get pods -n volsync-system -w
 
-# Check HelmRelease
-flux get helmrelease -n volsync-system volsync
+# Check the Argo CD Application
+kubectl -n argo-system get application volsync
 ```
 
 Expected output:
@@ -323,7 +323,7 @@ just configure
 
 # Force secret recreation
 kubectl delete secret immich-db-restic-secret -n entertainment
-flux reconcile kustomization immich-backup
+just reconcile   # Argo CD (self-heal) recreates the secret
 ```
 
 ### Backup Job Stuck in Pending
@@ -420,9 +420,6 @@ aws s3 ls s3://volsync-backups/ --recursive \
   --access-key-id "<your-key>" \
   --secret-access-key "<your-secret>"
 
-# Force reconcile all backups
-flux reconcile kustomization immich-backup
-flux reconcile kustomization kavita-backup
-flux reconcile kustomization homepage-backup
-flux reconcile kustomization grafana-backup
+# Force a refresh of every Application (backups are part of each app)
+just reconcile
 ```

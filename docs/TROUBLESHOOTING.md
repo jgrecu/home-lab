@@ -5,7 +5,7 @@ This guide provides diagnostic procedures and solutions for common issues in the
 ## Table of Contents
 
 1. [Quick Diagnostics](#quick-diagnostics)
-2. [Flux GitOps Issues](#flux-gitops-issues)
+2. [Argo CD GitOps Issues](#argo-cd-gitops-issues)
 3. [Pod Failures](#pod-failures)
 4. [Storage Issues](#storage-issues)
 5. [Network Issues](#network-issues)
@@ -27,7 +27,7 @@ just ops status
 # Or manual check
 kubectl get nodes
 kubectl get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded
-flux get kustomizations -A | grep -v "True.*Applied"
+kubectl -n argo-system get applications | grep -v 'Synced *Healthy'
 ```
 
 ### Check Resource Usage
@@ -55,171 +55,125 @@ kubectl get events -A --sort-by='.lastTimestamp' | tail -50
 
 ---
 
-## Flux GitOps Issues
+## Argo CD GitOps Issues
 
-### Kustomization Not Reconciling
+All Applications live in `argo-system`. The `argocd` CLI (mise) works without a login in
+core mode: point a kube context at `argo-system` first
+(`kubectl config set-context --current --namespace argo-system`) or use plain `kubectl`.
 
-**Symptom:** `flux get kustomizations` shows "False" status or stuck reconciliation.
+### Application OutOfSync / Degraded
 
-**Diagnosis:**
-
-```bash
-# Check Kustomization status
-flux get kustomizations -A
-
-# Detailed status for specific Kustomization
-kubectl -n flux-system describe kustomization <name>
-
-# Check Flux logs
-flux logs --all-namespaces --follow
-```
-
-**Common Causes & Solutions:**
-
-1. **Source not ready:**
-   ```bash
-   # Check GitRepository status
-   flux get sources git -A
-   
-   # Force reconcile source
-   flux reconcile source git flux-system
-   ```
-
-2. **Invalid YAML or Kustomize build error:**
-   ```bash
-   # Test build locally
-   kustomize build kubernetes/apps/<namespace>/<app>
-   
-   # Validate manifests
-   kubeconform kubernetes/apps/<namespace>/<app>
-   ```
-
-3. **Dependency not ready:**
-   ```bash
-   # Check dependencies
-   kubectl -n flux-system get kustomization <name> -o jsonpath='{.spec.dependsOn}'
-   
-   # Ensure dependencies are reconciled first
-   flux reconcile kustomization <dependency-name>
-   ```
-
-4. **Resource conflicts:**
-   ```bash
-   # Check for existing resources
-   kubectl get <resource-kind> -n <namespace> <resource-name>
-   
-   # If stuck, force prune
-   flux suspend kustomization <name>
-   kubectl delete <resource>
-   flux resume kustomization <name>
-   ```
-
-### HelmRelease Failures
-
-**Symptom:** HelmRelease shows "False" ready status, upgrade failures.
+**Symptom:** `just ops status` lists an Application, or the `ArgoCDAppOutOfSync` /
+`ArgoCDAppUnhealthy` alert fires.
 
 **Diagnosis:**
 
 ```bash
-# Check HelmRelease status
-flux get helmreleases -A
+# Every Application that is not Synced/Healthy
+kubectl -n argo-system get applications -o json | jq -r '.items[]
+  | select(.status.sync.status != "Synced" or .status.health.status != "Healthy")
+  | "\(.metadata.name): \(.status.sync.status)/\(.status.health.status)"'
 
-# Detailed status
-kubectl -n <namespace> describe helmrelease <name>
+# Conditions (ComparisonError, SyncError, ...) and last operation result
+kubectl -n argo-system get application <app> -o json | jq '.status.conditions, .status.operationState.message'
 
-# Check Helm controller logs
-kubectl -n flux-system logs -l app=helm-controller --tail=100
+# What would change (read-only)
+argocd --core app diff <app> --server-side-generate
+
+# Controller / repo-server logs
+kubectl -n argo-system logs statefulset/argocd-application-controller --tail=100
+kubectl -n argo-system logs deploy/argocd-repo-server -c repo-server --tail=100
 ```
 
 **Common Causes & Solutions:**
 
-1. **Chart download failure:**
+1. **Git change not picked up yet** (webhook missing or failed):
    ```bash
-   # Check HelmRepository
-   flux get sources helm -A
-   
-   # Force reconcile repository
-   flux reconcile source helm <repo-name> -n flux-system
+   just reconcile                     # hard refresh of every Application
+   # GitHub → Settings → Webhooks → Recent Deliveries must show 200
    ```
 
-2. **Values validation error:**
+2. **Render error (`ComparisonError: failed to generate manifest`):**
    ```bash
-   # Check values in HelmRelease
-   kubectl -n <namespace> get helmrelease <name> -o yaml
-   
-   # Test values locally
-   helm template <release-name> <chart-repo>/<chart-name> -f values.yaml
+   # Render exactly like the repo-server (helm-secrets + kustomize/ksops) + kubeconform
+   ./scripts/argo-parity.sh --render-only <namespace>
+   # Kustomize/ksops only
+   kustomize build --enable-alpha-plugins --enable-exec --enable-helm \
+     --load-restrictor LoadRestrictionsNone kubernetes/apps/<namespace>/<app>
    ```
 
-3. **Upgrade timeout:**
-   ```bash
-   # Increase timeout in HelmRelease spec
-   spec:
-     timeout: 10m  # Increase from default 5m
-   
-   # Force retry
-   flux reconcile helmrelease <name> -n <namespace>
-   ```
+3. **Ordering / dependency not ready:** Applications are ordered by
+   `argocd.argoproj.io/sync-wave` (lower first) on `kubernetes/argo/apps/<ns>/<app>.yaml`.
+   Sync the dependency first: `argocd --core app sync <dependency>`.
 
-4. **Failed hooks:**
+4. **Resource conflict or field that must not be managed:**
    ```bash
-   # Check Helm secrets
-   kubectl -n <namespace> get secrets -l owner=helm
-   
-   # Check hook jobs
-   kubectl -n <namespace> get jobs
-   
-   # Delete failed hooks
-   kubectl -n <namespace> delete job <hook-job-name>
-   flux reconcile helmrelease <name> -n <namespace>
+   # Pause auto-sync while fixing (the root 'apps' ignores child syncPolicy)
+   kubectl -n argo-system patch application <app> --type merge -p '{"spec":{"syncPolicy":{"automated":null}}}'
+   # ... fix in git / delete the conflicting object ...
+   kubectl -n argo-system patch application <app> --type merge \
+     -p '{"spec":{"syncPolicy":{"automated":{"prune":true,"selfHeal":true}}}}'
    ```
+   For fields changed by controllers (e.g. webhook `caBundle`), add `ignoreDifferences`
+   to the Application template.
+
+### Helm Chart Failures
+
+**Symptom:** Sync fails with a Helm/chart error, or a hook Job fails.
+
+Argo CD renders charts with `helm template` (there are **no Helm releases**: `helm list`
+is empty by design). Helm hooks run as Argo CD sync hooks.
+
+```bash
+# Chart version / values used
+yq '.spec.sources' kubernetes/argo/apps/<namespace>/<app>.yaml
+
+# Render the chart locally with the same values (helm-secrets decrypts values.sops.yaml)
+./scripts/argo-parity.sh --render-only <namespace>
+
+# Failed hook jobs
+kubectl -n <namespace> get jobs
+kubectl -n <namespace> delete job <hook-job-name>      # then re-sync
+argocd --core app sync <app>
+```
+
+Charts that use Helm `lookup` (e.g. seaweedfs checksums) render without cluster access in
+Argo CD - values derived from `lookup` are empty.
 
 ### SOPS Decryption Errors
 
-**Symptom:** Secrets not decrypted, Flux shows decryption errors.
+**Symptom:** `ComparisonError` mentioning sops/ksops/helm-secrets, or Secrets missing.
 
-**Diagnosis:**
+Decryption happens in the **repo-server**: ksops (kustomize Secrets / `*.sops.yaml`
+manifests) and helm-secrets (`values.sops.yaml`), both using the age key in
+Secret `argo-system/sops-age`.
 
 ```bash
-# Check SOPS age key secret exists
-kubectl -n flux-system get secret sops-age
+# Age key present and mounted
+kubectl -n argo-system get secret sops-age
+kubectl -n argo-system exec deploy/argocd-repo-server -c repo-server -- test -s /sops-age/age.agekey && echo mounted
 
-# Check Kustomization SOPS configuration
-kubectl -n flux-system get kustomization <name> -o yaml | grep -A 5 decryption
-
-# Check Flux logs for SOPS errors
-flux logs --kind=Kustomization --name=<name>
+# Tools installed by the init container (checksums verified)
+kubectl -n argo-system logs deploy/argocd-repo-server -c download-tools | tail
 ```
 
 **Common Causes & Solutions:**
 
-1. **Missing age key:**
+1. **Missing / wrong age key:**
    ```bash
-   # Verify age key is in cluster
-   kubectl -n flux-system get secret sops-age -o jsonpath='{.data.age\.agekey}' | base64 -d
-   
-   # Re-create if missing
-   cat age.key | kubectl -n flux-system create secret generic sops-age --from-file=age.agekey=/dev/stdin
+   sops exec-file bootstrap/sops-age.sops.yaml 'kubectl -n argo-system apply --server-side -f {}'
+   kubectl -n argo-system rollout restart deploy/argocd-repo-server
    ```
 
-2. **Wrong SOPS configuration:**
+2. **File not encrypted or wrong rule** (`.sops.yaml`: `values.sops.yaml` fully encrypted,
+   other `*.sops.yaml` encrypt `data|stringData|spec|metadata`):
    ```bash
-   # Check .sops.yaml has correct age public key
-   cat .sops.yaml
-   
-   # Re-encrypt if needed
-   sops updatekeys <file>.sops.yaml
+   sops filestatus <file>.sops.yaml
+   just configure                     # renders + encrypts + restores unchanged secrets
    ```
 
-3. **Secret not properly encrypted:**
-   ```bash
-   # Verify encryption
-   grep "sops:" <file>.sops.yaml
-   
-   # Re-encrypt
-   sops --encrypt --in-place <file>.yaml
-   mv <file>.yaml <file>.sops.yaml
-   ```
+3. **Secret listed as a plain resource:** `*.sops.yaml` files must only be listed in the
+   ksops generator (`secret-generator.yaml`), never under `resources:`.
 
 ---
 
@@ -433,7 +387,7 @@ git commit -m "fix(pss): relax <namespace> to baseline for <app-name>"
 git push
 
 # 5. Force reconcile
-flux reconcile kustomization cluster-apps --with-source
+just reconcile
 
 # 6. Restart deployment
 kubectl rollout restart deployment <app> -n <namespace>
@@ -1221,17 +1175,17 @@ kubectl -n observability logs -l app.kubernetes.io/name=fluent-bit --tail=100
 kubectl edit deployment myapp
 
 # DO this instead:
-# 1. Edit templates/config/kubernetes/apps/<namespace>/<app>/helmrelease.yaml.j2
+# 1. Edit templates/config/kubernetes/apps/<namespace>/<app>/values.yaml.j2 (or config/, values.sops.yaml.j2)
 # 2. Run: just configure
 # 3. Commit and push
-# 4. Flux will reconcile automatically
+# 4. Argo CD syncs automatically (webhook, or within 3 minutes)
 ```
 
 ### 2. Progressive Debugging
 
 Start broad, narrow down:
 
-1. Cluster-level: `kubectl get nodes`, `flux get kustomizations -A`
+1. Cluster-level: `kubectl get nodes`, `just ops status`
 2. Namespace-level: `kubectl -n <namespace> get all`
 3. Resource-level: `kubectl -n <namespace> describe <resource>`
 4. Container-level: `kubectl -n <namespace> logs <pod>`
@@ -1255,8 +1209,8 @@ git log --oneline -10
 # Recent commits
 git show HEAD
 
-# Flux reconciliation history
-flux logs --all-namespaces --since=1h
+# Argo CD sync history
+kubectl -n argo-system get applications -o json | jq -r '.items[] | "\(.metadata.name) \(.status.operationState.finishedAt) \(.status.operationState.phase)"' | sort -k2
 ```
 
 ### 5. Leverage Monitoring
@@ -1323,7 +1277,7 @@ If you've tried the above steps and still cannot resolve the issue:
 # Cluster health
 just ops status
 kubectl get nodes
-flux get kustomizations -A
+kubectl -n argo-system get applications
 
 # Pod debugging
 kubectl get pods -A --field-selector=status.phase!=Running
@@ -1342,9 +1296,10 @@ kubectl run -it --rm debug --image=nicolaka/netshoot --restart=Never -- bash
 kubectl get pvc -A
 kubectl -n longhorn-system get volumes
 
-# Flux debugging
-flux logs --all-namespaces --follow
-flux reconcile kustomization <name> --with-source
+# Argo CD debugging
+kubectl -n argo-system logs statefulset/argocd-application-controller -f
+just reconcile
+argocd --core app sync <app>
 
 # Talos debugging
 talosctl -n <node-ip> dashboard
@@ -1358,7 +1313,7 @@ talosctl -n <node-ip> logs <service>
 2. Fixing the template in `templates/config/`
 3. Running `just configure`
 4. Committing and pushing
-5. Letting Flux reconcile
+5. Letting Argo CD sync
 
 Direct cluster edits are temporary and will be overwritten!
 
@@ -1375,9 +1330,9 @@ After applying any troubleshooting fix, verify the resolution:
   # Expected: No results (empty)
   ```
 
-- **Flux**: All kustomizations should show `True` and `Applied`
+- **Argo CD**: All Applications should show `Synced` and `Healthy`
   ```bash
-  flux get kustomizations -A | grep -v "True.*Applied"
+  kubectl -n argo-system get applications | grep -v 'Synced *Healthy'
   # Expected: No results (empty)
   ```
 

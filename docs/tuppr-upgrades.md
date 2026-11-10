@@ -185,7 +185,7 @@ kubectl logs -n system-upgrade deployment/tuppr --tail=100
 # Delete the upgrade resource
 kubectl delete talosupgrade cluster -n system-upgrade
 
-# Flux will recreate it from git
+# Argo CD (self-heal) will recreate it from git
 # It will retry in the next maintenance window
 ```
 
@@ -205,7 +205,7 @@ git add -A
 git commit -m "rollback: revert Talos to v1.12.6"
 git push
 
-# Flux will apply the rollback spec
+# Argo CD will apply the rollback spec
 ```
 
 ### Common Issues
@@ -290,9 +290,9 @@ git commit -m "feat(upgrades): update Talos to v1.13.0 and Kubernetes to v1.36.0
 git push
 ```
 
-### 3. Flux Reconciles Automatically
+### 3. Argo CD Syncs Automatically
 
-Flux will:
+Argo CD will:
 1. Detect the new versions in git
 2. Update the `TalosUpgrade` and `KubernetesUpgrade` resources
 3. Tuppr will schedule the upgrade for the next maintenance window
@@ -352,25 +352,24 @@ kubectl annotate talosupgrade cluster -n system-upgrade \
 - **tuppr controller**: Runs in `system-upgrade` namespace
 - **TalosUpgrade CRD**: Defines Talos OS upgrade policy
 - **KubernetesUpgrade CRD**: Defines Kubernetes upgrade policy
-- **Flux**: Deploys and manages tuppr resources from git
+- **Argo CD**: Deploys and manages tuppr resources from git
 
 ### Dependencies
 
 - **Talos API**: Used to perform OS upgrades
 - **Kubernetes API**: Used for health checks and drains
-- **Flux GitOps**: Manages upgrade policy from git
+- **Argo CD GitOps**: Manages upgrade policy from git
 
 ### Resource Flow
 
 ```
 Git Repository
-  └─> Flux (flux-system namespace)
-      └─> Kustomization (system-upgrade)
-          ├─> tuppr Helm Release
-          │   └─> tuppr controller (deployment)
-          └─> tuppr policies
-              ├─> TalosUpgrade resource
-              └─> KubernetesUpgrade resource
+  └─> Argo CD (argo-system namespace)
+      ├─> Application tuppr (wave 0)
+      │   └─> tuppr chart → tuppr controller (deployment)
+      └─> Application tuppr-policies (wave 1)
+          ├─> TalosUpgrade resource
+          └─> KubernetesUpgrade resource
 ```
 
 ## References

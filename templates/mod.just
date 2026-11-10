@@ -57,11 +57,11 @@ schema:
     just log info "regenerated" file cluster.schema.json
 
 # Gather common resources from the cluster for debugging
-[doc("List certificates, HelmReleases, Kustomizations, nodes, pods across all namespaces")]
+[doc("List Argo CD Applications, certificates, HTTPRoutes, nodes, pods across all namespaces")]
 debug:
     #!/usr/bin/env bash
     set -euo pipefail
-    for resource in certificates certificaterequests gitrepositories helmrepositories helmreleases httproutes kustomizations nodes pods; do
+    for resource in applications.argoproj.io certificates certificaterequests httproutes nodes pods; do
         echo "=== $resource ==="
         kubectl get --all-namespaces "$resource" || true
         echo ""

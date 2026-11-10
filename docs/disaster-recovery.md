@@ -36,9 +36,9 @@ Your cluster uses **three backup systems** (all to SeaweedFS S3):
 kubectl delete namespace forgejo
 ```
 
-### Automatic Actions (Flux GitOps)
+### Automatic Actions (Argo CD GitOps)
 
-Within 1-5 minutes, Flux will:
+Within a few minutes (self-heal), Argo CD will:
 
 1. ✅ Detect that `forgejo` namespace is missing
 2. ✅ Recreate the namespace
@@ -145,7 +145,7 @@ kubectl wait --for=delete pod -l app.kubernetes.io/name=<app-name> -n <namespace
 #### Step 2: Delete the Empty PVC
 
 ```bash
-# Delete the PVC created by Flux (it's empty anyway)
+# Delete the PVC recreated by Argo CD (it's empty anyway)
 kubectl delete pvc -n <namespace> <pvc-name>
 
 # Wait for deletion to complete
@@ -211,11 +211,11 @@ kubectl logs -n <namespace> -l app.kubernetes.io/name=<app-name> -f
 
 **Recovery**:
 
-1. **Don't panic** - Flux will recreate everything automatically
-2. **Wait for Flux reconciliation** (1-5 minutes):
+1. **Don't panic** - Argo CD (self-heal) will recreate everything automatically
+2. **Wait for Argo CD to sync** (1-5 minutes):
    ```bash
-   # Force immediate reconciliation
-   flux reconcile kustomization forgejo --with-source
+   # Force an immediate refresh
+   kubectl -n argo-system annotate application forgejo argocd.argoproj.io/refresh=hard --overwrite
    ```
 3. **Wait for pods to start** (they'll have empty data)
 4. **Restore PVCs**:
@@ -306,7 +306,7 @@ This is the **full disaster recovery** scenario.
 1. **Build new cluster**:
    - Deploy Talos on new nodes
    - Use same cluster name and network configuration
-   - Apply Flux GitOps configuration
+   - Install Argo CD (`just bootstrap bootstrap-apps`)
 
 2. **Bootstrap SeaweedFS** (if NAS survived):
    ```bash
@@ -314,9 +314,10 @@ This is the **full disaster recovery** scenario.
    just ops bootstrap-seaweedfs
    ```
 
-3. **Deploy all apps via Flux**:
+3. **Deploy all apps via Argo CD** (root Applications applied by bootstrap):
    ```bash
-   flux reconcile kustomization flux-system --with-source
+   just reconcile
+   kubectl -n argo-system get applications
    ```
 
 4. **Wait for apps to deploy** (empty PVCs will be created)
@@ -401,7 +402,7 @@ You can restore to a **temporary PVC** and copy specific files:
 
 ### What DOES Protect You
 
-#### 1. Flux GitOps
+#### 1. Argo CD GitOps
 
 - ✅ Automatically recreates deleted resources
 - ✅ Ensures cluster state matches Git
@@ -456,7 +457,7 @@ You can restore to a **temporary PVC** and copy specific files:
 
 - No "recycle bin" for Kubernetes resources
 - Once confirmed, deletion is immediate
-- Only Flux or manual recreation brings it back
+- Only Argo CD (self-heal) or manual recreation brings it back
 
 #### ❌ Backup of Backups
 

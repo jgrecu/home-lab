@@ -45,7 +45,7 @@ These namespaces enforce strict security:
 |-----------|------|-------------|
 | `cert-manager` | cert-manager | Well-behaved, sets all security contexts |
 | `database-system` | CloudNativePG, Dragonfly | Database operators with proper security |
-| `flux-system` | Flux controllers | GitOps controllers are security-hardened |
+| `argo-system` | Argo CD | GitOps controllers are security-hardened |
 | `kube-system` | Core Kubernetes | System components |
 | `network` | Cilium, CoreDNS, Envoy Gateway | Network components with proper contexts |
 | `observability` | Prometheus, Grafana, Loki | Monitoring stack is well-configured |
@@ -100,9 +100,9 @@ git commit -m "fix(pss): relax <namespace> to baseline for <reason>"
 git push
 ```
 
-4. Wait for Flux to reconcile (or force):
+4. Wait for Argo CD to sync the `namespaces` Application (or force):
 ```bash
-flux reconcile kustomization cluster-apps --with-source
+just reconcile
 ```
 
 5. Restart affected deployments:
@@ -265,8 +265,8 @@ kubectl get events -A --field-selector type=Warning | grep "violates PodSecurity
 # Check specific namespace
 kubectl describe namespace <namespace>
 
-# Force reconcile after PSS change
-flux reconcile kustomization cluster-apps --with-source
+# Force a refresh after the PSS change
+just reconcile
 
 # Restart deployment to apply new PSS
 kubectl rollout restart deployment <app> -n <namespace>

@@ -24,7 +24,7 @@ Prometheus alerts will notify on:
 - Certificate expiration (<7 days)
 - Backup failures (Volsync out of sync >1 hour)
 - Storage exhaustion (>85% PVC usage)
-- Flux reconciliation failures
+- Argo CD Applications out of sync / unhealthy / failed syncs
 
 **No action required unless alerts fire.**
 
@@ -67,7 +67,7 @@ Renovate bot automatically creates PRs for:
 1. Check PR description for breaking changes
 2. Review changelog link provided by Renovate
 3. Merge if no breaking changes
-4. Monitor Flux reconciliation after merge
+4. Monitor the Argo CD sync after merge (`just ops status`)
 
 **Auto-merge enabled for:**
 - Patch version updates (x.y.Z)
@@ -171,11 +171,11 @@ kubectl port-forward -n observability svc/kube-prometheus-stack-prometheus 9090:
 
 ### Helm Chart Upgrades
 
-**Automated** via Renovate + Flux:
+**Automated** via Renovate + Argo CD:
 1. Renovate creates PR with Helm chart update
 2. Review changelog and breaking changes
 3. Merge PR
-4. Flux automatically applies HelmRelease update
+4. Argo CD syncs the new chart version (Application `targetRevision`)
 5. Monitor pod rollout: `kubectl rollout status deployment <name> -n <namespace>`
 
 **Manual helm upgrade** (emergency only):
@@ -203,8 +203,8 @@ git commit -m "feat(<app>): update configuration"
 # 4. Push
 git push
 
-# 5. Force reconciliation (optional, Flux auto-syncs within 10min)
-flux reconcile kustomization <app> --with-source -n flux-system
+# 5. Force a refresh (optional: the GitHub webhook syncs immediately, polling within 3min)
+just reconcile
 
 # 6. Monitor rollout
 kubectl get pods -n <namespace> --watch
@@ -344,7 +344,7 @@ kubectl port-forward -n observability svc/grafana 3000:3000
 **Update dashboards from Grafana community:**
 - Longhorn dashboard: ID 13032
 - cert-manager dashboard: ID 11001
-- Flux dashboard: ID 16714
+- Argo CD dashboard: provisioned (`grafana-dashboard-argocd`, Infrastructure folder)
 
 ### Prometheus Alert Rules Review
 
@@ -392,7 +392,7 @@ kubectl port-forward -n observability svc/kube-prometheus-stack-prometheus 9090:
 **Disaster recovery procedure:**
 1. Follow `docs/disaster-recovery.md`
 2. Bootstrap new Talos cluster: `just bootstrap bootstrap-talos`
-3. Restore from Git: Flux will reconcile all apps
+3. Restore from Git: `just bootstrap bootstrap-apps` installs Argo CD, which syncs all apps
 4. Restore PVCs from Volsync backups: `docs/volsync-restore-procedures.md`
 
 ### Data Corruption
@@ -413,7 +413,7 @@ kubectl port-forward -n observability svc/kube-prometheus-stack-prometheus 9090:
 
 **External resources:**
 - Talos documentation: https://www.talos.dev/
-- Flux documentation: https://fluxcd.io/docs/
+- Argo CD documentation: https://argo-cd.readthedocs.io/
 - Kubernetes documentation: https://kubernetes.io/docs/
 
 ---
@@ -431,10 +431,10 @@ kubectl get pods -A --field-selector=status.phase!=Running
 # Expected: Empty (no failing pods)
 ```
 
-**Flux Status**:
+**Argo CD Status**:
 ```bash
-flux get kustomizations -A
-# Expected: All showing "Applied" status
+kubectl -n argo-system get applications
+# Expected: all Synced / Healthy
 ```
 
 **Services Available**:

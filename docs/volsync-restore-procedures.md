@@ -191,10 +191,10 @@ kubectl wait --for=condition=Ready replicationdestination/<app-name>-restore-new
 
 #### Step 3: Switch Application to New PVC
 
-**Option A**: Update Helm values and reconcile via Flux
+**Option A**: Update the Helm values in git and let Argo CD sync
 
 ```yaml
-# In your HelmRelease values
+# In the app's values.yaml.j2 (templates/config/kubernetes/apps/<ns>/<app>/)
 persistence:
   config:
     existingClaim: <app-name>-restored  # Changed from original
@@ -334,12 +334,12 @@ kubectl get replicationdestination -n <namespace> -w
 kubectl describe replicationdestination <app-name>-dr-restore -n <namespace>
 ```
 
-#### Step 5: Deploy Applications via Flux
+#### Step 5: Deploy Applications via Argo CD
 
 ```bash
-# If using Flux, reconcile the cluster to deploy applications
-flux reconcile source git flux-system
-flux reconcile kustomization flux-system
+# Argo CD syncs all Applications from git; force a refresh
+just reconcile
+kubectl -n argo-system get applications
 
 # Applications will start and mount the restored PVCs
 ```
@@ -359,7 +359,7 @@ kubectl port-forward -n <namespace> svc/<app-name> 8080:80
 #### Step 7: Resume Backups
 
 ```bash
-# ReplicationSources should be deployed by Flux
+# ReplicationSources are deployed by Argo CD (part of each app's ./backup)
 # Verify they're running and starting new backup cycles
 kubectl get replicationsource -A
 

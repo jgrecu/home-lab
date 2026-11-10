@@ -41,8 +41,7 @@ templates/config/kubernetes/apps/storage/volsync/
 Each app has:
 - Restic secret (SOPS-encrypted S3 credentials)
 - ReplicationSource (backup schedule and retention)
-- Kustomization
-- Flux Kustomization
+- Kustomization (part of the app's Argo CD Application under `./backup`)
 
 **Apps configured:**
 - Immich database (`entertainment/immich/backup/`)
@@ -76,7 +75,7 @@ Each app has:
 1. Talos cluster running
 2. Longhorn deployed
 3. SeaweedFS S3 deployed
-4. Flux GitOps configured
+4. Argo CD GitOps configured
 
 ### Step-by-Step
 
@@ -133,7 +132,7 @@ After running `task configure --yes`, manifests are generated in corresponding `
 
 ✅ **Automated**: Daily backups with no manual intervention
 ✅ **Encrypted**: Restic encryption + SOPS for secrets
-✅ **GitOps**: Fully declarative, managed by Flux
+✅ **GitOps**: Fully declarative, managed by Argo CD
 ✅ **Efficient**: Longhorn snapshots for consistency
 ✅ **Retention**: Automatic pruning (7 daily, 4 weekly, 3 monthly)
 ✅ **Monitoring**: ServiceMonitor ready for Prometheus
