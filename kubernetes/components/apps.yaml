@@ -1,0 +1,42 @@
+---
+# Root Application (applied once by bootstrap, then self-managed).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: apps
+  namespace: argo-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/jgrecu/home-lab.git"
+    targetRevision: "main"
+    path: kubernetes/argo/apps
+    directory:
+      recurse: true
+  destination:
+    name: in-cluster
+    namespace: argo-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+  # Lets operators toggle auto-sync on child Applications (cut-over, debugging)
+  ignoreDifferences:
+    - group: argoproj.io
+      kind: Application
+      jsonPointers:
+        - /spec/syncPolicy
