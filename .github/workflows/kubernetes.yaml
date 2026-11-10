@@ -1,0 +1,62 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+# Renders every Argo CD Application exactly like the repo-server (helm-secrets wrapper,
+# kustomize + ksops) and validates the output with kubeconform. Replaces flux-local/flate.
+name: "Kubernetes"
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - kubernetes/**
+      - scripts/argo-parity.sh
+      - scripts/render-flux-baseline.sh
+      - .github/workflows/kubernetes.yaml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  render:
+    name: Render & validate Argo CD apps
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup mise
+        uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          cache: false
+
+      # Repository secret SOPS_AGE_KEY = contents of age.key (needed to decrypt
+      # values.sops.yaml / ksops manifests). Not available to PRs from forks.
+      - name: Write age key
+        env:
+          SOPS_AGE_KEY: "${{ secrets.SOPS_AGE_KEY }}"
+        run: |
+          if [[ -z "$SOPS_AGE_KEY" ]]; then
+            echo "::error::Repository secret SOPS_AGE_KEY is not set"; exit 1
+          fi
+          umask 077
+          printf '%s\n' "$SOPS_AGE_KEY" > "$RUNNER_TEMP/age.key"
+          echo "SOPS_AGE_KEY_FILE=$RUNNER_TEMP/age.key" >> "$GITHUB_ENV"
+
+      - name: Validate kustomizations and Applications
+        run: just template validate-kubernetes
+
+      - name: Render and validate every Application
+        run: ./scripts/argo-parity.sh --render-only
+
+      - name: Remove age key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/age.key"

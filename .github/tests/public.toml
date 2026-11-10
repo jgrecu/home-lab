@@ -85,6 +85,13 @@ r2_secret_access_key = "ci-fake-r2-secret"
 r2_endpoint          = "https://ci-fake.r2.cloudflarestorage.com"
 r2_bucket            = "ci-fake-bucket"
 
+
+# Vault AWS KMS auto-unseal (fake values for CI rendering)
+vault_kms_aws_region        = "eu-south-2"
+vault_kms_key_id            = "00000000-0000-0000-0000-000000000000"
+vault_kms_access_key_id     = "AKIAFAKEFAKEFAKEFAKE"
+vault_kms_secret_access_key = "fake"
+
 [[nodes]]
 name         = "k8s-0"
 address      = "10.10.10.100"

@@ -2,7 +2,9 @@
 # argo-parity.sh - Render converted Argo CD Applications exactly like the repo-server
 # (helm-secrets wrapper + kustomize/ksops) and diff against the Flux baseline
 # produced by scripts/render-flux-baseline.sh.
-# Usage: ./argo-parity.sh [namespace ...]     (default: every converted namespace)
+# Usage: ./argo-parity.sh [--render-only] [namespace ...]   (default: every namespace)
+#   --render-only: no Flux baseline; render every Application and validate with
+#                  kubeconform (used by CI). Rendered output is never printed.
 # Output: .tmp/parity/<ns>/<app>.diff + summary; exit 1 if any app differs or fails.
 
 set -Eeuo pipefail
@@ -18,6 +20,11 @@ KSOPS_VERSION=4.5.1
 HELM_SECRETS_VERSION=4.7.10
 FLUX_KINDS='["HelmRelease","OCIRepository","HelmRepository","Kustomization"]'
 RESULTS=()
+RENDER_ONLY=false
+KUBECONFORM_ARGS=(-strict -ignore-missing-schemas -summary
+  -skip "Gateway,HTTPRoute,Secret,TalosUpgrade,KubernetesUpgrade"
+  -schema-location default
+  -schema-location "https://kubernetes-schemas.pages.dev/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json")
 
 install_tools() {
   local os arch p
@@ -89,6 +96,14 @@ check_app() {
     RESULTS+=("FAIL  $ns/$name: $(tail -1 "$WORK/err")"); return 0
   fi
   normalise < "$WORK/argo.raw" > "$out/$name.argo.yaml"
+  if [[ "$RENDER_ONLY" == "true" ]]; then
+    if kubeconform "${KUBECONFORM_ARGS[@]}" "$out/$name.argo.yaml" > "$WORK/kc" 2>&1; then
+      RESULTS+=("OK    $ns/$name")
+    else  # only the summary/error lines, never the manifests
+      RESULTS+=("FAIL  $ns/$name: $(grep -m1 -E 'is invalid|error' "$WORK/kc" | cut -c1-200)")
+    fi
+    return 0
+  fi
   baseline_for "$ns" "$name" | normalise > "$out/$name.flux.yaml"
   if diff -u "$out/$name.flux.yaml" "$out/$name.argo.yaml" > "$out/$name.diff"; then
     RESULTS+=("OK    $ns/$name"); rm "$out/$name.diff"
@@ -98,18 +113,20 @@ check_app() {
 }
 
 parity_main() {
-  [[ -d "$BASELINE" ]] || { echo "Run scripts/render-flux-baseline.sh first"; exit 1; }
+  if [[ "${1:-}" == "--render-only" ]]; then RENDER_ONLY=true; shift; fi
+  [[ "$RENDER_ONLY" == "true" || -d "$BASELINE" ]] || { echo "Run scripts/render-flux-baseline.sh first"; exit 1; }
   install_tools
   local namespaces=("$@") ns file
   if [[ ${#namespaces[@]} -eq 0 ]]; then
     mapfile -t namespaces < <(find "$REPO_ROOT/kubernetes/argo/apps" -mindepth 1 -maxdepth 1 -type d \
-      ! -name argo-system -exec basename {} \; | sort)
+      -exec basename {} \; | sort)
   fi
   for ns in "${namespaces[@]}"; do
     for file in "$REPO_ROOT/kubernetes/argo/apps/$ns"/*.yaml; do
       [[ -e "$file" ]] && check_app "$file"
     done
   done
+  mkdir -p "$PARITY"
   printf '%s\n' "${RESULTS[@]}" | tee "$PARITY/SUMMARY.txt"
   ! printf '%s\n' "${RESULTS[@]}" | grep -qv '^OK'
 }
