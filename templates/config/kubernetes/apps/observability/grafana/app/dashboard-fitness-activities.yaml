@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-fitness-activities
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+    grafana_folder: "Fitness"
+data:
+  fitness-activities.json: |-
+    {
+      "title": "Fitness - Activities",
+      "uid": "fitness-activities",
+      "timezone": "browser",
+      "refresh": "1h",
+      "time": {"from": "now-180d", "to": "now"},
+      "panels": [
+        {
+          "title": "Workouts per Week",
+          "type": "barchart",
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"workout\")\n  |> aggregateWindow(every: 1w, fn: count, createEmpty: false)\n  |> yield(name: \"workouts_per_week\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "short", "color": {"fixedColor": "green", "mode": "fixed"}}}
+        },
+        {
+          "title": "Workout Duration",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"workout\" and r._field == \"duration_min\")\n  |> yield(name: \"duration\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "m", "color": {"mode": "palette-classic"}}}
+        },
+        {
+          "title": "Workout Types Distribution",
+          "type": "piechart",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"workout\")\n  |> group(columns: [\"type\"])\n  |> count()\n  |> group()\n  |> yield(name: \"types\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}}}
+        },
+        {
+          "title": "Weekly Active Energy",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"active_energy_burned\")\n  |> aggregateWindow(every: 1w, fn: sum, createEmpty: false)\n  |> yield(name: \"weekly_calories\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "kcal", "color": {"fixedColor": "orange", "mode": "fixed"}}}
+        },
+        {
+          "title": "Weekly Distance",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"distance_walking_running\")\n  |> aggregateWindow(every: 1w, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 1000.0}))\n  |> yield(name: \"weekly_distance\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "km", "color": {"fixedColor": "blue", "mode": "fixed"}}}
+        }
+      ],
+      "schemaVersion": 39
+    }

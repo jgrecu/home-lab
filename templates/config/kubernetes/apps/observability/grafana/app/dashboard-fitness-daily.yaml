@@ -1,0 +1,87 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-fitness-daily
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+    grafana_folder: "Fitness"
+data:
+  fitness-daily-overview.json: |-
+    {
+      "title": "Fitness - Daily Overview",
+      "uid": "fitness-daily-overview",
+      "timezone": "browser",
+      "refresh": "1h",
+      "time": {"from": "now-30d", "to": "now"},
+      "panels": [
+        {
+          "title": "Daily Steps",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"step_count\")\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> yield(name: \"steps\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "short", "color": {"mode": "palette-classic"}}}
+        },
+        {
+          "title": "Resting Heart Rate",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"heart_rate\")\n  |> aggregateWindow(every: 1d, fn: min, createEmpty: false)\n  |> yield(name: \"resting_hr\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "bpm", "color": {"fixedColor": "red", "mode": "fixed"}}}
+        },
+        {
+          "title": "Active Energy Burned",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"active_energy_burned\")\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> yield(name: \"calories\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "kcal", "color": {"fixedColor": "orange", "mode": "fixed"}}}
+        },
+        {
+          "title": "Body Weight",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"body_mass\")\n  |> aggregateWindow(every: 1d, fn: last, createEmpty: false)\n  |> yield(name: \"weight\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "masskg", "color": {"fixedColor": "blue", "mode": "fixed"}}}
+        },
+        {
+          "title": "Walking/Running Distance",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"distance_walking_running\")\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 1000.0}))\n  |> yield(name: \"distance\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "km", "color": {"fixedColor": "green", "mode": "fixed"}}}
+        },
+        {
+          "title": "SpO2",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"oxygen_saturation\")\n  |> aggregateWindow(every: 1d, fn: mean, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value * 100.0}))\n  |> yield(name: \"spo2\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "percent", "min": 90, "max": 100, "color": {"fixedColor": "purple", "mode": "fixed"}}}
+        }
+      ],
+      "schemaVersion": 39
+    }

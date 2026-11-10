@@ -1,0 +1,82 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-fitness-body
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+    grafana_folder: "Fitness"
+data:
+  fitness-body-composition.json: |-
+    {
+      "title": "Fitness - Body Composition",
+      "uid": "fitness-body-composition",
+      "timezone": "browser",
+      "refresh": "1h",
+      "time": {"from": "now-365d", "to": "now"},
+      "panels": [
+        {
+          "title": "Body Weight",
+          "type": "timeseries",
+          "gridPos": {"h": 10, "w": 24, "x": 0, "y": 0},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [
+            {
+              "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"body_mass\")\n  |> aggregateWindow(every: 1d, fn: last, createEmpty: false)\n  |> yield(name: \"weight\")",
+              "refId": "A"
+            },
+            {
+              "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"body_mass\")\n  |> aggregateWindow(every: 1d, fn: last, createEmpty: false)\n  |> movingAverage(n: 7)\n  |> yield(name: \"weight_7d_avg\")",
+              "refId": "B"
+            }
+          ],
+          "fieldConfig": {"defaults": {"unit": "masskg", "color": {"mode": "palette-classic"}}}
+        },
+        {
+          "title": "Body Fat %",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 10},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"body_fat_percentage\")\n  |> aggregateWindow(every: 1d, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value * 100.0}))\n  |> yield(name: \"body_fat\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "percent", "color": {"fixedColor": "yellow", "mode": "fixed"}}}
+        },
+        {
+          "title": "Lean Body Mass",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 10},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"lean_body_mass\")\n  |> aggregateWindow(every: 1d, fn: last, createEmpty: false)\n  |> yield(name: \"lean_mass\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "masskg", "color": {"fixedColor": "green", "mode": "fixed"}}}
+        },
+        {
+          "title": "BMI",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 18},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apple_health\" and r.metric == \"body_mass_index\")\n  |> aggregateWindow(every: 1d, fn: last, createEmpty: false)\n  |> yield(name: \"bmi\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "short", "color": {"fixedColor": "orange", "mode": "fixed"}, "thresholds": {"steps": [{"value": 18.5, "color": "yellow"}, {"value": 25, "color": "green"}, {"value": 30, "color": "red"}]}}}
+        },
+        {
+          "title": "Body Composition (Withings)",
+          "type": "timeseries",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 18},
+          "datasource": {"type": "influxdb", "uid": "InfluxDB-Fitness"},
+          "targets": [{
+            "query": "from(bucket: \"health_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"body_composition\" and r.source == \"withings\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> yield(name: \"withings\")",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "masskg", "color": {"mode": "palette-classic"}}}
+        }
+      ],
+      "schemaVersion": 39
+    }
