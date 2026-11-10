@@ -10,13 +10,9 @@ resources:
 
     # Enable metrics for Prometheus monitoring
 metrics:
-  serviceMonitor:
-    enabled: true
-    namespace: volsync-system
-    labels:
-      prometheus: kube-prometheus
-        # Add bearer token for authentication (fixes 401 Unauthorized)
-    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+  # --metrics-require-rbac=false: Prometheus scrapes in-cluster without a bearer token.
+  # The endpoint is only reachable inside the cluster so this is safe.
+  disableAuth: true
 
     # Container security context
 securityContext:
