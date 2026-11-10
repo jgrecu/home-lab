@@ -34,11 +34,15 @@
     managerFilePatterns: [
       '/(^|/)helmfile\\.ya?ml(?:\\.gotmpl)?(?:\\.j2)?$/',
       '/(^|/)helmfile\\.d/.+\\.ya?ml(?:\\.gotmpl)?(?:\\.j2)?$/',
+      '/(^|/)templates/config/bootstrap/helmfile\\.d/.+\\.ya?ml(\\.j2)?$/',
     ],
   },
   kubernetes: {
     managerFilePatterns: [
+      // generated output
       '/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/',
+      // template sources (the ones Renovate should update)
+      '/(^|/)templates/config/kubernetes/.+\\.ya?ml(\\.j2)?$/',
     ],
   },
   kustomize: {
