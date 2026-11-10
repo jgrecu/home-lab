@@ -70,8 +70,12 @@ render_path() {
   local path
   path=$(yq '(.spec.sources // [.spec.source])[] | select(has("path")) | .path' <<<"$1")
   [[ -n "$path" ]] || return 0
-  kustomize build --enable-alpha-plugins --enable-exec --enable-helm \
-    --load-restrictor LoadRestrictionsNone "$REPO_ROOT/$path"
+  local opts
+  # exactly Argo CD's kustomize.buildOptions (local helm binary instead of the in-pod path)
+  opts=$(yq '.configs.cm."kustomize.buildOptions"' "$REPO_ROOT/kubernetes/apps/argo-system/argo-cd/values.yaml" |
+    sed "s|--helm-command [^ ]*|--helm-command $(command -v helm)|")
+  # shellcheck disable=SC2086  # opts is a flag list
+  kustomize build $opts "$REPO_ROOT/$path"
 }
 
 # Flux side: every baseline dir of this app (main + -backup), Flux CRs removed
