@@ -74,18 +74,35 @@ spec:
             summary: "Certificate {{ $labels.name }} renewal failing"
             description: "Certificate {{ $labels.name }} in namespace {{ $labels.exported_namespace }} has failed renewal {{ $value }} times in the last hour"
 
-    - name: flux
+    - name: argocd
       interval: 1m
       rules:
-        - alert: FluxReconciliationFailure
+        - alert: ArgoCDAppOutOfSync
           expr: |
-            increase(gotk_reconcile_condition{type="Ready",status="False"}[5m]) > 0
-          for: 10m
+            argocd_app_info{sync_status!="Synced"} == 1
+          for: 15m
           labels:
             severity: warning
           annotations:
-            summary: "Flux {{ $labels.kind }} {{ $labels.name }} reconciliation failing"
-            description: "{{ $labels.kind }}/{{ $labels.name }} in namespace {{ $labels.namespace }} has been failing reconciliation for 10 minutes"
+            summary: "Argo CD application {{ $labels.name }} out of sync"
+            description: "Application {{ $labels.name }} (dest {{ $labels.dest_namespace }}) has been {{ $labels.sync_status }} for 15 minutes"
+        - alert: ArgoCDAppUnhealthy
+          expr: |
+            argocd_app_info{health_status!~"Healthy|Progressing"} == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Argo CD application {{ $labels.name }} is {{ $labels.health_status }}"
+            description: "Application {{ $labels.name }} (dest {{ $labels.dest_namespace }}) has been {{ $labels.health_status }} for 15 minutes"
+        - alert: ArgoCDSyncFailed
+          expr: |
+            increase(argocd_app_sync_total{phase=~"Error|Failed"}[10m]) > 0
+          labels:
+            severity: warning
+          annotations:
+            summary: "Argo CD sync of {{ $labels.name }} failed"
+            description: "A sync operation of {{ $labels.name }} ended in phase {{ $labels.phase }}"
 
     - name: upgrades
       interval: 1m

@@ -33,8 +33,8 @@ initContainers:
       # Load the WireGuard server private key into the kernel interface before wg-portal
       # starts. wg-portal's import_existing feature reads the key from the running kernel
       # interface — this preserves the existing key so current clients need no reconfiguration.
-      # The key is mounted as a file from the secret to avoid Flux envsubst treating
-      # shell variable references as substitution variables.
+      # The key is mounted as a file from the secret to keep shell variable
+      # references out of the manifest.
   - name: wg-key-loader
     image: alpine:3.24
     command:

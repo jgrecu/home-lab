@@ -155,10 +155,9 @@ validate-kubernetes:
     # ksops (mise tool) decrypts Secrets/domain manifests like Argo CD's repo-server does
     kustomize_args=("--load-restrictor=LoadRestrictionsNone" "--enable-alpha-plugins" "--enable-exec")
     dirs=()
-    for d in flux apps argo; do [[ -d "{{KUBERNETES_DIR}}/$d" ]] && dirs+=("{{KUBERNETES_DIR}}/$d"); done
-    # Plain manifests: Flux root + Argo CD Applications (root and per-app)
-    { find "{{KUBERNETES_DIR}}/flux" -maxdepth 1 -type f -name '*.yaml' 2>/dev/null
-      find "{{KUBERNETES_DIR}}/components" -maxdepth 1 -type f -name '*.yaml'
+    for d in apps argo; do [[ -d "{{KUBERNETES_DIR}}/$d" ]] && dirs+=("{{KUBERNETES_DIR}}/$d"); done
+    # Plain manifests: Argo CD root and per-app Applications
+    { find "{{KUBERNETES_DIR}}/components" -maxdepth 1 -type f -name '*.yaml'
       find "{{KUBERNETES_DIR}}/argo/apps" -type f -name '*.yaml' 2>/dev/null; } \
         | while IFS= read -r f; do kubeconform "${kubeconform_args[@]}" "$f"; done
     find "${dirs[@]}" -type f -name 'kustomization.yaml' -print0 \

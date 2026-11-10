@@ -47,7 +47,7 @@ persistence:
       #   3. Open Sonarr UI → Settings → General → copy API key
       #   4. Fill in recyclarr_radarr_api_key and recyclarr_sonarr_api_key
       #      in cluster.yaml, re-render, commit
-      #   5. Flux reconciles and the next CronJob run will sync successfully
+      #   5. Argo CD syncs and the next CronJob run will sync successfully
   config:
     type: persistentVolumeClaim
     storageClass: longhorn
