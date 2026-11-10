@@ -1,0 +1,70 @@
+---
+# Helm values for app-template (seerr).
+controllers:
+  seerr:
+    containers:
+      app:
+        image:
+          repository: ghcr.io/seerr-team/seerr
+              # renovate: datasource=docker depName=ghcr.io/seerr-team/seerr
+          tag: v3.5.1
+        env:
+          TZ: "Europe/Madrid"
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /api/v1/status
+                port: &port 5055
+              initialDelaySeconds: 30
+              periodSeconds: 30
+              timeoutSeconds: 5
+              failureThreshold: 5
+          readiness: *probes
+        resources:
+          requests:
+            cpu: 15m
+            memory: 400Mi
+          limits:
+            memory: 512Mi
+
+defaultPodOptions:
+  securityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: "Always"
+
+persistence:
+      # Seerr config + SQLite database — stores request history,
+      # user settings, and integration configurations
+  config:
+    type: persistentVolumeClaim
+    storageClass: longhorn
+    size: 2Gi
+    accessMode: ReadWriteOnce
+    globalMounts:
+      - path: /app/config
+
+service:
+  app:
+    ports:
+      http:
+        port: *port
+
+route:
+  app:
+    annotations:
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/name: "Seerr"
+      gethomepage.dev/group: "Entertainment"
+      gethomepage.dev/description: "Media request management"
+      gethomepage.dev/icon: "overseerr.png"
+    parentRefs:
+      - name: envoy-internal
+        namespace: network
+        sectionName: https
+    rules:
+      - backendRefs:
+          - identifier: app
+            port: *port

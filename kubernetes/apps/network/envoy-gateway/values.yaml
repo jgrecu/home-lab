@@ -1,0 +1,17 @@
+---
+# Helm values for gateway-helm (envoy-gateway).
+global:
+  imageRegistry: mirror.gcr.io
+config:
+  envoyGateway:
+    provider:
+      type: Kubernetes
+      kubernetes:
+        deploy:
+          type: GatewayNamespace
+resources:
+  requests:
+    cpu: 15m
+    memory: 256Mi
+  limits:
+    memory: 512Mi

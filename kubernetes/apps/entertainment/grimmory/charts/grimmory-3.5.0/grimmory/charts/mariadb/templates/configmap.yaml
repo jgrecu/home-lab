@@ -1,0 +1,22 @@
+{{- if and (or .Values.config.customConfiguration .Values.galera.enabled) (not .Values.config.existingConfigMap) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mariadb.fullname" . }}
+  namespace: {{ include "cloudpirates.namespace" . }}
+  labels:
+    {{- include "mariadb.labels" . | nindent 4 }}
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  {{- if .Values.config.customConfiguration }}
+  my.cnf: |
+    {{ .Values.config.customConfiguration | nindent 4 }}
+  {{- end }}
+  {{- if .Values.galera.enabled }}
+  00-galera.cnf: |
+    !include /etc/mysql/galera.cnf
+  {{- end }}
+{{- end }}

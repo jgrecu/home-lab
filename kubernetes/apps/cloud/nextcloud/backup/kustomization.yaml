@@ -3,9 +3,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 components:
   - ../../../../components/volsync
-resources:
-  - ./secret.sops.yaml
-  - ./secret-r2.sops.yaml
 patches:
   - target:
       kind: ReplicationSource
@@ -66,3 +63,5 @@ patches:
       - op: replace
         path: /spec/restic/moverResources/requests/memory
         value: 512Mi
+generators:
+  - ./secret-generator.yaml

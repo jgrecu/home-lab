@@ -1,0 +1,19 @@
+apiVersion: v2
+appVersion: 13.2.1
+description: Forgejo Runner with the Kubernetes backend plugin, running the plugin
+  as a native sidecar.
+home: https://git.erwanleboucher.dev/eleboucher/runner-k8s-plugin
+keywords:
+- forgejo
+- forgejo-runner
+- ci
+- kubernetes
+kubeVersion: '>=1.29.0-0'
+maintainers:
+- email: erwanleboucher@gmail.com
+  name: Erwan Leboucher
+name: forgejo-runner
+sources:
+- https://git.erwanleboucher.dev/eleboucher/runner-k8s-plugin
+type: application
+version: 13.2.1

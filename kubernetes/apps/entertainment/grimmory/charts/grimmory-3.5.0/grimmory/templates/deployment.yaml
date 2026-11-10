@@ -1,0 +1,196 @@
+apiVersion: apps/v1
+kind: Deployment
+{{- include "grimmory.validate-database" . }}
+metadata:
+  name: {{ include "grimmory.fullname" . }}
+  labels:
+    {{- include "grimmory.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "grimmory.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "grimmory.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "grimmory.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: wait-for-database
+          image: busybox:1.36
+          env:
+          - name: GRIMMORY_DB_HOST
+            {{- if and .Values.externalDatabase.enabled .Values.externalDatabase.existingSecret.enabled .Values.externalDatabase.existingSecret.hostnameKey }}
+            {{- with .Values.externalDatabase.existingSecret }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .secretName }}
+                key: {{ .hostnameKey }}
+            {{- end }}
+            {{- else }}
+            value: {{ include "grimmory.dbHostname" . | quote }}
+            {{- end }}
+          - name: GRIMMORY_DB_PORT
+            {{- if and .Values.externalDatabase.enabled .Values.externalDatabase.existingSecret.enabled .Values.externalDatabase.existingSecret.portKey }}
+            {{- with .Values.externalDatabase.existingSecret }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .secretName }}
+                key: {{ .portKey }}
+            {{- end }}
+            {{- else }}
+            value: {{ include "grimmory.dbPort" . | quote }}
+            {{- end }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for database at $GRIMMORY_DB_HOST:$GRIMMORY_DB_PORT ..."
+              until nc -z -v -w5 "$GRIMMORY_DB_HOST" "$GRIMMORY_DB_PORT"; do
+                echo "Waiting for database..."
+                sleep 2
+              done
+              echo "Database is available!"
+          resources:
+            {{- toYaml .Values.initContainer.resources | nindent 12 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+          env:
+            - name: DATABASE_HOST
+              {{- if and .Values.externalDatabase.enabled .Values.externalDatabase.existingSecret.enabled .Values.externalDatabase.existingSecret.hostnameKey }}
+              {{- with .Values.externalDatabase.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .hostnameKey }}
+              {{- end }}
+              {{- else }}
+              value: {{ include "grimmory.dbHostname" . | quote }}
+              {{- end }}
+            - name: DATABASE_PORT
+              {{- if and .Values.externalDatabase.enabled .Values.externalDatabase.existingSecret.enabled .Values.externalDatabase.existingSecret.portKey }}
+              {{- with .Values.externalDatabase.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .portKey }}
+              {{- end }}
+              {{- else }}
+              value: {{ include "grimmory.dbPort" . | quote }}
+              {{- end }}
+            - name: DATABASE_USERNAME
+              {{- if and .Values.externalDatabase.enabled .Values.externalDatabase.existingSecret.enabled .Values.externalDatabase.existingSecret.usernameKey }}
+              {{- with .Values.externalDatabase.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .usernameKey }}
+              {{- end }}
+              {{- else }}
+              value: {{ include "grimmory.dbUserName" . }}
+              {{- end }}
+            - name: DATABASE_PASSWORD
+              {{- if or (and .Values.externalDatabase.enabled .Values.externalDatabase.existingSecret.enabled) (not .Values.externalDatabase.enabled) }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "grimmory.dbPasswordSecretName" . }}
+                  key: {{ include "grimmory.dbPasswordSecretKey" . }}
+              {{- else }}
+              value: {{ .Values.externalDatabase.password | quote }}
+              {{- end }}
+            - name: DATABASE_NAME
+              {{- if and .Values.externalDatabase.enabled .Values.externalDatabase.existingSecret.enabled .Values.externalDatabase.existingSecret.databaseKey }}
+              {{- with .Values.externalDatabase.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .databaseKey }}
+              {{- end }}
+              {{- else }}
+              value: {{ include "grimmory.dbName" . | quote }}
+              {{- end }}
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if (or .Values.persistence.dataVolume.enabled .Values.persistence.booksVolume.enabled .Values.extraVolumeMounts) }}
+          volumeMounts:
+            {{- if .Values.persistence.dataVolume.enabled }}
+            - name: data
+              mountPath: /app/data
+            {{- end }}
+            {{- if .Values.persistence.booksVolume.enabled }}
+            - name: books
+              mountPath: /books
+            {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- end }}
+      {{- if (or .Values.persistence.dataVolume.enabled .Values.persistence.booksVolume.enabled .Values.extraVolumes) }}
+      volumes:
+        {{- if .Values.persistence.dataVolume.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.dataVolume.existingClaim | default (printf "%s-data" (include "grimmory.fullname" .)) }}
+        {{- end }}
+        {{- if .Values.persistence.booksVolume.enabled }}
+        - name: books
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.booksVolume.existingClaim | default (printf "%s-books" (include "grimmory.fullname" .)) }}
+        {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end -}}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

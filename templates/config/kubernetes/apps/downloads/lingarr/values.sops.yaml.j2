@@ -1,0 +1,7 @@
+---
+# Helm values with the domain (fully encrypted) for app-template (lingarr).
+route:
+  app:
+    hostnames: ["lingarr.#{ cloudflare_domain }#"]
+    annotations:
+      gethomepage.dev/href: https://lingarr.#{ cloudflare_domain }#

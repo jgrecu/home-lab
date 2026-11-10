@@ -1,0 +1,27 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./servicemonitor.yaml
+  - ./dashboard-cert-manager.yaml
+  - ./dashboard-cilium-agent.yaml
+  - ./dashboard-cilium-operator.yaml
+  - ./dashboard-argocd.yaml
+  - ./dashboard-kubernetes-api-server.yaml
+  - ./dashboard-kubernetes-cluster.yaml
+  - ./dashboard-kubernetes-views-global.yaml
+  - ./dashboard-kubernetes-views-namespaces.yaml
+  - ./dashboard-kubernetes-views-pods.yaml
+  - ./dashboard-longhorn.yaml
+  - ./dashboard-node-exporter.yaml
+  - ./dashboard-talos-nodes.yaml
+  - ./dashboard-arr-stack.yaml
+  - ./dashboard-dragonfly.yaml
+  - ./dashboard-wg-portal.yaml
+  - ./dashboard-health-metrics.yaml
+  - ./dashboard-health-body-composition.yaml
+  - ./dashboard-workouts-table.yaml
+  - ./dashboard-workout-details.yaml
+  - ./dashboard-volsync.yaml
+generators:
+  - ./secret-generator.yaml

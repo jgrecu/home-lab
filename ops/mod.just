@@ -4,16 +4,18 @@ REPO_ROOT     := source_directory() + "/.."
 
 # ─── Cluster Operations ───────────────────────────────────────────────────────
 
-# Show overall cluster health: Flux status, failed pods, PVCs, recent warnings
+# Show overall cluster health: Argo CD status, failed pods, PVCs, recent warnings
 status:
     #!/usr/bin/env bash
     set -euo pipefail
-    gum style --foreground 212 --bold "Flux Status"
-    FLUX_ISSUES=$(flux get kustomizations -A | grep -v "True.*Applied" | grep -v "NAME.*REVISION" || true)
-    if [[ -z "$FLUX_ISSUES" ]]; then
-        echo "All kustomizations healthy (Applied & Ready)"
+    gum style --foreground 212 --bold "Argo CD Applications"
+    APP_ISSUES=$(kubectl -n argo-system get applications -o json | jq -r '.items[]
+        | select(.status.sync.status != "Synced" or .status.health.status != "Healthy")
+        | "\(.metadata.name): sync=\(.status.sync.status) health=\(.status.health.status)"')
+    if [[ -z "$APP_ISSUES" ]]; then
+        echo "All Applications Synced & Healthy"
     else
-        echo "$FLUX_ISSUES"
+        echo "$APP_ISSUES"
     fi
 
     echo ""

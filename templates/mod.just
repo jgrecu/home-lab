@@ -125,15 +125,17 @@ restore-unchanged-secrets:
     set -euo pipefail
     decrypt_norm() { sops decrypt --input-type "$1" --output-type json /dev/stdin | jq -S .; }
     restored=0
-    while IFS= read -r f; do
+    # list first: a running `git diff` holds the index lock that `git checkout` needs
+    mapfile -t changed < <(git diff --name-only HEAD -- "{{BOOTSTRAP_DIR}}" "{{KUBERNETES_DIR}}" "{{TALOS_DIR}}" | grep '\.sops\.' || true)
+    for f in "${changed[@]}"; do
         case "$f" in *.yaml|*.yml) type=yaml ;; *.json) type=json ;; *) continue ;; esac
         head_plain=$(git show "HEAD:$f" | decrypt_norm "$type") || continue
         new_plain=$(decrypt_norm "$type" < "$f") || continue
         if [[ "$head_plain" == "$new_plain" ]]; then
-            git checkout HEAD -- "$f"
+            git show "HEAD:$f" > "$f"   # no index lock needed (editors poll git status)
             restored=$((restored + 1))
         fi
-    done < <(git diff --name-only HEAD -- "{{BOOTSTRAP_DIR}}" "{{KUBERNETES_DIR}}" "{{TALOS_DIR}}" | grep '\.sops\.' || true)
+    done
     just log info "restored unchanged secrets" count "$restored"
 
 # Validate all Kubernetes manifests with kubeconform
@@ -150,10 +152,15 @@ validate-kubernetes:
         "-schema-location" "https://kubernetes-schemas.pages.dev/{{{{.Group}}}}/{{{{.ResourceKind}}}}_{{{{.ResourceAPIVersion}}}}.json"
         "-verbose"
     )
-    kustomize_args=("--load-restrictor=LoadRestrictionsNone")
-    find "{{KUBERNETES_DIR}}/flux" -maxdepth 1 -type f -name '*.yaml' -print0 \
-        | while IFS= read -r -d '' f; do kubeconform "${kubeconform_args[@]}" "$f"; done
-    find "{{KUBERNETES_DIR}}/flux" "{{KUBERNETES_DIR}}/apps" -type f -name 'kustomization.yaml' -print0 \
+    # ksops (mise tool) decrypts Secrets/domain manifests like Argo CD's repo-server does
+    kustomize_args=("--load-restrictor=LoadRestrictionsNone" "--enable-alpha-plugins" "--enable-exec")
+    dirs=()
+    for d in apps argo; do [[ -d "{{KUBERNETES_DIR}}/$d" ]] && dirs+=("{{KUBERNETES_DIR}}/$d"); done
+    # Plain manifests: Argo CD root and per-app Applications
+    { find "{{KUBERNETES_DIR}}/components" -maxdepth 1 -type f -name '*.yaml'
+      find "{{KUBERNETES_DIR}}/argo/apps" -type f -name '*.yaml' 2>/dev/null; } \
+        | while IFS= read -r f; do kubeconform "${kubeconform_args[@]}" "$f"; done
+    find "${dirs[@]}" -type f -name 'kustomization.yaml' -print0 \
         | while IFS= read -r -d '' f; do
             dir="${f%kustomization.yaml}"
             kustomize build "$dir" "${kustomize_args[@]}" | kubeconform "${kubeconform_args[@]}"

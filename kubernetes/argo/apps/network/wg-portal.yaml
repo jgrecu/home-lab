@@ -1,0 +1,41 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wg-portal
+  namespace: argo-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: kubernetes
+  sources:
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/network/wg-portal
+      ref: repo
+    - repoURL: ghcr.io/h44z/charts
+      chart: wg-portal
+      targetRevision: 0.7.3
+      helm:
+        releaseName: wg-portal
+        valueFiles:
+          - $repo/kubernetes/apps/network/wg-portal/values.yaml
+          - $repo/kubernetes/apps/network/wg-portal/values.sops.yaml
+  destination:
+    name: in-cluster
+    namespace: network
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+      - PruneLast=true
+      - RespectIgnoreDifferences=true

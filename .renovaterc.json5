@@ -20,9 +20,10 @@
     'templates/overrides/**',
     'templates/scripts/**',
   ],
-  flux: {
+  argocd: {
     managerFilePatterns: [
-      '/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/',
+      '/(^|/)kubernetes/argo/.+\\.ya?ml(?:\\.j2)?$/',
+      '/(^|/)kubernetes/components/[^/]+\\.ya?ml(?:\\.j2)?$/',
     ],
   },
   helmfile: {
@@ -38,7 +39,7 @@
   },
   kustomize: {
     managerFilePatterns: [
-      '/^kustomization\\.ya?ml(?:\\.j2)?$/',
+      '/(^|/)kustomization\\.ya?ml(?:\\.j2)?$/',
     ],
   },
   packageRules: [
@@ -71,19 +72,15 @@
       description: 'Disable Renovate for Forgejo Helm chart (Codeberg OCI not supported)',
       enabled: false,
       matchPackageNames: [
-        '/^codeberg\\.org/forgejo-helm/forgejo$/',
+        '/^(codeberg\\.org|code\\.forgejo\\.org)/forgejo-helm/forgejo$/',
       ],
     },
     {
-      description: 'Flux Operator Group',
-      groupName: 'flux-operator',
-      matchDatasources: [
-        'docker',
-      ],
+      description: 'Argo CD group (chart + bootstrap helmfile)',
+      groupName: 'argo-cd',
       matchPackageNames: [
-        '/flux-operator/',
-        '/flux-instance/',
-        '/flux-operator-manifests/',
+        '/argoproj/argo-helm/argo-cd/',
+        '/^argo-cd$/',
       ],
       group: {
         commitMessageTopic: '{{{groupName}}} group',

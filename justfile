@@ -20,10 +20,10 @@ default:
 log lvl msg *args:
     gum log -t rfc3339 -s -l "{{lvl}}" "{{msg}}" {{args}}
 
-# Force Flux to pull in changes from your Git repository
-[doc("Force Flux to reconcile from git")]
+# Force Argo CD to re-read Git and re-render every Application
+[doc("Hard-refresh all Argo CD Applications from git")]
 reconcile:
-    flux --namespace flux-system reconcile kustomization flux-system --with-source
+    kubectl -n argo-system annotate applications --all argocd.argoproj.io/refresh=hard --overwrite
 
 # === template ===
 

@@ -1,0 +1,40 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: volsync
+  namespace: argo-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: kubernetes
+  sources:
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/storage/volsync
+      ref: repo
+    - repoURL: https://backube.github.io/helm-charts
+      chart: volsync
+      targetRevision: 0.17.0
+      helm:
+        releaseName: volsync
+        valueFiles:
+          - $repo/kubernetes/apps/storage/volsync/values.yaml
+  destination:
+    name: in-cluster
+    namespace: volsync-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+      - PruneLast=true
+      - RespectIgnoreDifferences=true

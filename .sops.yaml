@@ -3,8 +3,13 @@ creation_rules:
   - path_regex: talos/.*\.sops\.ya?ml
     mac_only_encrypted: true
     age: "age1vmuwa3m333fmewnm9ltl02qg9sa6675qe4459cctyt7mjcfz6a0q5j4fxt"
+  # Helm values that contain the domain: encrypt the WHOLE file (helm-secrets in Argo CD)
+  - path_regex: kubernetes/.*values\.sops\.ya?ml
+    mac_only_encrypted: true
+    age: "age1vmuwa3m333fmewnm9ltl02qg9sa6675qe4459cctyt7mjcfz6a0q5j4fxt"
   - path_regex: (bootstrap|kubernetes)/.*\.sops\.ya?ml
-    encrypted_regex: "^(data|stringData)$"
+    # spec/metadata: non-Secret manifests carrying the domain (HTTPRoute, Certificate, ...) via ksops
+    encrypted_regex: "^(data|stringData|spec|metadata)$"
     mac_only_encrypted: true
     age: "age1vmuwa3m333fmewnm9ltl02qg9sa6675qe4459cctyt7mjcfz6a0q5j4fxt"
 stores:

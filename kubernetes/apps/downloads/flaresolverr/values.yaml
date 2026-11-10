@@ -1,0 +1,39 @@
+---
+# Helm values for app-template (flaresolverr).
+controllers:
+  flaresolverr:
+    containers:
+      app:
+        image:
+          repository: ghcr.io/flaresolverr/flaresolverr
+          tag: v3.5.2
+        env:
+          TZ: "Europe/Madrid"
+          LOG_LEVEL: info
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: &port 8191
+              initialDelaySeconds: 10
+              periodSeconds: 30
+          readiness: *probes
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities: {drop: ["ALL"]}
+        resources:
+          requests:
+            cpu: 15m
+            memory: 1Gi
+          limits:
+            memory: 2Gi
+
+    # Stateless — no persistent storage needed
+service:
+  app:
+    ports:
+      http:
+        port: *port

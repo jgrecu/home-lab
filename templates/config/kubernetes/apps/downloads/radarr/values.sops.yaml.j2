@@ -1,0 +1,7 @@
+---
+# Helm values with the domain (fully encrypted) for app-template (radarr).
+route:
+  app:
+    hostnames: ["radarr.#{ cloudflare_domain }#"]
+    annotations:
+      gethomepage.dev/href: https://radarr.#{ cloudflare_domain }#

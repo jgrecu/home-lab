@@ -1,0 +1,33 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ENC[AES256_GCM,data:uMkqVY3zmHpIQkkpC8Lr4FEkjGE0,iv:tsQCno5AGISNNws65FztyoFgtPZSJScz/v1kHwj5MYc=,tag:Lye/1efNO9a690O8bytPNw==,type:str]
+spec:
+  dnsNames:
+    - ENC[AES256_GCM,data:X+RWDTaCKesYeg==,iv:B8CRvqPpH3sJIEqV3eqghcXdns35rFwwQ4oQcmd/tnI=,tag:XRkUgOjSgIrienXOGrDoAw==,type:str]
+    - ENC[AES256_GCM,data:Za3NVKMZq8Z5WxCR,iv:iryNCQzRYvLkPmqfhSiwxI0ZAE11MvqFlU+v/Ogo8Ro=,tag:yzdJeG2Up9iD5XsyhRnhVg==,type:str]
+  duration: ENC[AES256_GCM,data:mHTrmQ==,iv:xtoV9h29NXuB6WEV4fQoRXBE8u4IbqQQtYLmh7CM5L8=,tag:SEXYH5bcOS1YX0B5xAuz8g==,type:str]
+  issuerRef:
+    name: ENC[AES256_GCM,data:WuzZy1RZjzwb0taBfIUHJMCZMfBWiw==,iv:6JGpvR3IGoIrjh0JxN7pqLpIpM8mx6OK7GmzmfNhGUY=,tag:ejteo1KGZCjsiLES4P8bDA==,type:str]
+    kind: ENC[AES256_GCM,data:YRPvRw9jUeqCbD7BKQ==,iv:5vMDGyT1EnlDGsYOpX9w8mgqr/iCyq5MzCzgemDP5SA=,tag:syXZHEPHvQojEzQGr9Zt8Q==,type:str]
+  privateKey:
+    algorithm: ENC[AES256_GCM,data:2M8Iw7k=,iv:Vf8z1EMtjswgUZjOfm8+kK7HodLoVN+MiGneWwwJbno=,tag:fRD7BH4cRycyFcL9V4k9eQ==,type:str]
+  secretName: ENC[AES256_GCM,data:/mt6sfeW9kfreMtb1Pp6nr1A6BX1wQPILg==,iv:tE5YVCweBheK0BuGnZEsqd92SSsUf00dC8RhDoHfDjI=,tag:pO6dZG6gfkxbSmF7Oim8Dw==,type:str]
+  usages:
+    - ENC[AES256_GCM,data:XEyowLyxPCeWvQCczK42jCM=,iv:MMdkBQoG6UjNtaIL0YdOq99qgghW+xI1tEksI3isVWE=,tag:iPVm/cwB1PcCnCmYytDWgA==,type:str]
+sops:
+  age:
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBldDMwR3pVVGFvcnloK25w
+        d2FqdzJSZ3o0aTZkVk1yOVBSdUlwV3ppd2tjCkViSWRJeitqZTJiWGYvYmd4cnBD
+        M0tSYTZNSUp4N1d3SllLbFc5K0x3K1kKLS0tIGN5N2N4M3VTS2NvRGdzS2RHWlBO
+        eUpCRzl2UEFFSXVhTUoxWVV3c05zckkKnJp8Xyurr7Qd4+nieNN20B2l8Kvom5za
+        INlMmJw5jrDewY00vb0oEXOXcmBFvWbMwkG4rx3ov+PF9W2EjfQzGQ==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: age1vmuwa3m333fmewnm9ltl02qg9sa6675qe4459cctyt7mjcfz6a0q5j4fxt
+  encrypted_regex: ^(data|stringData|spec|metadata)$
+  lastmodified: "2026-11-10T13:10:12Z"
+  mac: ENC[AES256_GCM,data:MgoWYEnj/OC2hxyh7UQ9B0d5kV3RPIDLkb8grDoKYu11xmei2HSJM7a06tsxmvVS2+ugdewFn8MTrbeTnOE8o0jPdZaQsZzGcQ5etk1gNsPmKr6jzgxaXUl7OmVZSFZ2vuNXnvV8KYs2yayHhnwES+S/drKyE/r4Ie/Yi5Gja3U=,iv:Y38Si3HXyA2GHNzE89Yj09S2AkL8q4Tqxc2/EXi2EVI=,tag:cAFaAsSpd4MEiVb+gT2PWg==,type:str]
+  mac_only_encrypted: true
+  version: 3.13.3

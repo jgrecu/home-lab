@@ -1,0 +1,8 @@
+---
+# Helm values with the domain (fully encrypted) for app-template (pihole).
+controllers:
+  pihole:
+    containers:
+      app:
+        env:
+          VIRTUAL_HOST: "pihole.#{ cloudflare_domain }#"

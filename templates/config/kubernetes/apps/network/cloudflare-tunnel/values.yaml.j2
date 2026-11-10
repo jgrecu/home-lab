@@ -1,0 +1,65 @@
+---
+# Helm values for app-template (cloudflare-tunnel).
+controllers:
+  cloudflare-tunnel:
+    strategy: RollingUpdate
+    annotations:
+      reloader.stakater.com/auto: "true"
+    containers:
+      app:
+        image:
+          repository: docker.io/cloudflare/cloudflared
+          tag: 2026.10.7
+        env:
+          NO_AUTOUPDATE: true
+          TUNNEL_METRICS: 0.0.0.0:8080
+          TUNNEL_POST_QUANTUM: true     # disable when using http2
+          TUNNEL_TRANSPORT_PROTOCOL: quic     # or http2
+        envFrom:
+          - secretRef:
+              name: cloudflare-tunnel-secret
+        args: ["tunnel", "run"]
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /ready
+                port: &port 8080
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness: *probes
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        resources:
+          requests:
+            cpu: 15m
+            memory: 100Mi
+          limits:
+            memory: 256Mi
+defaultPodOptions:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+service:
+  app:
+    ports:
+      http:
+        port: *port
+serviceMonitor:
+  app:
+    endpoints:
+      - port: http
+persistence:
+  config-file:
+    type: configMap
+    identifier: config
+    globalMounts:
+      - path: /etc/cloudflared/config.yaml
+        subPath: config.yaml

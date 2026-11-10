@@ -55,14 +55,15 @@ function apply_namespaces() {
     shopt -u nullglob
 }
 
-# SOPS secrets to be applied before the helmfile charts are installed
+# SOPS secrets Argo CD needs before it can read the repository:
+#  - sops-age: age key for the repo-server (ksops + helm-secrets)
+#  - repository credentials (only used for private repositories)
 function apply_sops_secrets() {
     log debug "Applying secrets"
 
     local -r secrets=(
-        "${ROOT_DIR}/bootstrap/github-deploy-key.sops.yaml"
         "${ROOT_DIR}/bootstrap/sops-age.sops.yaml"
-        "${ROOT_DIR}/kubernetes/components/sops/cluster-secrets.sops.yaml"
+        "${ROOT_DIR}/kubernetes/argo/repositories/github.sops.yaml"
     )
 
     for secret in "${secrets[@]}"; do
@@ -72,13 +73,13 @@ function apply_sops_secrets() {
         fi
 
         # Check if the secret resources are up-to-date
-        if sops exec-file "${secret}" "kubectl --namespace flux-system diff --filename {}" &>/dev/null; then
+        if sops exec-file "${secret}" "kubectl --namespace argo-system diff --filename {}" &>/dev/null; then
             log info "Secret resource is up-to-date" "resource=$(basename "${secret}" ".sops.yaml")"
             continue
         fi
 
         # Apply secret resources
-        if sops exec-file "${secret}" "kubectl --namespace flux-system apply --server-side --filename {}" &>/dev/null; then
+        if sops exec-file "${secret}" "kubectl --namespace argo-system apply --server-side --filename {}" &>/dev/null; then
             log info "Secret resource applied successfully" "resource=$(basename "${secret}" ".sops.yaml")"
         else
             log error "Failed to apply secret resource" "resource=$(basename "${secret}" ".sops.yaml")"
@@ -129,9 +130,23 @@ function sync_helm_releases() {
     log info "Helm releases synced successfully"
 }
 
+# Root Applications: projects -> repositories -> apps (Argo CD takes over from here)
+function apply_root_applications() {
+    log debug "Applying Argo CD root Applications"
+
+    local app
+    for app in cluster repositories apps; do
+        if ! kubectl apply --server-side --filename "${ROOT_DIR}/kubernetes/components/${app}.yaml" &>/dev/null; then
+            log error "Failed to apply root Application" "file=kubernetes/components/${app}.yaml"
+        fi
+    done
+
+    log info "Root Applications applied"
+}
+
 function main() {
     check_env KUBECONFIG TALOSCONFIG
-    check_cli helmfile kubectl kustomize sops talhelper yq
+    check_cli helmfile kubectl kustomize sops yq
 
     # Apply resources and Helm releases
     wait_for_nodes
@@ -139,8 +154,9 @@ function main() {
     apply_sops_secrets
     apply_crds
     sync_helm_releases
+    apply_root_applications
 
-    log info "Congrats! The cluster is bootstrapped and Flux is syncing the Git repository"
+    log info "Congrats! The cluster is bootstrapped and Argo CD is syncing the Git repository"
 }
 
 main "$@"

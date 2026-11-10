@@ -20,6 +20,6 @@ bootstrap-talos:
     topf kubeconfig > "{{REPO_ROOT}}/kubeconfig"
     topf talosconfig > talosconfig
 
-# Bootstrap Flux and Helm apps into a running Talos cluster
+# Bootstrap Helm apps and Argo CD into a running Talos cluster
 bootstrap-apps:
     bash "{{SCRIPTS_DIR}}/bootstrap-apps.sh"

@@ -1,1 +1,2 @@
-{{ (fromYaml (readFile (printf "../../../kubernetes/apps/%s/%s/app/helmrelease.yaml" .Release.Namespace .Release.Name))).spec.values | toYaml }}
+{{- /* Plain Helm values shared with the Argo CD Application (kubernetes/apps/<ns>/<release>/values.yaml) */ -}}
+{{ readFile (printf "%s/kubernetes/apps/%s/%s/values.yaml" (requiredEnv "ROOT_DIR") .Release.Namespace .Release.Name) }}

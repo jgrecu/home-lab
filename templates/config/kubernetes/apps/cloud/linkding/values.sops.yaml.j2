@@ -1,0 +1,7 @@
+---
+# Helm values with the domain (fully encrypted) for app-template (linkding).
+route:
+  app:
+    hostnames: ["linkding.#{ cloudflare_domain }#"]
+    annotations:
+      gethomepage.dev/href: "https://linkding.#{ cloudflare_domain }#"

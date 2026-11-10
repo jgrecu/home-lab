@@ -1,0 +1,7 @@
+---
+# Helm values with the domain (fully encrypted) for app-template (seerr).
+route:
+  app:
+    hostnames: ["seerr.#{ cloudflare_domain }#"]
+    annotations:
+      gethomepage.dev/href: "https://seerr.#{ cloudflare_domain }#"

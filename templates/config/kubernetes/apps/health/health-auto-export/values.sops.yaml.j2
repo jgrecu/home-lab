@@ -1,0 +1,13 @@
+---
+# Helm values with the domain (fully encrypted) for app-template (health-auto-export).
+route:
+  app:
+    hostnames: ["hae.#{ cloudflare_domain }#"]
+    annotations:
+      gethomepage.dev/href: https://hae.#{ cloudflare_domain }#
+controllers:
+  health-auto-export:
+    containers:
+      app:
+        image:
+          repository: forgejo.#{ cloudflare_domain }#/jeremy/health-auto-export
