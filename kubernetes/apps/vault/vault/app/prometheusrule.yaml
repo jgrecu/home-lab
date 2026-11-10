@@ -30,3 +30,14 @@ spec:
             severity: critical
           annotations:
             summary: "No Vault pod is running"
+
+        - alert: VaultSnapshotMissing
+          expr: |
+            time() - kube_cronjob_status_last_successful_time{namespace="vault", cronjob="vault-raft-snapshot"} > 86400
+            or absent(kube_cronjob_status_last_successful_time{namespace="vault", cronjob="vault-raft-snapshot"})
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "No successful Vault Raft snapshot to R2 in the last 24h"
+            description: "Check: kubectl -n vault get jobs -l job-name; kubectl -n vault logs job/<job> -c snapshot / -c upload"

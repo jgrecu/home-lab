@@ -7,3 +7,5 @@ resources:
   - ./httproute.yaml
   - ./vault-kms.sops.yaml
   - ./prometheusrule.yaml
+  - ./vault-snapshot-r2.sops.yaml
+  - ./raft-snapshot.yaml

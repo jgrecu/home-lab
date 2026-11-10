@@ -179,3 +179,32 @@ vault-kms-secret:
       | sops encrypt --filename-override "{{VAULT_KMS_SECRET}}" --input-type yaml --output-type yaml /dev/stdin \
       > "{{VAULT_KMS_SECRET}}"
     echo "Wrote {{VAULT_KMS_SECRET}}"
+
+# One-time Vault setup for the Raft snapshot CronJob (prompts for a root/admin token)
+vault-snapshot-setup:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    read -r -s -p "Vault token: " TOKEN; echo
+    kubectl -n vault exec -i vault-0 -- sh -c '
+      set -eu
+      read -r VAULT_TOKEN; export VAULT_TOKEN
+      vault auth list -format=json | grep -q "\"kubernetes/\"" || vault auth enable kubernetes
+      vault write auth/kubernetes/config kubernetes_host=https://kubernetes.default.svc
+      printf "path \"sys/storage/raft/snapshot\" {\n  capabilities = [\"read\"]\n}\n" \
+        | vault policy write raft-snapshot -
+      vault write auth/kubernetes/role/raft-snapshot \
+        bound_service_account_names=vault-snapshot \
+        bound_service_account_namespaces=vault \
+        policies=raft-snapshot ttl=15m
+      vault read auth/kubernetes/role/raft-snapshot
+    ' <<<"$TOKEN"
+
+# Run the Raft snapshot CronJob now and follow its logs
+vault-snapshot-now:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    JOB="vault-raft-snapshot-manual-$(date +%s)"
+    kubectl -n vault create job "$JOB" --from=cronjob/vault-raft-snapshot
+    kubectl -n vault wait job/"$JOB" --for=condition=complete --timeout=300s || true
+    kubectl -n vault logs job/"$JOB" -c snapshot
+    kubectl -n vault logs job/"$JOB" -c upload
