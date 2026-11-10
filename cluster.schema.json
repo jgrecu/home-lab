@@ -23,7 +23,565 @@
           "type": "string"
         },
         "mac_addr": {
-... (539 lines omitted)
+          "description": "Primary NIC MAC address for network interface selection",
+          "title": "Mac Addr",
+          "type": "string"
+        },
+        "schematic_id": {
+          "description": "Talos factory schematic ID from factory.talos.dev",
+          "title": "Schematic Id",
+          "type": "string"
+        },
+        "mtu": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1500,
+          "description": "NIC MTU (default: 1500)",
+          "title": "Mtu"
+        },
+        "secureboot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Enable SecureBoot on UEFI platforms",
+          "title": "Secureboot"
+        },
+        "encrypt_disk": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Enable TPM-based disk encryption",
+          "title": "Encrypt Disk"
+        },
+        "kernel_modules": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Extra kernel modules",
+          "title": "Kernel Modules"
+        },
+        "media_node": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Label for downloads/media workloads",
+          "title": "Media Node"
+        }
+      },
+      "required": [
+        "name",
+        "address",
+        "controller",
+        "disk",
+        "mac_addr",
+        "schematic_id"
+      ],
+      "title": "NodeConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "node_cidr": {
+      "description": "Node network CIDR (e.g. 192.168.1.0/24)",
+      "title": "Node Cidr",
+      "type": "string"
+    },
+    "node_dns_servers": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "DNS servers (default: Cloudflare)",
+      "title": "Node Dns Servers"
+    },
+    "node_ntp_servers": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "NTP servers (default: Cloudflare)",
+      "title": "Node Ntp Servers"
+    },
+    "node_default_gateway": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Default gateway (default: first IP of node_cidr)",
+      "title": "Node Default Gateway"
+    },
+    "node_vlan_tag": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "VLAN tag for Talos nodes",
+      "title": "Node Vlan Tag"
+    },
+    "cluster_api_addr": {
+      "description": "Kubernetes API VIP (unused IP within node_cidr)",
+      "title": "Cluster Api Addr",
+      "type": "string"
+    },
+    "cluster_api_tls_sans": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Additional API server cert SANs",
+      "title": "Cluster Api Tls Sans"
+    },
+    "cluster_pod_cidr": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "10.42.0.0/16",
+      "description": "Pod CIDR (must not overlap node_cidr)",
+      "title": "Cluster Pod Cidr"
+    },
+    "cluster_svc_cidr": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "10.43.0.0/16",
+      "description": "Service CIDR (must not overlap node_cidr)",
+      "title": "Cluster Svc Cidr"
+    },
+    "cluster_dns_gateway_addr": {
+      "description": "Load balancer IP for k8s-gateway (split-DNS)",
+      "title": "Cluster Dns Gateway Addr",
+      "type": "string"
+    },
+    "cluster_gateway_addr": {
+      "description": "Load balancer IP for internal Envoy gateway",
+      "title": "Cluster Gateway Addr",
+      "type": "string"
+    },
+    "transmission_peer_addr": {
+      "description": "Load balancer IP for Transmission peer port",
+      "title": "Transmission Peer Addr",
+      "type": "string"
+    },
+    "wg_portal_vpn_addr": {
+      "description": "Load balancer IP for wg-portal WireGuard VPN",
+      "title": "Wg Portal Vpn Addr",
+      "type": "string"
+    },
+    "wg_portal_admin_password": {
+      "description": "wg-portal admin password (min 16 chars)",
+      "title": "Wg Portal Admin Password",
+      "type": "string"
+    },
+    "wg_portal_server_private_key": {
+      "description": "WireGuard server private key (preserve to avoid reconfiguring clients)",
+      "title": "Wg Portal Server Private Key",
+      "type": "string"
+    },
+    "pihole_dns_addr": {
+      "description": "Load balancer IP for Pi-hole",
+      "title": "Pihole Dns Addr",
+      "type": "string"
+    },
+    "pihole_admin_password": {
+      "description": "Pi-hole admin dashboard password",
+      "title": "Pihole Admin Password",
+      "type": "string"
+    },
+    "cloudflare_gateway_addr": {
+      "description": "Load balancer IP for Cloudflare Tunnel gateway",
+      "title": "Cloudflare Gateway Addr",
+      "type": "string"
+    },
+    "cloudflare_domain": {
+      "description": "Cloudflare domain (e.g. example.com)",
+      "title": "Cloudflare Domain",
+      "type": "string"
+    },
+    "cloudflare_token": {
+      "description": "Cloudflare API token (Zone:DNS:Edit + Tunnel:Read)",
+      "title": "Cloudflare Token",
+      "type": "string"
+    },
+    "cilium_loadbalancer_mode": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "dsr",
+      "description": "'dsr' or 'snat'",
+      "title": "Cilium Loadbalancer Mode"
+    },
+    "cilium_bgp_router_addr": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cilium Bgp Router Addr"
+    },
+    "cilium_bgp_router_asn": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cilium Bgp Router Asn"
+    },
+    "cilium_bgp_node_asn": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cilium Bgp Node Asn"
+    },
+    "repository_name": {
+      "description": "GitHub repository (owner/name)",
+      "title": "Repository Name",
+      "type": "string"
+    },
+    "repository_branch": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "main",
+      "title": "Repository Branch"
+    },
+    "repository_visibility": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "public",
+      "title": "Repository Visibility"
+    },
+    "grafana_admin_password": {
+      "title": "Grafana Admin Password",
+      "type": "string"
+    },
+    "nfs_server_addr": {
+      "title": "Nfs Server Addr",
+      "type": "string"
+    },
+    "nfs_server_path": {
+      "title": "Nfs Server Path",
+      "type": "string"
+    },
+    "nfs_media_path": {
+      "title": "Nfs Media Path",
+      "type": "string"
+    },
+    "nfs_photos_path": {
+      "title": "Nfs Photos Path",
+      "type": "string"
+    },
+    "nfs_books_path": {
+      "title": "Nfs Books Path",
+      "type": "string"
+    },
+    "nfs_seaweedfs_path": {
+      "title": "Nfs Seaweedfs Path",
+      "type": "string"
+    },
+    "nfs_nextcloud_path": {
+      "title": "Nfs Nextcloud Path",
+      "type": "string"
+    },
+    "nextcloud_admin_password": {
+      "title": "Nextcloud Admin Password",
+      "type": "string"
+    },
+    "forgejo_admin_email": {
+      "title": "Forgejo Admin Email",
+      "type": "string"
+    },
+    "forgejo_admin_password": {
+      "title": "Forgejo Admin Password",
+      "type": "string"
+    },
+    "forgejo_runner_secret": {
+      "title": "Forgejo Runner Secret",
+      "type": "string"
+    },
+    "forgejo_runner_uuid": {
+      "title": "Forgejo Runner Uuid",
+      "type": "string"
+    },
+    "linkding_admin_password": {
+      "title": "Linkding Admin Password",
+      "type": "string"
+    },
+    "linkding_healthcheck_token": {
+      "title": "Linkding Healthcheck Token",
+      "type": "string"
+    },
+    "woodpecker_admin_user": {
+      "title": "Woodpecker Admin User",
+      "type": "string"
+    },
+    "woodpecker_oauth_client_id": {
+      "title": "Woodpecker Oauth Client Id",
+      "type": "string"
+    },
+    "woodpecker_oauth_client_secret": {
+      "title": "Woodpecker Oauth Client Secret",
+      "type": "string"
+    },
+    "woodpecker_agent_secret": {
+      "title": "Woodpecker Agent Secret",
+      "type": "string"
+    },
+    "radarr_api_key": {
+      "title": "Radarr Api Key",
+      "type": "string"
+    },
+    "recyclarr_radarr_api_key": {
+      "title": "Recyclarr Radarr Api Key",
+      "type": "string"
+    },
+    "sonarr_api_key": {
+      "title": "Sonarr Api Key",
+      "type": "string"
+    },
+    "recyclarr_sonarr_api_key": {
+      "title": "Recyclarr Sonarr Api Key",
+      "type": "string"
+    },
+    "prowlarr_api_key": {
+      "title": "Prowlarr Api Key",
+      "type": "string"
+    },
+    "bazarr_api_key": {
+      "title": "Bazarr Api Key",
+      "type": "string"
+    },
+    "sabnzbd_api_key": {
+      "title": "Sabnzbd Api Key",
+      "type": "string"
+    },
+    "grimmory_mariadb_root_password": {
+      "title": "Grimmory Mariadb Root Password",
+      "type": "string"
+    },
+    "grimmory_mariadb_password": {
+      "title": "Grimmory Mariadb Password",
+      "type": "string"
+    },
+    "hae_mongo_password": {
+      "title": "Hae Mongo Password",
+      "type": "string"
+    },
+    "hae_read_token": {
+      "title": "Hae Read Token",
+      "type": "string"
+    },
+    "hae_write_token": {
+      "title": "Hae Write Token",
+      "type": "string"
+    },
+    "volsync_restic_password": {
+      "title": "Volsync Restic Password",
+      "type": "string"
+    },
+    "volsync_s3_access_key": {
+      "title": "Volsync S3 Access Key",
+      "type": "string"
+    },
+    "volsync_s3_secret_key": {
+      "title": "Volsync S3 Secret Key",
+      "type": "string"
+    },
+    "seaweedfs_s3_access_key_id": {
+      "title": "Seaweedfs S3 Access Key Id",
+      "type": "string"
+    },
+    "seaweedfs_s3_secret_access_key": {
+      "title": "Seaweedfs S3 Secret Access Key",
+      "type": "string"
+    },
+    "r2_access_key_id": {
+      "title": "R2 Access Key Id",
+      "type": "string"
+    },
+    "r2_secret_access_key": {
+      "title": "R2 Secret Access Key",
+      "type": "string"
+    },
+    "r2_endpoint": {
+      "title": "R2 Endpoint",
+      "type": "string"
+    },
+    "r2_bucket": {
+      "title": "R2 Bucket",
+      "type": "string"
+    },
+    "vault_kms_aws_region": {
+      "default": "eu-south-2",
+      "description": "AWS region of the Vault seal KMS key",
+      "title": "Vault Kms Aws Region",
+      "type": "string"
+    },
+    "vault_kms_key_id": {
+      "description": "tofu output kms_key_id",
+      "title": "Vault Kms Key Id",
+      "type": "string"
+    },
+    "vault_kms_access_key_id": {
+      "description": "tofu output access_key_id",
+      "title": "Vault Kms Access Key Id",
+      "type": "string"
+    },
+    "vault_kms_secret_access_key": {
+      "description": "tofu output -raw secret_access_key",
+      "title": "Vault Kms Secret Access Key",
+      "type": "string"
+    },
+    "nodes": {
+      "description": "Cluster node definitions (at least one controller required)",
+      "items": {
+        "$ref": "#/$defs/NodeConfig"
+      },
+      "title": "Nodes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "node_cidr",
+    "cluster_api_addr",
+    "cluster_dns_gateway_addr",
+    "cluster_gateway_addr",
+    "transmission_peer_addr",
+    "wg_portal_vpn_addr",
+    "wg_portal_admin_password",
+    "wg_portal_server_private_key",
+    "pihole_dns_addr",
+    "pihole_admin_password",
+    "cloudflare_gateway_addr",
+    "cloudflare_domain",
+    "cloudflare_token",
+    "repository_name",
+    "grafana_admin_password",
+    "nfs_server_addr",
+    "nfs_server_path",
+    "nfs_media_path",
+    "nfs_photos_path",
+    "nfs_books_path",
+    "nfs_seaweedfs_path",
+    "nfs_nextcloud_path",
+    "nextcloud_admin_password",
+    "forgejo_admin_email",
+    "forgejo_admin_password",
+    "forgejo_runner_secret",
+    "forgejo_runner_uuid",
+    "linkding_admin_password",
+    "linkding_healthcheck_token",
+    "woodpecker_admin_user",
+    "woodpecker_oauth_client_id",
+    "woodpecker_oauth_client_secret",
+    "woodpecker_agent_secret",
+    "radarr_api_key",
+    "recyclarr_radarr_api_key",
     "sonarr_api_key",
     "recyclarr_sonarr_api_key",
     "prowlarr_api_key",
@@ -43,10 +601,12 @@
     "r2_secret_access_key",
     "r2_endpoint",
     "r2_bucket",
+    "vault_kms_key_id",
+    "vault_kms_access_key_id",
+    "vault_kms_secret_access_key",
     "nodes"
   ],
   "title": "cluster.toml \u2014 homelab cluster configuration",
   "type": "object",
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }
-[see remaining: tail -n +26 "$HOME/Library/Application Support/rtk/tee/1792750004_uv-run-stdout.log"]

@@ -1,0 +1,43 @@
+---
+# Vault metrics are unavailable while sealed, so detect sealing via the
+# readiness probe (sealed -> NotReady) using kube-state-metrics.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: vault-alerts
+  labels:
+    prometheus: kube-prometheus-stack
+    role: alert-rules
+spec:
+  groups:
+    - name: vault
+      rules:
+        - alert: VaultSealedOrNotReady
+          expr: |
+            kube_pod_status_ready{namespace="vault", pod=~"vault-[0-9]+", condition="true"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Vault pod {{ $labels.pod }} is sealed or not ready"
+            description: "Check `vault status`. With AWS KMS auto-unseal this usually means KMS is unreachable or the vault-kms credentials are wrong."
+
+        - alert: VaultAbsent
+          expr: |
+            absent(kube_pod_status_ready{namespace="vault", pod=~"vault-[0-9]+", condition="true"})
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "No Vault pod is running"
+
+        - alert: VaultSnapshotMissing
+          expr: |
+            time() - kube_cronjob_status_last_successful_time{namespace="vault", cronjob="vault-raft-snapshot"} > 86400
+            or absent(kube_cronjob_status_last_successful_time{namespace="vault", cronjob="vault-raft-snapshot"})
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "No successful Vault Raft snapshot to R2 in the last 24h"
+            description: "Check: kubectl -n vault get jobs -l job-name; kubectl -n vault logs job/<job> -c snapshot / -c upload"

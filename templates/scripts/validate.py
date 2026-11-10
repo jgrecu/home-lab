@@ -130,6 +130,12 @@ class ClusterConfig(BaseModel):
     r2_endpoint: str
     r2_bucket: str
 
+    # ── Vault AWS KMS auto-unseal (ops/terraform/aws-kms outputs) ────────────
+    vault_kms_aws_region: str = Field(default="eu-south-2", description="AWS region of the Vault seal KMS key")
+    vault_kms_key_id: str = Field(description="tofu output kms_key_id")
+    vault_kms_access_key_id: str = Field(description="tofu output access_key_id")
+    vault_kms_secret_access_key: str = Field(description="tofu output -raw secret_access_key")
+
     # ── Nodes ────────────────────────────────────────────────────────────────
     nodes: List[NodeConfig] = Field(description="Cluster node definitions (at least one controller required)")
 

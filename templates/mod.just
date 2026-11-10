@@ -48,7 +48,7 @@ init:
 
 # Render and validate all configuration files
 [doc("Render templates, encrypt secrets, validate Kubernetes manifests and Talos config")]
-configure: render encrypt-secrets validate-kubernetes validate-talos
+configure: render encrypt-secrets restore-unchanged-secrets validate-kubernetes validate-talos
 
 # Regenerate cluster.schema.json from the Pydantic validator
 [doc("Regenerate cluster.schema.json (run after adding fields to validate.py)")]
@@ -115,6 +115,26 @@ encrypt-secrets:
                 *)     just log fatal "could not determine encryption status" file "$f" ;;
             esac
           done
+
+# Re-encryption always produces new ciphertext. Restore the committed version of
+# any *.sops.* file whose decrypted content is unchanged, so git only shows real
+# secret changes. Plaintext is compared in memory, never written to disk.
+[private]
+restore-unchanged-secrets:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    decrypt_norm() { sops decrypt --input-type "$1" --output-type json /dev/stdin | jq -S .; }
+    restored=0
+    while IFS= read -r f; do
+        case "$f" in *.yaml|*.yml) type=yaml ;; *.json) type=json ;; *) continue ;; esac
+        head_plain=$(git show "HEAD:$f" | decrypt_norm "$type") || continue
+        new_plain=$(decrypt_norm "$type" < "$f") || continue
+        if [[ "$head_plain" == "$new_plain" ]]; then
+            git checkout HEAD -- "$f"
+            restored=$((restored + 1))
+        fi
+    done < <(git diff --name-only HEAD -- "{{BOOTSTRAP_DIR}}" "{{KUBERNETES_DIR}}" "{{TALOS_DIR}}" | grep '\.sops\.' || true)
+    just log info "restored unchanged secrets" count "$restored"
 
 # Validate all Kubernetes manifests with kubeconform
 [private]

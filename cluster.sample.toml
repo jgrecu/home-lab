@@ -229,13 +229,17 @@ r2_bucket         = ""
 # Vault Configuration
 # ============================================================================
 
-# No application secrets required in cluster.toml — Vault manages its own
-# credentials. After first deploy, initialise and unseal manually:
+# AWS KMS auto-unseal. Populate from the OpenTofu module:
+#   just ops tofu-kms output                       # key id, access key id
+#   just ops tofu-kms output -raw secret_access_key
 #
+# First deploy only (auto-unseal handles every restart afterwards):
 #   kubectl -n vault exec -it vault-0 -- vault operator init
-#   kubectl -n vault exec -it vault-0 -- vault operator unseal   # repeat 3×
-#
-# The root token and unseal keys are printed once — store them securely.
+# The root token and recovery keys are printed once — store them securely.
+vault_kms_aws_region        = "eu-south-2"
+vault_kms_key_id            = ""
+vault_kms_access_key_id     = ""
+vault_kms_secret_access_key = ""
 
 # ============================================================================
 # Nodes — one [[nodes]] block per cluster node
