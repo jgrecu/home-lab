@@ -1,0 +1,8 @@
+---
+# Helm values with the domain (fully encrypted) for forgejo (forgejo).
+gitea:
+  config:
+    server:
+      ROOT_URL: "https://forgejo.#{ cloudflare_domain }#"
+      DOMAIN: "forgejo.#{ cloudflare_domain }#"
+      SSH_DOMAIN: "forgejo.#{ cloudflare_domain }#"

@@ -1,0 +1,5 @@
+---
+# Helm values with the domain (fully encrypted) for app-template (echo).
+route:
+  app:
+    hostnames: ["{{ .Release.Name }}.#{ cloudflare_domain }#"]

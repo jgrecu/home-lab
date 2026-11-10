@@ -1,0 +1,7 @@
+---
+# Helm values with the domain (fully encrypted) for app-template (sabnzbd).
+route:
+  app:
+    hostnames: ["sabnzbd.#{ cloudflare_domain }#"]
+    annotations:
+      gethomepage.dev/href: https://sabnzbd.#{ cloudflare_domain }#

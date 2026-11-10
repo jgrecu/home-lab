@@ -3,13 +3,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: cloud
 
-components:
-  - ../../components/sops
-
 resources:
   - ./namespace.yaml
   - ./nextcloud-pvc.yaml
-  - ./nextcloud/ks.yaml
-  - ./nextcloud/backup-ks.yaml
-  - ./linkding/ks.yaml
-  - ./linkding/backup-ks.yaml

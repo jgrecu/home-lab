@@ -1,0 +1,25 @@
+# Persistent Nextcloud configuration mounted at /var/www/html/config/custom.config.php
+# Survives pod restarts, image upgrades, and full reinstalls.
+# Nextcloud merges all *.config.php files in /var/www/html/config/ automatically.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ENC[AES256_GCM,data:F47et/YioasNW+paphTQCfEXPajT+qY=,iv:yzFtE6xl9tgzJ+GHkPcvggrf2Qb3hVJQiJ9vaEvw3W8=,tag:fxT7GxNVp41Hyl1suZ6TXA==,type:str]
+data:
+  custom.config.php: ENC[AES256_GCM,data:K/hBBM5jM9CHmqjmrx7uVYGEI2ndKVB8B2L+QjgyLzEoBf5U8RVxDGuybOCMPXLaDKfM1+9bheuC8zJ7w2AMraSglMabIGHNLxGx0/gH0v0Pgj5+bdWa1j6BNxcMVAg7a8bhZHQw40v1z/Guylz+Jbhdfz+gQK/4CgmVcyAtMKyiNbmYmSZ6F7otmixy3P/eys2sIaHCIzGhBeh4wGOOLnUxCURmE6SbxGWGoIE++OLkp93SfA8x9mj4AHJEtt0JD8Od1/1dlCMxM1wiO47luTdbUp4vYH0v5MCtWz3oRzQEe7Cbtw29YZbmJmLNteD7QQhVPTFNyoW1BNvDoheexgo0G8CpIwzgsz0oMIpF171vX3iBQ8jeHwU2g4cxdpoYTRrN0T9dAe2aEJBJP4wCzOQDcZGRrAUEvpnZPP6FXXm3aFveZKzma8gGDyeTw9z9yE0M1WITepZO8TqZZrsDAo3VpZzsZawAQEF60l/vvyLxBJAFiC/Er7MA5scKmuZgd/CmH44Zfc/Mde8pDy6GmRxjPOv09lHbtAIdlhxLyjuobLd7UMmFgkxPKFpqJU1f9aTNJ+GGcdnroVebbA0JPgj+pW0+IOva1XE3OxaKr0Ma4olRolsu7yQ/u0xM1sfQbxbcaexSjdac/D0Dk6FLrJuHXeTxfzZKmMvRu/FFpVqLkaZ3Hhun2JFJmUxSIetTbrfrjaJ/XEDZMRGiwSqTAkuqfVkSIR7zI5ZzAww6UbeOlAkFJOZkuURmyLOgSHcmtXEXAApO40b2RTj4p8pFUxsRN1xMVu4aCeF1E3Ss4xDJQOI+xYo0fKIffgVi46VGRC0r/8HJ4kK6w7fZhtLxN3D+m+9DqsGmHqPSmaz+pLpmz8B+gQzQ6sFbHtSGEBUoabgW8efAFwFNvOM90l2c101+cKFjlKMzRnXxPAMtlcj18v8qCImQoZNKgwOBn4TK3PmeOB/hGTPjSKK2e5tk3lnsDvlO9nR9p9EXeVlsTrLPiuamLuiTJwTP3pV3Bf88Hmipz3iiVJZTJ6YFp/z1V393rSUYCHM55d4DVTQaY2s/N6FAJ345wAhSqZMEfQbs,iv:4kKhIVVZdOvhdf8ufh5SlHS5SiBFHmvvlUcu6FonC/8=,tag:6B19WD1fs6anpI/KFsrGSQ==,type:str]
+sops:
+  age:
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGRlEwRUE0UWlhMHZ3RGtu
+        bmJpeThwbmFyUVVDcTA5c1pBei8wdFowZjAwCjJMcVRwU25VWERseXFicjdXOTNz
+        OHdtaHRnUjcwcTRUS0ZiT0UzNjZVa2sKLS0tIG9jWW42bEpzMGIvckdaazFNdFl5
+        czBKWDdtc1pXMTh5ZW9xNWl6WlJiL2MKsBB+i74GYwp+YUqX4y5HwYgXfSw6SBv8
+        OWGcxEI9QehGh9cdHmhN9xIKBjN2xQ5kQZiLVHCNqla3KoPYclwBtg==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: age1vmuwa3m333fmewnm9ltl02qg9sa6675qe4459cctyt7mjcfz6a0q5j4fxt
+  encrypted_regex: ^(data|stringData|spec|metadata)$
+  lastmodified: "2026-11-10T13:47:31Z"
+  mac: ENC[AES256_GCM,data:gLxzBdJG7B1yrew5kBFlp9xj1nC/3DJw7t/5/DMbIXN/A3EKCKHBJ5RKJITcV6uSmy5PVL+IfDdoBAk5lRqSko3V6JAvEFFQ1FJN4fpZ7UKNMmUdQHOK2khJ7DMfx7yuAPVFfELzhT6oT9GM6gwhzHZE+xpDawKGPo85vtHw7XA=,iv:EaQc3szRFDSOOaqTvxJ9pzG8VnDrMHwXk38Lq0m+plI=,tag:kfM/f+mAsGFs23OLR9OplA==,type:str]
+  mac_only_encrypted: true
+  version: 3.13.3

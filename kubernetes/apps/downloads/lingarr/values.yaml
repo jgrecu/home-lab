@@ -1,0 +1,103 @@
+---
+# Helm values for app-template (lingarr).
+controllers:
+  lingarr:
+    containers:
+      app:
+        image:
+          repository: ghcr.io/lingarr-translate/lingarr
+              # renovate: datasource=docker depName=ghcr.io/lingarr-translate/lingarr
+          tag: 1.4.1
+        env:
+          TZ: "Europe/Madrid"
+          ASPNETCORE_URLS: "http://+:9876"
+              # PostgreSQL connection via CNPG-managed cluster
+          DB_CONNECTION: "postgresql"
+          DB_HOST: "lingarr-postgres-rw"
+          DB_PORT: "5432"
+          DB_DATABASE: "lingarr"
+          DB_USERNAME: "lingarr"
+          DB_PASSWORD:
+            valueFrom:
+              secretKeyRef:
+                    # Auto-created by CNPG operator from the Cluster resource
+                name: lingarr-postgres-app
+                key: password
+              # Radarr integration
+          RADARR_URL: "http://radarr.downloads.svc.cluster.local:7878"
+          RADARR_API_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: lingarr-secret
+                key: radarr-api-key
+              # Sonarr integration
+          SONARR_URL: "http://sonarr.downloads.svc.cluster.local:8989"
+          SONARR_API_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: lingarr-secret
+                key: sonarr-api-key
+              # Opt out of anonymous telemetry
+          TELEMETRY_ENABLED: "false"
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: &port 9876
+              initialDelaySeconds: 60
+              periodSeconds: 30
+          readiness: *probes
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits:
+            memory: 512Mi
+
+persistence:
+  config:
+    type: persistentVolumeClaim
+    storageClass: longhorn
+    size: 1Gi
+    accessMode: ReadWriteOnce
+    globalMounts:
+      - path: /app/config
+
+      # Shared NFS media library — Lingarr reads existing subtitles and
+      # writes translated output alongside video files.
+  media:
+    type: persistentVolumeClaim
+    existingClaim: media-library
+    globalMounts:
+      - path: /media
+
+service:
+  app:
+    ports:
+      http:
+        port: *port
+
+route:
+  app:
+    annotations:
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/group: Downloads
+      gethomepage.dev/name: Lingarr
+      gethomepage.dev/icon: https://raw.githubusercontent.com/lingarr-translate/lingarr/main/Lingarr/Client/public/android-chrome-512x512.png
+      gethomepage.dev/description: Automated subtitle translation
+    parentRefs:
+      - name: envoy-internal
+        namespace: network
+        sectionName: https
+    rules:
+      - backendRefs:
+          - identifier: app
+            port: *port
