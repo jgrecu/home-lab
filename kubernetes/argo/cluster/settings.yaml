@@ -18,6 +18,3 @@ spec:
   clusterResourceWhitelist:
     - group: "*"
       kind: "*"
-  # Warn (UI) about resources in managed namespaces that no Application owns
-  orphanedResources:
-    warn: true

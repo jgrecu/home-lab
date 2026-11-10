@@ -75,6 +75,10 @@ volume:
 
 filer:
   enabled: true
+  # Argo CD renders the chart offline, so the s3config checksum (Helm lookup) no longer
+  # tracks seaweedfs-s3-secret: let Reloader restart the filer when that secret changes.
+  annotations:
+    secret.reloader.stakater.com/reload: seaweedfs-s3-secret
   replicas: 1
   port: 8888
   grpcPort: 18888
