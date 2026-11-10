@@ -21,6 +21,7 @@ HR_PATH=kubernetes/apps/vault/vault/app/helmrelease.yaml
 JOB=vault-migrate-raft
 IMAGE=$(kubectl -n "$NS" get sts vault -o jsonpath='{.spec.template.spec.containers[0].image}')
 FLUX_SUSPENDED=false
+BACKUP_TRIGGERED=false
 
 log() { echo "==> $*"; }
 die() { echo "❌ $*" >&2; exit 1; }
@@ -36,7 +37,7 @@ wait_unsealed() {
   local status
   for _ in $(seq 1 30); do
     status=$(vault_status)
-    [[ "$(jq -r '.sealed // empty' <<<"$status")" == "false" ]] && { echo "$status"; return 0; }
+    [[ "$(jq -r '.sealed' <<<"$status")" == "false" ]] && { echo "$status"; return 0; }
     sleep 5
   done
   die "vault-0 did not unseal within 150s"
@@ -58,6 +59,7 @@ backup_r2() {
   log "Step 2: volsync backup $R2_SOURCE ($label)"
   kubectl -n "$NS" patch replicationsource "$R2_SOURCE" --type merge \
     -p "{\"spec\":{\"trigger\":{\"manual\":\"$label\"}}}" >/dev/null
+  BACKUP_TRIGGERED=true
 
   for _ in $(seq 1 60); do
     if [[ "$(kubectl -n "$NS" get replicationsource "$R2_SOURCE" -o jsonpath='{.status.lastManualSync}')" == "$label" ]]; then
@@ -73,8 +75,9 @@ backup_r2() {
 }
 
 restore_backup_schedule() {
-  flux reconcile ks vault-backup -n flux-system >/dev/null 2>&1 ||
-    echo "WARNING: run 'flux reconcile ks vault-backup -n flux-system' to restore the backup schedule"
+  [[ "$BACKUP_TRIGGERED" == "true" ]] || return 0
+  flux reconcile ks vault-backup -n "$NS" >/dev/null 2>&1 ||
+    echo "WARNING: run 'flux reconcile ks vault-backup -n $NS' to restore the backup schedule"
 }
 
 suspend_flux() {
