@@ -30,25 +30,37 @@ spec:
         tag: "2.2.1"
         pullPolicy: IfNotPresent
 
-      # Standalone mode — single StatefulSet replica, no HA
+      # HA mode with integrated Raft storage (single replica: 1–2 node cluster).
+      # Raft makes `vault operator raft snapshot` backups possible.
       standalone:
+        enabled: false
+      ha:
         enabled: true
-        config: |
-          ui = true
+        replicas: 1
+        # chart computes maxUnavailable=0 for 1 replica, which blocks node drains
+        disruptionBudget:
+          enabled: false
+        raft:
+          enabled: true
+          setNodeId: true
+          config: |
+            ui = true
 
-          listener "tcp" {
-            tls_disable = 1
-            address     = "[::]:8200"
-            cluster_address = "[::]:8201"
-          }
+            listener "tcp" {
+              tls_disable = 1
+              address     = "[::]:8200"
+              cluster_address = "[::]:8201"
+            }
 
-          storage "file" {
-            path = "/vault/data"
-          }
+            storage "raft" {
+              path = "/vault/data/raft"
+            }
 
-          # AWS KMS auto-unseal (eu-south-2). Region, key id and credentials
-          # come from the vault-kms Secret via extraSecretEnvironmentVars.
-          seal "awskms" {}
+            # AWS KMS auto-unseal (eu-south-2). Region, key id and credentials
+            # come from the vault-kms Secret via extraSecretEnvironmentVars.
+            seal "awskms" {}
+
+            service_registration "kubernetes" {}
 
       # AWS KMS seal credentials (ops/terraform/aws-kms -> just ops vault-kms-secret)
       extraSecretEnvironmentVars:
