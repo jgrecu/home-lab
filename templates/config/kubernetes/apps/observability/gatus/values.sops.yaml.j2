@@ -290,3 +290,18 @@ configMaps:
             interval: 3m
             conditions:
               - "[STATUS] == 200"
+
+          - name: Argo CD
+            group: Infrastructure
+            url: "http://argocd-server.argo-system.svc.cluster.local/healthz"
+            interval: 3m
+            conditions:
+              - "[STATUS] == 200"
+
+          # 200 only when initialized, unsealed and active (sealed = 503)
+          - name: Vault
+            group: Infrastructure
+            url: "http://vault-active.vault.svc.cluster.local:8200/v1/sys/health"
+            interval: 3m
+            conditions:
+              - "[STATUS] == 200"
