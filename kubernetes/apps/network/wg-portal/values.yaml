@@ -99,6 +99,14 @@ persistence:
   size: 1Gi
   mountPath: /data
 
+config:
+  database:
+    # PVC is mounted at /app/data; without this wg-portal writes to /data (overlay, lost on restart)
+    dsn: /app/data/sqlite.db
+  backend:
+    # Disable resolvconf: fails in the container and blocks interface saves
+    local_resolvconf_prefix: ""
+
 service:
   web:
     type: ClusterIP
