@@ -17,6 +17,7 @@ import argparse
 import io
 import re
 import shutil
+import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -74,6 +75,48 @@ def restore(text: str, found: list[str]) -> str:
     for i, expr in reversed(list(enumerate(found))):
         text = text.replace(f"# __JINJA{i}__", expr).replace(f"__JINJA{i}__", expr)
     return text.replace(DOMAIN_TOKEN, DOMAIN_JINJA)
+
+
+def jinja_preamble(raw: str) -> str:
+    """Leading #% %# tag lines (e.g. `set` loops) the values may depend on."""
+    out = []
+    for line in raw.splitlines():
+        s = line.strip()
+        if s in ("", "---") or s.startswith("# "):
+            continue
+        if not JINJA_BLOCK.fullmatch(s):
+            break
+        out.append(s)
+    return "\n".join(out) + "\n" if out else ""
+
+
+BLOCK_SCALAR = re.compile(r":\s*[|>][-+0-9]*\s*(#.*)?$")
+
+
+def drop_comments_after_block_scalars(text: str) -> str:
+    """ruamel round-trips comment lines that follow a `|`/`>` block *into* the block's
+    content (changes the value). Drop such comment lines; they are prose only."""
+    out, block_indent, key_indent = [], None, None
+    lines = text.splitlines()
+    for i, line in enumerate(lines):
+        indent = len(line) - len(line.lstrip())
+        stripped = line.strip()
+        if block_indent is None and key_indent is not None and stripped:
+            block_indent = indent if indent > key_indent else -1
+        if block_indent not in (None, -1) and stripped and indent < block_indent:
+            block_indent = key_indent = None  # block ended
+            if stripped.startswith("#"):
+                j = i  # drop this and following comment/blank lines up to the next key
+                while j < len(lines) and (not lines[j].strip() or lines[j].strip().startswith("#")):
+                    j += 1
+                lines[i:j] = [""] * (j - i)
+                line = ""
+        if block_indent == -1:
+            block_indent = key_indent = None
+        if BLOCK_SCALAR.search(line) and not stripped.startswith("#"):
+            key_indent, block_indent = indent, None
+        out.append(lines[i] if line else "")
+    return "\n".join(out) + ("\n" if text.endswith("\n") else "")
 
 
 def file_guard(raw: str) -> tuple[str, str] | None:
@@ -194,19 +237,34 @@ def group(namespace: str, kss: list[Ks]) -> list[AppPlan]:
     return list(plans.values())
 
 
-def index_chart_sources() -> dict[str, dict]:
-    """name -> {kind, url, tag, renovate} for every OCIRepository/HelmRepository template."""
-    index: dict[str, dict] = {}
+def source_texts(ref: str):
+    """(path, text) of every OCI/HelmRepository template in the working tree and in git `ref`
+    (sources of already-converted apps are deleted locally but still needed by later ones)."""
+    seen = set()
     for f in list(APPS.rglob("ocirepository.yaml.j2")) + list(APPS.rglob("helmrepository.yaml.j2")):
-        text = f.read_text()
+        seen.add(f.relative_to(ROOT).as_posix())
+        yield f.read_text()
+    listing = subprocess.run(["git", "ls-tree", "-r", "--name-only", ref, "--", str(APPS.relative_to(ROOT))],
+                             cwd=ROOT, capture_output=True, text=True, check=False).stdout.split()
+    for path in listing:
+        if path.endswith(("ocirepository.yaml.j2", "helmrepository.yaml.j2")) and path not in seen:
+            yield subprocess.run(["git", "show", f"{ref}:{path}"], cwd=ROOT,
+                                 capture_output=True, text=True, check=True).stdout
+
+
+def index_chart_sources(ref: str = "main") -> dict[str, dict]:
+    """name -> {kind, url, tag, type, renovate} for every OCIRepository/HelmRepository template."""
+    index: dict[str, dict] = {}
+    for text in source_texts(ref):
         renovate = re.search(r"#\s*renovate:.*", text)
-        for d in load_docs(f)[0]:
-            if d.get("kind") in ("OCIRepository", "HelmRepository"):
-                index[d["metadata"]["name"]] = {
+        safe, _ = protect(text)
+        for d in yaml_rt().load_all(safe):
+            if d and d.get("kind") in ("OCIRepository", "HelmRepository"):
+                index.setdefault(d["metadata"]["name"], {
                     "kind": d["kind"], "url": str(d["spec"]["url"]),
                     "tag": str(d["spec"].get("ref", {}).get("tag", "")),
                     "type": d["spec"].get("type", "default"),
-                    "renovate": renovate.group(0) if renovate else None}
+                    "renovate": renovate.group(0) if renovate else None})
     return index
 
 
@@ -272,6 +330,24 @@ def prune_empty(root: CommentedMap, path: tuple) -> None:
             path = path[:-1]
         else:
             return
+
+
+def deep_merge(base: dict, over: dict) -> dict:
+    out = dict(base)
+    for k, v in over.items():
+        out[k] = deep_merge(out[k], v) if isinstance(v, dict) and isinstance(out.get(k), dict) else v
+    return out
+
+
+def verify_split(expected, plain: CommentedMap, secret: CommentedMap, found: list[str]) -> None:
+    """Helm merges valueFiles deeply: plain + secret must equal the original values."""
+    def roundtrip(node):
+        buf = io.StringIO()
+        yaml_rt().dump(node, buf)
+        return YAML(typ="safe").load(buf.getvalue()) or {}
+    merged = deep_merge(roundtrip(plain), roundtrip(secret))
+    if merged != (expected or {}):
+        raise ValueError("values split changed the values (semantic check) - convert manually")
 
 
 def dump_values(data: CommentedMap, found: list[str], header: str) -> str:
@@ -354,7 +430,8 @@ def convert_helmrelease(app_dir: Path, plan: AppPlan, sources: dict) -> None:
         return
     raw = hr_file.read_text()
     plan.guard = file_guard(raw)
-    text, found = protect(flux_text(raw))
+    text, found = protect(drop_comments_after_block_scalars(flux_text(raw)))
+    original = YAML(typ="safe").load_all(text)
     hr = next(d for d in yaml_rt().load_all(text) if d and d.get("kind") == "HelmRelease")
     spec = hr["spec"]
     plan.chart = chart_from_helmrelease(hr, sources)
@@ -366,10 +443,17 @@ def convert_helmrelease(app_dir: Path, plan: AppPlan, sources: dict) -> None:
     for unsupported in ("postRenderers", "valuesFrom", "install", "upgrade", "timeout"):
         if unsupported in spec:
             plan.notes.append(f"HelmRelease.spec.{unsupported} not converted - review")
+    expected = next(d for d in original if d and d.get("kind") == "HelmRelease")["spec"].get("values") or {}
     plain, secret = split_values(spec.get("values") or CommentedMap(), found)
-    header = f"---\n# Helm values for {plan.chart['chart']} ({plan.name}).\n"
-    if plan.guard:  # the guard tags are inside `found`; drop them from the values body
-        found = [x if x not in plan.guard else "" for x in found]
+    verify_split(expected, plain, secret, found)
+    preamble = "" if plan.guard else jinja_preamble(raw)
+    header = f"{preamble}---\n# Helm values for {plan.chart['chart']} ({plan.name}).\n"
+    # tag lines are the first entries of `found`, in document order: drop by position
+    tags = len(JINJA_TAG_LINE.findall(raw))
+    drop = set(range(len(preamble.splitlines()))) if preamble else set()
+    if plan.guard:
+        drop |= {0, tags - 1}
+    found = ["" if i in drop else x for i, x in enumerate(found)]
     (plan.root / "values.yaml.j2").write_text(scrub_comments(dump_values(plain, found, header)))
     if secret:
         (plan.root / "values.sops.yaml.j2").write_text(dump_values(

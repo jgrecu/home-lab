@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ENC[AES256_GCM,data:L5utljxBhYxD,iv:m1EPDGtlaosnotYK3zzfw9PnjRsAPTQFYlN3qKoJfQo=,tag:61WgPaSMMTjtYP54vZL/QQ==,type:str]
+  namespace: ENC[AES256_GCM,data:mos8m4E=,iv:Tvqk3n0JyILnAonMCLtlLBLlZ8mD8CTIeCjpCG4JdfE=,tag:e7azfoenVxAQuYBX6PmKSw==,type:str]
+type: Opaque
+stringData:
+  AWS_REGION: ENC[AES256_GCM,data:2wJXlb21SGIKow==,iv:7kDxZqKfbzPeXHkdeUKA2l3ig0uQUpHOGcXWQsz6Jbc=,tag:uSvfO6832RA7RZZ9Y9LIgw==,type:str]
+  VAULT_AWSKMS_SEAL_KEY_ID: ENC[AES256_GCM,data:18nWuRY4bDtKABYPqZjJzcV27wCJPzRNYWgEkdJdrAC0Miup,iv:vJ/DPLyr0G290hVrGxq98fktB41w9H7Wf0ECYlXwpHM=,tag:u9h1FJmFvNe3gqSTmPsgNA==,type:str]
+  AWS_ACCESS_KEY_ID: ENC[AES256_GCM,data:Dxqcp5rnxJhk8tEf6VGxmRColvs=,iv:FujFJ7WWr1Qin9oM1hS9q7Z59RDBgl314AnNuESY8ps=,tag:urcG0tCW2VBbswOygf5QwQ==,type:str]
+  AWS_SECRET_ACCESS_KEY: ENC[AES256_GCM,data:nKQKtwQGrvbBLJEUCb2P2IywlAZ2F0ATJFmT53/kdQlypFhsBeGwsg==,iv:VC3ryrOT5ygqONAEW+pSXBxFCKECslUht6bTMJn+syE=,tag:aAftfEMEP7LFDjvOrem7Dw==,type:str]
+sops:
+  age:
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB4QzVsYm1kR0RFM29Pb09O
+        OXYwMGxUYmRWM21mOVpUS01QVUJESHlyakh3CkF2T0ViNkQ3ajJOdkFZZlhGR3J0
+        blI3dEdZb2tLMjVaUmlhYnlMRS96OHcKLS0tIG5ld0pKbnJaZDkyWkhzZmtVeVdx
+        YVh6emtYNUZ5bVJ2UUVmeG9icFhVUUEKBWOIw7Aw9zeR7uCquxLrLCLd5qKN2+fj
+        Is+7tsxtq4ew2oA2JsrJy77O8TQQzeIweYVbOfp5qDSBFeENH1Xlfw==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: age1vmuwa3m333fmewnm9ltl02qg9sa6675qe4459cctyt7mjcfz6a0q5j4fxt
+  encrypted_regex: ^(data|stringData|spec|metadata)$
+  lastmodified: "2026-11-10T13:31:42Z"
+  mac: ENC[AES256_GCM,data:FVqYuMAiMd9g9SeFgVyQuGdBXSXPxg//g+FrAuIdoVKYnlobHGVqqEJLy81eOYCl/7GqqjRnaQhzZ5uDKwNR+WTowuf/eKfkI6q9Jtiy903N2SzwrCDLlw7OgjtXa90uf3M9jBKbtE8kKGlw4JkJgQLFxp1nKVvW8Vf8yZtcYUI=,iv:XP+OX56k4JPHEPEKJy/L0FFtJp3i279aAPWdVBmF7AA=,tag:64PODH2pD0EDJMFwqYXP7w==,type:str]
+  mac_only_encrypted: true
+  version: 3.13.3

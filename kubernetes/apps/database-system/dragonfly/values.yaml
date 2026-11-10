@@ -1,0 +1,9 @@
+---
+# Helm values for dragonfly-operator (dragonfly-operator).
+    # Resource limits for the operator
+resources:
+  requests:
+    cpu: 11m
+    memory: 64Mi
+  limits:
+    memory: 128Mi

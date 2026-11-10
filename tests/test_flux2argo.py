@@ -178,3 +178,27 @@ def test_domain_in_jinja_placeholders_and_comments_never_stays_plain():
     out = flux2argo.scrub_comments(flux2argo.dump_values(plain, found, ""))
     assert "cloudflare_domain" not in out and "keep: 1" in out
     assert set(secret["a"]) == {"host", "name"}
+
+
+def test_jinja_preamble_is_collected():
+    raw = "---\n#% set xs = [] %#\n#% for n in nodes %#\n#% endfor %#\napiVersion: v1\n"
+    assert flux2argo.jinja_preamble(raw) == "#% set xs = [] %#\n#% for n in nodes %#\n#% endfor %#\n"
+    assert flux2argo.jinja_preamble("---\napiVersion: v1\n") == ""
+
+
+def test_comments_after_block_scalar_are_dropped_not_absorbed():
+    raw = "a:\n  conf: |\n    [X]\n      k v\n\n  # prose about b\n  b: 1\n"
+    out = flux2argo.drop_comments_after_block_scalars(raw)
+    assert "prose" not in out and "b: 1" in out and "[X]" in out
+    data = flux2argo.yaml_rt().load(out)
+    assert data["a"]["conf"] == "[X]\n  k v\n"
+
+
+def test_verify_split_detects_changed_values():
+    hr = load_hr(APP_TEMPLATE_HR)
+    expected = YAML(typ="safe").load(APP_TEMPLATE_HR.replace(flux2argo.DOMAIN_VAR, flux2argo.DOMAIN_TOKEN))
+    plain, secret = flux2argo.split_values(hr["spec"]["values"])
+    flux2argo.verify_split(expected["spec"]["values"], plain, secret, [])
+    plain["service"]["app"]["ports"]["http"]["port"] = 1
+    with pytest.raises(ValueError, match="semantic"):
+        flux2argo.verify_split(expected["spec"]["values"], plain, secret, [])
