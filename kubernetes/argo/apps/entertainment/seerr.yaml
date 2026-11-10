@@ -5,12 +5,13 @@ metadata:
   name: seerr
   namespace: argo-system
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   project: kubernetes
   sources:
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
+      path: kubernetes/apps/entertainment/seerr
       ref: repo
     - repoURL: ghcr.io/bjw-s-labs/helm
       chart: app-template
