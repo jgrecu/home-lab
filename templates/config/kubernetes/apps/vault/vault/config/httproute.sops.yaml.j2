@@ -18,6 +18,14 @@ spec:
   hostnames:
     - "vault.#{ cloudflare_domain }#"
   rules:
-    - backendRefs:
+    # Vault 2.2.x bug: GET /ui/ without Accept-Encoding returns 200 with an empty body
+    # (2.1.2 is fine). Always ask Vault for gzip; remove once a fixed release is out.
+    - filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: Accept-Encoding
+                value: gzip
+      backendRefs:
         - name: vault-ui
           port: 8200
