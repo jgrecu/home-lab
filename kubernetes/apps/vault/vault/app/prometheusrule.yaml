@@ -1,0 +1,32 @@
+---
+# Vault metrics are unavailable while sealed, so detect sealing via the
+# readiness probe (sealed -> NotReady) using kube-state-metrics.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: vault-alerts
+  labels:
+    prometheus: kube-prometheus-stack
+    role: alert-rules
+spec:
+  groups:
+    - name: vault
+      rules:
+        - alert: VaultSealedOrNotReady
+          expr: |
+            kube_pod_status_ready{namespace="vault", pod=~"vault-[0-9]+", condition="true"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Vault pod {{ $labels.pod }} is sealed or not ready"
+            description: "Check `vault status`. With AWS KMS auto-unseal this usually means KMS is unreachable or the vault-kms credentials are wrong."
+
+        - alert: VaultAbsent
+          expr: |
+            absent(kube_pod_status_ready{namespace="vault", pod=~"vault-[0-9]+", condition="true"})
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "No Vault pod is running"

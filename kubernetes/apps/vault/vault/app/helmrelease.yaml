@@ -46,6 +46,25 @@ spec:
             path = "/vault/data"
           }
 
+          # AWS KMS auto-unseal (eu-south-2). Region, key id and credentials
+          # come from the vault-kms Secret via extraSecretEnvironmentVars.
+          seal "awskms" {}
+
+      # AWS KMS seal credentials (ops/terraform/aws-kms -> just ops vault-kms-secret)
+      extraSecretEnvironmentVars:
+        - envName: AWS_REGION
+          secretName: vault-kms
+          secretKey: AWS_REGION
+        - envName: VAULT_AWSKMS_SEAL_KEY_ID
+          secretName: vault-kms
+          secretKey: VAULT_AWSKMS_SEAL_KEY_ID
+        - envName: AWS_ACCESS_KEY_ID
+          secretName: vault-kms
+          secretKey: AWS_ACCESS_KEY_ID
+        - envName: AWS_SECRET_ACCESS_KEY
+          secretName: vault-kms
+          secretKey: AWS_SECRET_ACCESS_KEY
+
       # Clear default pod anti-affinity — blocks scheduling on a single-node-available cluster
       affinity: ""
 
@@ -67,10 +86,11 @@ spec:
         limits:
           memory: 512Mi
 
-      # Readiness: Vault is ready only when unsealed
+      # Readiness: Vault is ready only when unsealed (sealed -> 503 -> NotReady,
+      # which fires the VaultSealed alert)
       readinessProbe:
         enabled: true
-        path: "/v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204"
+        path: "/v1/sys/health?standbyok=true&uninitcode=204"
 
       # Liveness: keep pod alive even when sealed (so you can unseal it)
       livenessProbe:

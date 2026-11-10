@@ -28,6 +28,10 @@ status:
     gum style --foreground 212 --bold "Recent Warning Events"
     kubectl get events -A --sort-by='.lastTimestamp' | grep -i "warning\|error" | tail -10 || echo "No recent warnings"
 
+# Trigger a one-off backup on all Volsync sources (usage: just ops volsync-snapshot-all [--dry-run] [--only local|r2] [label])
+volsync-snapshot-all *ARGS:
+    {{REPO_ROOT}}/scripts/volsync-snapshot-all.sh {{ARGS}}
+
 # Get logs for an app pod (usage: just ops logs APP [NAMESPACE])
 logs APP NAMESPACE="":
     #!/usr/bin/env bash
@@ -130,3 +134,48 @@ longhorn-status:
     gum style --foreground 212 --bold "Longhorn Nodes"
     kubectl get nodes.longhorn.io -n storage \
         -o custom-columns="NAME:.metadata.name,READY:.status.conditions[?(@.type==\"Ready\")].status,SCHEDULABLE:.status.conditions[?(@.type==\"Schedulable\")].status"
+
+# ─── OpenTofu: AWS KMS for Vault auto-unseal ──────────────────────────────────
+# Requires env: R2_TFSTATE_ENDPOINT, R2_TFSTATE_ACCESS_KEY_ID, R2_TFSTATE_SECRET_ACCESS_KEY
+# and AWS admin credentials (AWS_PROFILE or default chain).
+
+TOFU_KMS_DIR := REPO_ROOT + "/ops/terraform/aws-kms"
+VAULT_KMS_SECRET := REPO_ROOT + "/kubernetes/apps/vault/vault/app/vault-kms.sops.yaml"
+
+# Run tofu in the aws-kms module (usage: just ops tofu-kms init|plan|apply|output ...)
+tofu-kms *ARGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    : "${R2_TFSTATE_ENDPOINT:?set R2_TFSTATE_ENDPOINT}"
+    : "${R2_TFSTATE_ACCESS_KEY_ID:?set R2_TFSTATE_ACCESS_KEY_ID}"
+    : "${R2_TFSTATE_SECRET_ACCESS_KEY:?set R2_TFSTATE_SECRET_ACCESS_KEY}"
+    cd "{{TOFU_KMS_DIR}}"
+    tofu init -input=false -reconfigure \
+        -backend-config="endpoints={s3=\"${R2_TFSTATE_ENDPOINT}\"}" \
+        -backend-config="access_key=${R2_TFSTATE_ACCESS_KEY_ID}" \
+        -backend-config="secret_key=${R2_TFSTATE_SECRET_ACCESS_KEY}" >/dev/null
+    [[ "{{ARGS}}" == "init" ]] && { echo "tofu init OK"; exit 0; }
+    tofu {{ARGS}}
+
+# Write tofu outputs into a SOPS-encrypted Secret for Vault (no plaintext on disk)
+vault-kms-secret:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    OUT=$(just ops tofu-kms output -json)
+    jq -e '.kms_key_id.value' <<<"$OUT" >/dev/null || { echo "Run 'just ops tofu-kms apply' first"; exit 1; }
+    jq -r '"---
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: vault-kms
+      namespace: vault
+    type: Opaque
+    stringData:
+      AWS_REGION: \(.aws_region.value)
+      VAULT_AWSKMS_SEAL_KEY_ID: \(.kms_key_id.value)
+      AWS_ACCESS_KEY_ID: \(.access_key_id.value)
+      AWS_SECRET_ACCESS_KEY: \(.secret_access_key.value)"' <<<"$OUT" \
+      | sed 's/^    //' \
+      | sops encrypt --filename-override "{{VAULT_KMS_SECRET}}" --input-type yaml --output-type yaml /dev/stdin \
+      > "{{VAULT_KMS_SECRET}}"
+    echo "Wrote {{VAULT_KMS_SECRET}}"
