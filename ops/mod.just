@@ -208,3 +208,7 @@ vault-snapshot-now:
     kubectl -n vault wait job/"$JOB" --for=condition=complete --timeout=300s || true
     kubectl -n vault logs job/"$JOB" -c snapshot
     kubectl -n vault logs job/"$JOB" -c upload
+
+# Restore the latest R2 Raft snapshot into a throwaway Vault pod and verify it
+vault-snapshot-test-restore:
+    {{REPO_ROOT}}/scripts/vault-snapshot-test-restore.sh
