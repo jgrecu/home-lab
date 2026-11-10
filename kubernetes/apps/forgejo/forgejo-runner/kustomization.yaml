@@ -1,6 +1,33 @@
 ---
+# Chart rendered by kustomize (Argo CD --enable-helm) so it can be patched.
+# Chart always renders /data as emptyDir; keep the persistent runner data PVC (was a Flux postRenderer).
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: forgejo
+helmCharts:
+  - name: forgejo-runner
+    repo: oci://git.erwanleboucher.dev/eleboucher/charts
+    # renovate: datasource=docker depName=git.erwanleboucher.dev/eleboucher/charts/forgejo-runner
+    version: 13.2.1
+    releaseName: forgejo-runner
+    namespace: forgejo
+    valuesFile: values.yaml
+    includeCRDs: true
 resources:
   - ./config
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: forgejo-runner
+    patch: |
+      - op: test
+        path: /spec/template/spec/volumes/3/name
+        value: data
+      - op: replace
+        path: /spec/template/spec/volumes/3
+        value:
+          name: data
+          persistentVolumeClaim:
+            claimName: forgejo-runner-data

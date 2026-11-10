@@ -1,7 +1,29 @@
 ---
+# Chart rendered by kustomize (Argo CD --enable-helm) so it can be patched.
+# Chart has no `strategy` value; RWO PVC needs Recreate (was a Flux postRenderer).
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: entertainment
+helmCharts:
+  - name: grimmory
+    repo: oci://ghcr.io/grimmory-tools/helm-charts
+    # renovate: datasource=docker depName=ghcr.io/grimmory-tools/helm-charts/grimmory
+    version: 3.5.0
+    releaseName: grimmory
+    namespace: entertainment
+    valuesFile: values.yaml
+    includeCRDs: true
 resources:
   - ./config
   - ./backup
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: grimmory
+    patch: |
+      - op: add
+        path: /spec/strategy
+        value:
+          type: Recreate

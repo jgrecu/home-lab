@@ -7,6 +7,5 @@ resources:
   - ./bookmarks-config.yaml
   - ./settings-config.yaml
   - ./widgets-config.yaml
-  - ./serviceaccount.yaml
   - ./clusterrole.yaml
   - ./clusterrolebinding.yaml

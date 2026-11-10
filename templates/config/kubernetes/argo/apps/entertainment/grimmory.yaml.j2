@@ -8,19 +8,10 @@ metadata:
     argocd.argoproj.io/sync-wave: "2"
 spec:
   project: kubernetes
-  sources:
-    - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
-      targetRevision: "#{ repository_branch }#"
-      path: kubernetes/apps/entertainment/grimmory
-      ref: repo
-    - repoURL: ghcr.io/grimmory-tools/helm-charts
-      chart: grimmory
-      # renovate: datasource=docker depName=ghcr.io/grimmory-tools/helm-charts/grimmory
-      targetRevision: 3.5.0
-      helm:
-        releaseName: grimmory
-        valueFiles:
-          - $repo/kubernetes/apps/entertainment/grimmory/values.yaml
+  source:
+    repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
+    targetRevision: "#{ repository_branch }#"
+    path: kubernetes/apps/entertainment/grimmory
   destination:
     name: in-cluster
     namespace: entertainment
