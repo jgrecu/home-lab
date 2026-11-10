@@ -14,7 +14,6 @@ spec:
       ref: repo
     - repoURL: ghcr.io/stakater/charts
       chart: reloader
-      # renovate: datasource=docker depName=ghcr.io/stakater/charts/reloader
       targetRevision: 2.2.19
       helm:
         releaseName: reloader

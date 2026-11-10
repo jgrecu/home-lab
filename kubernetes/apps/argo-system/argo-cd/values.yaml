@@ -137,15 +137,15 @@ repoServer:
       image: docker.io/library/alpine:3.24.4
       command: [sh, -euc]
       env:
-        # renovate: datasource=github-releases depName=getsops/sops
         - name: SOPS_VERSION
-          value: "3.13.3"
-        # renovate: datasource=github-releases depName=viaduct-ai/kustomize-sops
+          # renovate: datasource=github-releases depName=getsops/sops
+          value: 3.13.3
         - name: KSOPS_VERSION
-          value: "4.5.1"
-        # renovate: datasource=github-releases depName=jkroepke/helm-secrets
+          # renovate: datasource=github-releases depName=viaduct-ai/kustomize-sops
+          value: 4.5.1
         - name: HELM_SECRETS_VERSION
-          value: "4.7.10"
+          # renovate: datasource=github-releases depName=jkroepke/helm-secrets
+          value: 4.7.10
       args:
         - |
           ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')

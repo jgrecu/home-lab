@@ -15,7 +15,6 @@ spec:
       ref: repo
     - repoURL: mirror.gcr.io/envoyproxy
       chart: gateway-helm
-      # renovate: datasource=docker depName=mirror.gcr.io/envoyproxy/gateway-helm
       targetRevision: v1.10.0
       helm:
         releaseName: envoy-gateway

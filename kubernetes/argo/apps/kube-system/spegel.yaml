@@ -14,7 +14,6 @@ spec:
       ref: repo
     - repoURL: ghcr.io/spegel-org/helm-charts
       chart: spegel
-      # renovate: datasource=docker depName=ghcr.io/spegel-org/helm-charts/spegel
       targetRevision: 0.8.1
       helm:
         releaseName: spegel

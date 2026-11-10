@@ -546,8 +546,6 @@ def application(plan: AppPlan) -> str:
         c = plan.chart
         lines.append("      ref: repo")
         lines += [f"    - repoURL: {c['repoURL']}", f"      chart: {c['chart']}"]
-        if c.get("renovate"):
-            lines.append(f"      {c['renovate'].strip()}")
         lines += [f"      targetRevision: {c['version']}", "      helm:",
                   f"        releaseName: {c['releaseName']}", "        valueFiles:",
                   f"          - $repo/{rel}/values.yaml"]

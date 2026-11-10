@@ -15,7 +15,6 @@ spec:
       ref: repo
     - repoURL: ghcr.io/h44z/charts
       chart: wg-portal
-      # renovate: datasource=docker depName=ghcr.io/h44z/charts/wg-portal
       targetRevision: 0.7.3
       helm:
         releaseName: wg-portal

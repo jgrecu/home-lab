@@ -15,7 +15,6 @@ spec:
       ref: repo
     - repoURL: ghcr.io/dragonflydb/dragonfly-operator/helm
       chart: dragonfly-operator
-      # renovate: datasource=docker depName=ghcr.io/dragonflydb/dragonfly-operator/helm/dragonfly-operator
       targetRevision: v1.8.0
       helm:
         releaseName: dragonfly-operator

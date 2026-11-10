@@ -15,7 +15,6 @@ spec:
       ref: repo
     - repoURL: ghcr.io/home-operations/charts-mirror
       chart: external-dns
-      # renovate: datasource=docker depName=ghcr.io/home-operations/charts-mirror/external-dns
       targetRevision: 1.23.0
       helm:
         releaseName: cloudflare-dns

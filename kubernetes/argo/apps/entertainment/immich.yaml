@@ -15,7 +15,6 @@ spec:
       ref: repo
     - repoURL: ghcr.io/immich-app/immich-charts
       chart: immich
-      # renovate: datasource=docker depName=ghcr.io/immich-app/immich-charts/immich
       targetRevision: 0.13.4
       helm:
         releaseName: immich
