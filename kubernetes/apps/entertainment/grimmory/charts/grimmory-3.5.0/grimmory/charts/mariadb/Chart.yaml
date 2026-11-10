@@ -31,7 +31,7 @@ appVersion: 12.2.2
 dependencies:
 - name: common
   repository: oci://registry-1.docker.io/cloudpirates
-  version: 2.2.0
+  version: 2.2.1
 description: MariaDB is a high-performance, open-source relational database server
   that is a drop-in replacement for MySQL. Supports both single-node and Galera Cluster
   deployments.
