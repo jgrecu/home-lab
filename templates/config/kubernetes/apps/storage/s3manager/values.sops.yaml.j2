@@ -1,0 +1,7 @@
+---
+# Helm values with the domain (fully encrypted) for app-template (s3manager).
+route:
+  app:
+    hostnames: ["s3.#{ cloudflare_domain }#"]
+    annotations:
+      gethomepage.dev/href: "https://s3.#{ cloudflare_domain }#"

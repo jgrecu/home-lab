@@ -1,0 +1,17 @@
+---
+# Helm values for k8s-gateway (k8s-gateway).
+fullnameOverride: k8s-gateway
+ttl: 1
+resources:
+  requests:
+    cpu: 15m
+    memory: 100Mi
+  limits:
+    memory: 256Mi
+service:
+  type: LoadBalancer
+  port: 53
+  annotations:
+    lbipam.cilium.io/ips: "192.168.1.159"
+  externalTrafficPolicy: Cluster
+watchedResources: ["HTTPRoute", "Service"]

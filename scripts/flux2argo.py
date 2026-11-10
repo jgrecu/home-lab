@@ -32,8 +32,11 @@ SKIP_NAMESPACES = {"flux-system", "argo-system"}
 DOMAIN_VAR = "${SECRET_DOMAIN}"
 DOMAIN_TOKEN = "__DOMAIN__"
 DOMAIN_JINJA = "#{ cloudflare_domain }#"
+DOMAIN_RE = re.compile(r"\$\{SECRET_DOMAIN(?:/([^/}]*)/([^}]*))?\}")
+DOMAIN_JINJA_ANY = re.compile(r"#\{[^}]*cloudflare_domain[^}]*\}#")
 JINJA_EXPR = re.compile(r"#\{.*?\}#")
 JINJA_BLOCK = re.compile(r"#%.*?%#")
+JINJA_TAG_LINE = re.compile(r"^([ \t]*)(#%.*?%#)[ \t]*$", re.MULTILINE)
 REPO_URL = ("#{ 'ssh://git@github.com/' if repository_visibility == 'private' "
             "else 'https://github.com/' }##{ repository_name }#.git")
 SOURCE_FILES = {"helmrelease.yaml", "ocirepository.yaml", "helmrepository.yaml"}
@@ -50,28 +53,56 @@ def yaml_rt() -> YAML:
 # ── Jinja-safe text handling ────────────────────────────────────────────────
 
 def protect(text: str) -> tuple[str, list[str]]:
-    """Replace #{ }# expressions by placeholders so the text parses as YAML."""
+    """Replace #{ }# expressions by placeholders and #% %# tag lines by placeholder
+    comments, so the text parses as YAML (ruamel keeps comments in place)."""
     found: list[str] = []
 
     def sub(m: re.Match) -> str:
         found.append(m.group(0))
         return f"__JINJA{len(found) - 1}__"
+
+    def block(m: re.Match) -> str:
+        found.append(m.group(2))
+        return f"{m.group(1)}# __JINJA{len(found) - 1}__"
+    text = JINJA_TAG_LINE.sub(block, text)
     return JINJA_EXPR.sub(sub, text), found
 
 
 def restore(text: str, found: list[str]) -> str:
-    for i, expr in enumerate(found):
-        text = text.replace(f"__JINJA{i}__", expr)
+    # block tags go to column 0 (values are re-indented, tags never carry YAML indentation)
+    text = re.sub(r"^[ \t]*# (__JINJA\d+__)[ \t]*$", r"# \1", text, flags=re.MULTILINE)
+    for i, expr in reversed(list(enumerate(found))):
+        text = text.replace(f"# __JINJA{i}__", expr).replace(f"__JINJA{i}__", expr)
     return text.replace(DOMAIN_TOKEN, DOMAIN_JINJA)
+
+
+def file_guard(raw: str) -> tuple[str, str] | None:
+    """(open, close) jinja tags when the whole file is wrapped in one #% if %# block."""
+    lines = [ln.strip() for ln in raw.strip().splitlines()]
+    if lines and JINJA_BLOCK.fullmatch(lines[0]) and JINJA_BLOCK.fullmatch(lines[-1]):
+        return lines[0], lines[-1]
+    return None
+
+
+def domain_jinja(m: re.Match) -> str:
+    """${SECRET_DOMAIN} or Flux/bash pattern form ${SECRET_DOMAIN/old/new} (first match)."""
+    if m.group(1) is None:
+        return DOMAIN_JINJA
+    return f"#{{ cloudflare_domain | replace('{m.group(1)}', '{m.group(2)}', 1) }}#"
 
 
 def flux_text(text: str) -> str:
     """Apply Flux postBuild semantics at template level: domain var + $${ un-escape."""
-    return text.replace(DOMAIN_VAR, DOMAIN_JINJA).replace("$${", "${")
+    return DOMAIN_RE.sub(domain_jinja, text).replace("$${", "${")
 
 
 def has_domain(text: str) -> bool:
-    return DOMAIN_VAR in text or "cloudflare_domain" in text
+    return "SECRET_DOMAIN" in text or "cloudflare_domain" in text
+
+
+def scrub_comments(text: str) -> str:
+    """Plain values hold no domain scalars (split moved them); leftovers are in comments."""
+    return DOMAIN_JINJA_ANY.sub("<domain>", text)
 
 
 def load_docs(path: Path) -> tuple[list, list[str]]:
@@ -116,6 +147,8 @@ class AppPlan:
     extra: list[Ks] = field(default_factory=list)
     chart: dict | None = None
     wave: int = 0
+    hr_namespace: str | None = None
+    guard: tuple[str, str] | None = None   # whole app wrapped in #% if %# ... #% endif %#
     notes: list[str] = field(default_factory=list)
 
     @property
@@ -185,23 +218,23 @@ def chart_from_helmrelease(hr: CommentedMap, sources: dict[str, dict]) -> dict:
         return {"repoURL": repo, "chart": chart, "version": src["tag"], "renovate": src["renovate"]}
     cs = spec["chart"]["spec"]
     src = sources[cs["sourceRef"]["name"]]
-    url = src["url"]
+    url = src["url"].rstrip("/")
     if src["type"] == "oci" or url.startswith("oci://"):
-        url = url.removeprefix("oci://").rstrip("/")
+        url = url.removeprefix("oci://")
     return {"repoURL": url, "chart": str(cs["chart"]), "version": str(cs["version"]), "renovate": None}
 
 
 # ── Values split ────────────────────────────────────────────────────────────
 
-def domain_paths(node, path=()):
-    """Yield paths (tuples of keys/indices) to scalars containing the domain token."""
+def domain_paths(node, markers: tuple[str, ...], path=()):
+    """Yield paths (tuples of keys/indices) to scalars containing a domain marker."""
     if isinstance(node, dict):
         for k, v in node.items():
-            yield from domain_paths(v, path + (k,))
+            yield from domain_paths(v, markers, path + (k,))
     elif isinstance(node, list):
         for i, v in enumerate(node):
-            yield from domain_paths(v, path + (i,))
-    elif isinstance(node, str) and DOMAIN_TOKEN in node:
+            yield from domain_paths(v, markers, path + (i,))
+    elif isinstance(node, str) and any(m in node for m in markers):
         yield path
 
 
@@ -213,8 +246,10 @@ def cut_point(path: tuple) -> tuple:
     return path
 
 
-def split_values(values: CommentedMap) -> tuple[CommentedMap, CommentedMap]:
-    cuts = sorted({cut_point(p) for p in domain_paths(values)}, key=len)
+def split_values(values: CommentedMap, found: list[str] | None = None) -> tuple[CommentedMap, CommentedMap]:
+    markers = (DOMAIN_TOKEN,) + tuple(f"__JINJA{i}__" for i, e in enumerate(found or [])
+                                      if "cloudflare_domain" in e)
+    cuts = sorted({cut_point(p) for p in domain_paths(values, markers)}, key=len)
     cuts = [c for c in cuts if not any(c[:len(o)] == o and c != o for o in cuts)]
     secret = CommentedMap()
     for cut in cuts:
@@ -283,7 +318,10 @@ def rewrite_kustomization(directory: Path, plan: AppPlan) -> bool:
             new_text = flux_text(text)
             if is_secret_file(src):
                 encrypted.append(name)
-            elif has_domain(text):
+                if new_text != text:
+                    src.write_text(new_text)
+                continue  # decrypted by ksops, must not also be a plain resource
+            if has_domain(text):
                 enc_name = name.removesuffix(".yaml") + ".sops.yaml"
                 (directory / f"{enc_name}.j2").write_text(new_text)
                 src.unlink()
@@ -315,19 +353,24 @@ def convert_helmrelease(app_dir: Path, plan: AppPlan, sources: dict) -> None:
     if not hr_file.exists():
         return
     raw = hr_file.read_text()
-    if JINJA_BLOCK.search(raw):
-        raise ValueError("helmrelease contains #% %# jinja blocks - convert manually")
-    text, found = protect(raw.replace(DOMAIN_VAR, DOMAIN_TOKEN).replace("$${", "${"))
+    plan.guard = file_guard(raw)
+    text, found = protect(flux_text(raw))
     hr = next(d for d in yaml_rt().load_all(text) if d and d.get("kind") == "HelmRelease")
     spec = hr["spec"]
     plan.chart = chart_from_helmrelease(hr, sources)
     plan.chart["releaseName"] = str(spec.get("releaseName", hr["metadata"]["name"]))
+    # Flux precedence: ks targetNamespace > HelmRelease.spec.targetNamespace > HelmRelease namespace
+    ns = spec.get("targetNamespace") or hr["metadata"].get("namespace")
+    if ns and "__JINJA" not in str(ns):
+        plan.hr_namespace = str(ns)
     for unsupported in ("postRenderers", "valuesFrom", "install", "upgrade", "timeout"):
         if unsupported in spec:
             plan.notes.append(f"HelmRelease.spec.{unsupported} not converted - review")
-    plain, secret = split_values(spec.get("values") or CommentedMap())
+    plain, secret = split_values(spec.get("values") or CommentedMap(), found)
     header = f"---\n# Helm values for {plan.chart['chart']} ({plan.name}).\n"
-    (plan.root / "values.yaml.j2").write_text(dump_values(plain, found, header))
+    if plan.guard:  # the guard tags are inside `found`; drop them from the values body
+        found = [x if x not in plan.guard else "" for x in found]
+    (plan.root / "values.yaml.j2").write_text(scrub_comments(dump_values(plain, found, header)))
     if secret:
         (plan.root / "values.sops.yaml.j2").write_text(dump_values(
             secret, found, header.replace("values", "values with the domain (fully encrypted)", 1)))
@@ -401,6 +444,10 @@ def existing_waves() -> dict[str, int]:
     return out
 
 
+def destination_namespace(plan: AppPlan) -> str:
+    return plan.main.target_ns or plan.hr_namespace or plan.namespace
+
+
 def application(plan: AppPlan) -> str:
     rel = plan.root.relative_to(ROOT / "templates/config").as_posix()
     has_dir = (plan.root / "kustomization.yaml.j2").exists()
@@ -423,13 +470,14 @@ def application(plan: AppPlan) -> str:
         if (plan.root / "values.sops.yaml.j2").exists():
             lines.append(f"          - $repo/{rel}/values.sops.yaml")
     lines += ["  destination:", "    name: in-cluster",
-              f"    namespace: {plan.main.target_ns or plan.namespace}",
+              f"    namespace: {destination_namespace(plan)}",
               "  syncPolicy:", "    automated:", "      prune: true", "      selfHeal: true",
               "    retry:", "      limit: 5", "      backoff:", "        duration: 10s",
               "        factor: 2", "        maxDuration: 3m", "    syncOptions:",
               "      - ApplyOutOfSyncOnly=true", "      - ServerSideApply=true",
               "      - PruneLast=true", "      - RespectIgnoreDifferences=true"]
-    return "\n".join(lines) + "\n"
+    body = "\n".join(lines) + "\n"
+    return f"{plan.guard[0]}\n{body}{plan.guard[1]}\n" if plan.guard else body
 
 
 def rewrite_namespace_kustomization(namespace: str) -> None:

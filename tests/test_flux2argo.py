@@ -150,3 +150,31 @@ def test_protect_and_restore_roundtrip_jinja():
     assert "#{" not in safe
     assert flux2argo.restore(safe.replace(flux2argo.DOMAIN_VAR, flux2argo.DOMAIN_TOKEN), found) == \
         'addr: "#{ cluster_pod_cidr }#"\nhost: x.#{ cloudflare_domain }#\n'
+
+
+def test_block_tags_survive_and_move_to_column_zero():
+    text = "a:\n  b: 1\n  #% if x %#\n  c: 2\n  #% endif %#\n"
+    safe, found = flux2argo.protect(text)
+    data = flux2argo.yaml_rt().load(safe)
+    out = flux2argo.restore(dump(data), found)
+    assert "\n#% if x %#\n" in out and "\n#% endif %#\n" in out and "c: 2" in out
+
+
+def test_file_guard_detects_whole_file_condition():
+    assert flux2argo.file_guard("#% if a %#\n---\nx: 1\n#% endif %#\n") == ("#% if a %#", "#% endif %#")
+    assert flux2argo.file_guard("---\nx: 1\n") is None
+
+
+def test_flux_pattern_substitution_becomes_jinja_replace():
+    assert flux2argo.flux_text("n: ${SECRET_DOMAIN/./-}-tls") == \
+        "n: #{ cloudflare_domain | replace('.', '-', 1) }#-tls"
+    assert flux2argo.flux_text("h: a.${SECRET_DOMAIN} x: $${v}") == "h: a.#{ cloudflare_domain }# x: ${v}"
+
+
+def test_domain_in_jinja_placeholders_and_comments_never_stays_plain():
+    raw = "a:\n  # see https://x.${SECRET_DOMAIN}\n  host: x.${SECRET_DOMAIN}\n  name: ${SECRET_DOMAIN/./-}\n  keep: 1\n"
+    text, found = flux2argo.protect(flux2argo.flux_text(raw))
+    plain, secret = flux2argo.split_values(flux2argo.yaml_rt().load(text), found)
+    out = flux2argo.scrub_comments(flux2argo.dump_values(plain, found, ""))
+    assert "cloudflare_domain" not in out and "keep: 1" in out
+    assert set(secret["a"]) == {"host", "name"}

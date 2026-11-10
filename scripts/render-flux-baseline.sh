@@ -20,11 +20,6 @@ KS_COUNT=0
 HR_COUNT=0
 POST_RENDERERS=()
 
-CLUSTER_SCOPED='["Namespace","ClusterRole","ClusterRoleBinding","CustomResourceDefinition",
-  "StorageClass","ClusterIssuer","PriorityClass","ValidatingWebhookConfiguration",
-  "MutatingWebhookConfiguration","VolumeSnapshotClass","PersistentVolume","GatewayClass",
-  "ClusterSecretStore","APIService","CSIDriver","IngressClass","RuntimeClass"]'
-
 cleanup() { rm -rf "$WORK"; }
 trap cleanup EXIT
 
@@ -39,19 +34,21 @@ load_domain() {
 
 # Flux postBuild behaviour: substitute ${SECRET_DOMAIN}, then un-escape $${ -> ${
 flux_substitute() {
-  sed -e "s|\${SECRET_DOMAIN}|$SECRET_DOMAIN|g" -e 's|\$\${|${|g'
+  local dashed=${SECRET_DOMAIN/./-}   # Flux supports ${VAR/old/new} (first match)
+  sed -e "s|\${SECRET_DOMAIN}|$SECRET_DOMAIN|g" -e "s|\${SECRET_DOMAIN/./-}|$dashed|g" -e 's|\$\${|${|g'
 }
 
 # Replace Secret values by "<redacted>" and normalise: sorted keys, sorted docs
 # shellcheck disable=SC2016  # yq variables, not shell
 normalise() {
-  yq ea -P '[select(. != null)]
+  yq ea -P '[select(. != null)] | (... comments="") | map(select(tag == "!!map" and . != {}))
     | map(select(.kind == "Secret") |= (
         (.data // {} | keys) as $d | (.stringData // {} | keys) as $s
         | del(.data, .stringData, .sops)
         | .data = ($d + $s | map({(.): "<redacted>"}) | .[] as $i ireduce ({}; . * $i))))
     | sort_by(.kind, .metadata.namespace // "", .metadata.name)
-    | .[] | sort_keys(..) | split_doc'
+    | .[] | sort_keys(..) | split_doc' |
+    awk '/^---$/ { if (prev == "---" || NR == 1) next } { print; prev = $0 }'
 }
 
 # Prints "name<TAB>path<TAB>targetNamespace" for every Kustomization doc in a ks file
@@ -60,10 +57,15 @@ list_ks_docs() {
     | [.metadata.name, .spec.path, (.spec.targetNamespace // "")] | @tsv' "$1"
 }
 
+# Flux targetNamespace = kustomize namespace transformer over the build output
 set_target_namespace() {
-  local ns=$1
+  local ns=$1 dir
   if [[ -z "$ns" ]]; then cat; return; fi
-  yq ea "select(.kind as \$k | $CLUSTER_SCOPED | contains([\$k]) | not).metadata.namespace = \"$ns\""
+  dir=$(mktemp -d "$WORK/ns.XXXXXX")
+  cat > "$dir/resources.yaml"
+  printf 'apiVersion: kustomize.config.k8s.io/v1beta1\nkind: Kustomization\nnamespace: %s\nresources: [resources.yaml]\n' \
+    "$ns" > "$dir/kustomization.yaml"
+  kustomize build "$dir"
 }
 
 build_ks() {
@@ -190,4 +192,4 @@ main() {
   [[ ${#FAILURES[@]} -eq 0 ]]
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi

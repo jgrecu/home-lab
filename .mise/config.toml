@@ -34,6 +34,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 "aqua:helm/helm" = "4.3.1"
 "aqua:helmfile/helmfile" = "1.8.3"
 "aqua:kubernetes-sigs/kustomize" = "5.8.1"
+"aqua:viaduct-ai/kustomize-sops" = "4.5.1"
 "aqua:kubernetes/kubernetes/kubectl" = "1.37.2"
 "aqua:yannh/kubeconform" = "0.8.0"
 

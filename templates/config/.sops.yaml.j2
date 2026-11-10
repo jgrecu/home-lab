@@ -8,8 +8,8 @@ creation_rules:
     mac_only_encrypted: true
     age: "#{ age_key('public') }#"
   - path_regex: (bootstrap|kubernetes)/.*\.sops\.ya?ml
-    # spec: non-Secret manifests carrying the domain (HTTPRoute, Certificate, ...) via ksops
-    encrypted_regex: "^(data|stringData|spec)$"
+    # spec/metadata: non-Secret manifests carrying the domain (HTTPRoute, Certificate, ...) via ksops
+    encrypted_regex: "^(data|stringData|spec|metadata)$"
     mac_only_encrypted: true
     age: "#{ age_key('public') }#"
 stores:

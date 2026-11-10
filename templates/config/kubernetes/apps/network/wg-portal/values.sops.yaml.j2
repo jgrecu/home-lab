@@ -1,0 +1,38 @@
+---
+# Helm values with the domain (fully encrypted) for wg-portal (wg-portal).
+env:
+      # Database — SQLite stored on the PVC (sufficient for homelab single-replica)
+  - name: WG_PORTAL_DATABASE_TYPE
+    value: "sqlite"
+  - name: WG_PORTAL_DATABASE_DSN
+    value: "/data/sqlite.db"
+
+      # Core settings
+  - name: WG_PORTAL_CORE_ADMIN_USER
+    value: "admin@wgportal.local"
+  - name: WG_PORTAL_CORE_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: wg-portal-secret
+        key: admin-password
+      # Allow wg-portal to import the pre-loaded kernel interface and its private key
+  - name: WG_PORTAL_CORE_IMPORT_EXISTING
+    value: "true"
+      # Allow editing keys via UI (useful for restoring the private key if PVC is lost)
+  - name: WG_PORTAL_CORE_EDITABLE_KEYS
+    value: "true"
+
+      # Web server — listen on all interfaces, HTTP (behind internal HTTPS gateway)
+  - name: WG_PORTAL_WEB_EXTERNAL_URL
+    value: "https://wg.#{ cloudflare_domain }#"
+  - name: WG_PORTAL_WEB_LISTENING_ADDRESS
+    value: ":8888"
+
+      # Built-in Prometheus metrics endpoint
+  - name: WG_PORTAL_STATISTICS_LISTENING_ADDRESS
+    value: ":8787"
+
+      # WireGuard interface name
+  - name: WG_PORTAL_ADVANCED_IGNORED_LOCAL_INTERFACES
+    value: "eth0"
+
