@@ -16,6 +16,7 @@
 # Mutating phases are DRY-RUN unless --apply is given; with --apply every step asks first.
 
 set -Eeuo pipefail
+trap 'echo "❌ $(basename "$0") failed at line $LINENO: $BASH_COMMAND" >&2' ERR
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 STATE=$REPO_ROOT/.tmp/cutover
@@ -182,7 +183,9 @@ list_waves() {
 apps_in_wave() {
   local f
   while IFS= read -r f; do
-    [[ "$(yq '.metadata.annotations."argocd.argoproj.io/sync-wave"' "$f")" == "$1" ]] && yq '.metadata.name' "$f"
+    if [[ "$(yq '.metadata.annotations."argocd.argoproj.io/sync-wave"' "$f")" == "$1" ]]; then
+      yq '.metadata.name' "$f"
+    fi
   done < <(find "$REPO_ROOT/kubernetes/argo/apps" -name '*.yaml' | sort)
 }
 
