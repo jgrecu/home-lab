@@ -103,9 +103,12 @@ config:
   database:
     # PVC is mounted at /app/data; without this wg-portal writes to /data (overlay, lost on restart)
     dsn: /app/data/sqlite.db
-  backend:
-    # Disable resolvconf: fails in the container and blocks interface saves
-    local_resolvconf_prefix: ""
+
+# backend.local_resolvconf_prefix is not exposed by the chart; set via env var instead
+# (resolvconf fails in the container and blocks interface saves when DNS is configured)
+env:
+  - name: WG_PORTAL_BACKEND_LOCAL_RESOLVCONF_PREFIX
+    value: ""
 
 service:
   web:
