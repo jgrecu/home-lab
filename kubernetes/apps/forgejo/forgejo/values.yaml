@@ -4,6 +4,7 @@ gitea:
   admin:
     existingSecret: forgejo-secret
     email: "admin@example.com"
+    passwordMode: initialOnlyNoReset
   podAnnotations:
     secret.reloader.stakater.com/reload: forgejo-secret
   config:
