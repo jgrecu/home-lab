@@ -4,9 +4,9 @@
 
 A beginner-friendly homelab project demonstrating how to run your own Kubernetes cluster for self-hosting applications. Learn GitOps principles, automated deployments, and infrastructure-as-code while building a production-like environment at home.
 
-![Talos](https://img.shields.io/badge/Talos-v1.14.4-blue?logo=talos&logoColor=white)
-![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.37.1-blue?logo=kubernetes&logoColor=white)
-![Argo CD](https://img.shields.io/badge/Argo%20CD-GitOps-orange?logo=argo&logoColor=white)
+![Talos](https://img.shields.io/badge/Talos-v1.14.5-blue?logo=talos&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.37.2-blue?logo=kubernetes&logoColor=white)
+![Argo CD](https://img.shields.io/badge/Argo%20CD-v10.17.2-orange?logo=argo&logoColor=white)
 
 ## 🚀 What's Running
 
