@@ -5,6 +5,8 @@ admin:
   userKey: admin-user
   passwordKey: admin-password
 
+envFromSecret: grafana-secret
+
 plugins:
   - yesoreyeram-infinity-datasource
 
@@ -33,7 +35,7 @@ datasources:
           tlsSkipVerify: true
           httpHeaderName1: api-key
         secureJsonData:
-          httpHeaderValue1: "#{ hae_read_token }#"
+          httpHeaderValue1: $__env{HAE_READ_TOKEN}
 
     # Enable sidecar to watch for ConfigMaps with grafana_dashboard label
     # This adds custom dashboards from ConfigMaps to the existing downloaded ones
