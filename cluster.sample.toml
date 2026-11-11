@@ -56,18 +56,14 @@ transmission_peer_addr = "192.168.1.58"
 # Load balancer IP for wg-portal WireGuard VPN. (REQUIRED for WireGuard)
 wg_portal_vpn_addr = "192.168.1.59"
 
-# wg-portal admin password for web UI — minimum 16 characters. (REQUIRED for WireGuard)
-wg_portal_admin_password = ""
-
-# WireGuard server private key — copy from your existing wg-easy secret to preserve clients. (REQUIRED)
-# Generate a new one with: wg genkey
-wg_portal_server_private_key = ""
+# wg-portal admin password and WireGuard private key are managed in Vault.
+# vault kv put secret-kv2/wg-portal admin-password=... server-private-key=...
 
 # Load balancer IP for Pi-hole DNS server. (REQUIRED for Pi-hole)
 pihole_dns_addr = "192.168.1.60"
 
-# Pi-hole admin dashboard password. (REQUIRED for Pi-hole)
-pihole_admin_password = "ChangeMe-SecurePassword123!"
+# Pi-hole admin password is managed in Vault.
+# vault kv put secret-kv2/pihole admin-password=...
 
 # Load balancer IP for the external Cloudflare Tunnel gateway. (REQUIRED)
 cloudflare_gateway_addr = "192.168.1.61"
@@ -108,8 +104,8 @@ repository_name = "your-github-username/your-repo-name"
 # Repository visibility. (OPTIONAL — default: "public")
 # repository_visibility = ""
 
-# Grafana admin password. (REQUIRED)
-grafana_admin_password = "ChangeMe-SecurePassword123!"
+# Grafana admin password is managed in Vault.
+# vault kv put secret-kv2/grafana admin-user=admin admin-password=...
 
 # ============================================================================
 # NFS Storage Configuration
@@ -125,85 +121,75 @@ nfs_photos_path   = "/immich"
 nfs_books_path    = "/books"
 nfs_seaweedfs_path = "/seaweedfs"
 nfs_nextcloud_path = "/nextcloud"
-nextcloud_admin_password = ""
+
+# Nextcloud admin password is managed in Vault.
+# vault kv put secret-kv2/nextcloud admin-password=...
 
 # ============================================================================
 # Forgejo Configuration
 # ============================================================================
 
-# Forgejo admin account. (REQUIRED)
+# Forgejo admin account. (REQUIRED — used in Helm values, not a secret)
 forgejo_admin_email    = "admin@example.com"
-forgejo_admin_password = ""
 
-# Forgejo Actions runner registration token — obtain from Forgejo UI after first deploy.
-# Site Administration → Runners → New runner token
-forgejo_runner_secret = ""
-forgejo_runner_uuid   = ""
+# Forgejo admin password, runner secret, and runner UUID are managed in Vault.
+# vault kv put secret-kv2/forgejo username=forgejo-admin password=... admin-password=...
+# vault kv put secret-kv2/forgejo-runner token=... uuid=...
 
 # ============================================================================
 # Linkding Configuration
 # ============================================================================
 
-# Initial admin password (set on first boot only). Generate: openssl rand -base64 16
-linkding_admin_password = ""
-
-# API token for the healthcheck CronJob — obtain from Linkding after first deploy.
-linkding_healthcheck_token = ""
+# Linkding admin password and healthcheck token are managed in Vault.
+# vault kv put secret-kv2/linkding admin-password=... healthcheck-token=...
 
 # ============================================================================
 # Woodpecker CI Configuration
 # ============================================================================
 
-# Must match the Forgejo admin username.
+# Must match the Forgejo admin username. (REQUIRED — used in Helm values, not a secret)
 woodpecker_admin_user = "admin"
 
-# OAuth2 application credentials — create in Forgejo: Site Administration → Applications
-# Redirect URI: https://woodpecker.${cloudflare_domain}/authorize
-woodpecker_oauth_client_id     = ""
-woodpecker_oauth_client_secret = ""
-
-# Agent secret for server-agent authentication. Generate: openssl rand -hex 32
-woodpecker_agent_secret = ""
+# Woodpecker OAuth credentials and agent secret are managed in Vault.
+# vault kv put secret-kv2/woodpecker gitea-client-id=... gitea-client-secret=... agent-secret=...
+# vault kv put secret-kv2/woodpecker-agent agent-secret=...
 
 # ============================================================================
 # Media Stack Configuration (Radarr / Sonarr / Prowlarr / Bazarr / SABnzbd)
 # ============================================================================
 
-# API keys — obtain from each app's Settings → General → API Key after first deploy.
-radarr_api_key          = ""
-recyclarr_radarr_api_key = ""
-sonarr_api_key          = ""
-recyclarr_sonarr_api_key = ""
-prowlarr_api_key        = ""
-bazarr_api_key          = ""
+# SABnzbd API key — app-managed (written into sabnzbd.ini on first boot, not a K8s Secret).
 sabnzbd_api_key         = ""
+
+# All other media stack API keys are managed in Vault (obtain from each app after first deploy):
+# vault kv put secret-kv2/radarr    api-key=...
+# vault kv put secret-kv2/sonarr    api-key=...
+# vault kv put secret-kv2/prowlarr  api-key=...
+# vault kv put secret-kv2/bazarr    api-key=...
+# vault kv put secret-kv2/recyclarr radarr-api-key=... sonarr-api-key=...
+# vault kv put secret-kv2/lingarr   radarr-api-key=... sonarr-api-key=...
 
 # ============================================================================
 # Grimmory Configuration
 # ============================================================================
 
-# MariaDB passwords. Generate: openssl rand -base64 16
-grimmory_mariadb_root_password = ""
-grimmory_mariadb_password      = ""
+# Grimmory MariaDB passwords are managed in Vault.
+# vault kv put secret-kv2/grimmory mariadb-root-password=... mariadb-password=...
 
 # ============================================================================
 # Health Auto Export Configuration
 # ============================================================================
 
-# MongoDB password. Generate: openssl rand -base64 16
-hae_mongo_password = ""
-
-# API tokens for Grafana (read) and iOS app (write). Generate: echo "sk-$(openssl rand -hex 16)"
-hae_read_token  = ""
-hae_write_token = ""
+# Health Auto Export secrets are managed in Vault.
+# vault kv put secret-kv2/health-auto-export mongo-username=admin mongo-password=... read-token=... write-token=...
+# vault kv put secret-kv2/health-auto-export-mongodb username=admin password=...
 
 # ============================================================================
 # Immich
 # ============================================================================
 
-# Admin API key for immich-exporter (Grafana dashboard). Create under:
-# Immich → Account Settings → API Keys → New key (admin account, "all" permission)
-immich_api_key = ""
+# Immich exporter API key is managed in Vault.
+# vault kv put secret-kv2/immich-exporter token=...
 
 # ============================================================================
 # Volsync Backup Configuration
