@@ -8,6 +8,7 @@ resources:
   - ./database-system
   - ./default
   - ./downloads
+  - ./external-secrets
   - ./entertainment
   - ./forgejo
   - ./health
