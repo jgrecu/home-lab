@@ -2590,7 +2590,7 @@ data:
           "options": {
             "basemap": {
               "name": "Basemap",
-              "type": "default"
+              "type": "osm-standard"
             },
             "controls": {
               "mouseWheelZoom": false,
