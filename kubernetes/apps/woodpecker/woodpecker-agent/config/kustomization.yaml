@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
   - ./rbac.yaml
   - ./pvc-cleanup-cronjob.yaml
-generators:
-  - ./secret-generator.yaml
+  - ./externalsecret.yaml
