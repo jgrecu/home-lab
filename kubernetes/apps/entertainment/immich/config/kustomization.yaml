@@ -7,3 +7,5 @@ resources:
   - ./scheduledbackup.yaml
   - ./immich-exporter.yaml
   - ./externalsecret.yaml
+generators:
+  - ./secret-generator.yaml
