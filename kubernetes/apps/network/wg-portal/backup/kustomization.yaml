@@ -24,6 +24,9 @@ patches:
         path: /spec/restic/repository
         value: wg-portal-data-restic-secret
       - op: replace
+        path: /spec/restic/capacity
+        value: 1Gi
+      - op: replace
         path: /spec/restic/moverResources/limits/memory
         value: 512Mi
       - op: replace
@@ -45,5 +48,8 @@ patches:
       - op: replace
         path: /spec/restic/repository
         value: wg-portal-data-r2-restic-secret
+      - op: replace
+        path: /spec/restic/capacity
+        value: 1Gi
 generators:
   - ./secret-generator.yaml
