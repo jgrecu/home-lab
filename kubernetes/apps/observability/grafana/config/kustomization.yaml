@@ -23,5 +23,6 @@ resources:
   - ./dashboard-workouts-table.yaml
   - ./dashboard-workout-details.yaml
   - ./dashboard-volsync.yaml
+  - ./dashboard-immich.yaml
 generators:
   - ./secret-generator.yaml
