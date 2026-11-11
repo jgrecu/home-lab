@@ -49,10 +49,7 @@ class ClusterConfig(BaseModel):
     cluster_gateway_addr: str = Field(description="Load balancer IP for internal Envoy gateway")
     transmission_peer_addr: str = Field(description="Load balancer IP for Transmission peer port")
     wg_portal_vpn_addr: str = Field(description="Load balancer IP for wg-portal WireGuard VPN")
-    wg_portal_admin_password: str = Field(description="wg-portal admin password (min 16 chars)")
-    wg_portal_server_private_key: str = Field(description="WireGuard server private key (preserve to avoid reconfiguring clients)")
     pihole_dns_addr: str = Field(description="Load balancer IP for Pi-hole")
-    pihole_admin_password: str = Field(description="Pi-hole admin dashboard password")
     cloudflare_gateway_addr: str = Field(description="Load balancer IP for Cloudflare Tunnel gateway")
 
     # ── Cloudflare ───────────────────────────────────────────────────────────
@@ -69,7 +66,6 @@ class ClusterConfig(BaseModel):
     repository_name: str = Field(description="GitHub repository (owner/name)")
     repository_branch: Optional[str] = Field(default="main")
     repository_visibility: Optional[str] = Field(default="public")
-    grafana_admin_password: str
 
     # ── NFS ──────────────────────────────────────────────────────────────────
     nfs_server_addr: str
@@ -79,44 +75,9 @@ class ClusterConfig(BaseModel):
     nfs_books_path: str
     nfs_seaweedfs_path: str
     nfs_nextcloud_path: str
-    nextcloud_admin_password: str
 
     # ── Forgejo ──────────────────────────────────────────────────────────────
     forgejo_admin_email: str
-    forgejo_admin_password: str
-    forgejo_runner_secret: str
-    forgejo_runner_uuid: str
-
-    # ── Linkding ─────────────────────────────────────────────────────────────
-    linkding_admin_password: str
-    linkding_healthcheck_token: str
-
-    # ── Woodpecker CI ────────────────────────────────────────────────────────
-    woodpecker_admin_user: str
-    woodpecker_oauth_client_id: str
-    woodpecker_oauth_client_secret: str
-    woodpecker_agent_secret: str
-
-    # ── Media stack ──────────────────────────────────────────────────────────
-    radarr_api_key: str
-    recyclarr_radarr_api_key: str
-    sonarr_api_key: str
-    recyclarr_sonarr_api_key: str
-    prowlarr_api_key: str
-    bazarr_api_key: str
-    sabnzbd_api_key: str
-
-    # ── Grimmory ─────────────────────────────────────────────────────────────
-    grimmory_mariadb_root_password: str
-    grimmory_mariadb_password: str
-
-    # ── Health Auto Export ───────────────────────────────────────────────────
-    hae_mongo_password: str
-    hae_read_token: str
-    hae_write_token: str
-
-    # ── Immich ───────────────────────────────────────────────────────────────
-    immich_api_key: str
 
     # ── Volsync ──────────────────────────────────────────────────────────────
     volsync_restic_password: str
