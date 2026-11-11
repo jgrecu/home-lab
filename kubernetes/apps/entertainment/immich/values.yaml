@@ -23,6 +23,9 @@ server:
                 # Redis — use Dragonfly in database-system namespace
             REDIS_HOSTNAME: dragonfly.database-system.svc.cluster.local
             REDIS_PORT: "6379"
+                # Bind Prometheus metrics to all interfaces so Prometheus can scrape via pod IP.
+                # @opentelemetry/exporter-prometheus >= 0.x defaults to localhost instead of 0.0.0.0.
+            OTEL_EXPORTER_PROMETHEUS_HOST: "0.0.0.0"
           resources:
             requests:
               cpu: 50m
