@@ -4,6 +4,8 @@ gitea:
   admin:
     existingSecret: forgejo-secret
     email: "admin@example.com"
+  podAnnotations:
+    secret.reloader.stakater.com/reload: forgejo-secret
   config:
     server:
       SSH_PORT: 22
@@ -68,7 +70,3 @@ resources:
     memory: 128Mi
   limits:
     memory: 256Mi
-
-gitea:
-  podAnnotations:
-    secret.reloader.stakater.com/reload: forgejo-secret
