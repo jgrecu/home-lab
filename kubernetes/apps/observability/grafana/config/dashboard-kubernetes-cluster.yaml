@@ -1,6 +1,7 @@
 ---
-# kubernetes-cluster dashboard
+# Kubernetes Cluster dashboard
 # Downloaded from Grafana dashboard 7249 revision 1
+# https://grafana.com/grafana/dashboards/7249
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,36 +9,10 @@ metadata:
   namespace: observability
   labels:
     grafana_dashboard: "1"
-    grafana_folder: "Infrastructure"
+    grafana_folder: "Kubernetes"
 data:
   kubernetes-cluster.json: |-
     {
-      "__requires": [
-        {
-          "type": "grafana",
-          "id": "grafana",
-          "name": "Grafana",
-          "version": "5.2.0"
-        },
-        {
-          "type": "panel",
-          "id": "graph",
-          "name": "Graph",
-          "version": "5.0.0"
-        },
-        {
-          "type": "datasource",
-          "id": "prometheus",
-          "name": "Prometheus",
-          "version": "5.0.0"
-        },
-        {
-          "type": "panel",
-          "id": "singlestat",
-          "name": "Singlestat",
-          "version": "5.0.0"
-        }
-      ],
       "annotations": {
         "list": [
           {
@@ -65,7 +40,7 @@ data:
             "rgba(248, 112, 0, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "format": "none",
           "gauge": {
             "maxValue": 3000,
@@ -117,17 +92,17 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kube_pod_status_phase{phase=\"Running\"})",
+              "expr": "sum(nginx_connections_total{type=\"active\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "",
-              "metric": "kube_pod_status_phase",
+              "metric": "node_memory_MemTotal",
               "refId": "A",
               "step": 40
             }
           ],
-          "thresholds": "200,300",
-          "title": "Running Pods",
+          "thresholds": "2000,2500",
+          "title": "Current Connections",
           "type": "singlestat",
           "valueFontSize": "120%",
           "valueMaps": [
@@ -148,7 +123,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "decimals": 2,
           "format": "percentunit",
           "gauge": {
@@ -231,7 +206,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "description": "",
           "format": "percentunit",
           "gauge": {
@@ -313,7 +288,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "format": "percentunit",
           "gauge": {
             "maxValue": 1,
@@ -396,7 +371,7 @@ data:
             "rgba(248, 112, 0, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "format": "s",
           "gauge": {
             "maxValue": 10,
@@ -448,19 +423,19 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "count(kube_node_info)",
+              "expr": "avg(irate(http_request_duration_seconds_count{status=\"200\", method=\"GET\"}[10m]))",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "",
-              "metric": "kube_node_info",
+              "metric": "node_memory_MemTotal",
               "refId": "A",
               "step": 40
             }
           ],
           "thresholds": "2,5",
-          "title": "Nodes",
+          "title": "Request Time",
           "type": "singlestat",
-          "valueFontSize": "120%",
+          "valueFontSize": "80%",
           "valueMaps": [
             {
               "op": "=",
@@ -479,7 +454,7 @@ data:
             "rgba(248, 112, 0, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "description": "",
           "format": "none",
           "gauge": {
@@ -565,7 +540,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -654,7 +629,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "fill": 3,
           "gridPos": {
             "h": 8,
@@ -698,10 +673,10 @@ data:
               "step": 10
             },
             {
-              "expr": "kubelet_active_pods",
+              "expr": "kubelet_running_pod_count{kubernetes_io_role =~ \".*node.*\"}",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ node }}",
+              "legendFormat": "{{ instance }}",
               "refId": "B",
               "step": 10
             }
@@ -751,7 +726,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "fill": 1,
           "gridPos": {
             "h": 6,
@@ -837,7 +812,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "fill": 1,
           "gridPos": {
             "h": 6,
@@ -924,7 +899,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -1011,7 +986,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -1099,7 +1074,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -1186,7 +1161,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -1220,10 +1195,10 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "topk(5, sum(container_memory_usage_bytes{pod!=\"\",id=~\"/kubepods/.*\"}) by (pod, namespace))",
+              "expr": "topk(5,sum(container_memory_usage_bytes{image!=\"\"}) by (pod_name))",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{pod}} ({{namespace}})",
+              "legendFormat": "{{pod_name}}",
               "refId": "A",
               "step": 10
             }
@@ -1273,7 +1248,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${datasource}",
+          "datasource": "Prometheus",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -1308,11 +1283,11 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "topk(5, sum(rate(container_cpu_usage_seconds_total{pod!=\"\",id=~\"/kubepods/.*\"}[2m])) by (pod, namespace))",
+              "expr": "topk(5, sum(rate(container_cpu_usage_seconds_total{image!=\"\",name=~\"^k8s_.*\",container_name!=\"POD\"}[2m])) by (pod_name, container_name))",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
-              "legendFormat": "{{ pod }} ({{ namespace }})",
+              "legendFormat": "{{ container_name }} in {{ pod_name }}",
               "metric": "container_cpu_usage_seconds_total",
               "refId": "A",
               "step": 4
@@ -1364,27 +1339,7 @@ data:
       "style": "dark",
       "tags": [],
       "templating": {
-        "list": [
-          {
-            "current": {
-              "selected": false,
-              "text": "default",
-              "value": "default"
-            },
-            "hide": 0,
-            "includeAll": false,
-            "label": "Datasource",
-            "multi": false,
-            "name": "datasource",
-            "options": [],
-            "query": "prometheus",
-            "queryValue": "",
-            "refresh": 1,
-            "regex": "",
-            "skipUrlSync": false,
-            "type": "datasource"
-          }
-        ]
+        "list": []
       },
       "time": {
         "from": "now-30m",

@@ -1,6 +1,7 @@
 ---
-# kubernetes-api-server dashboard
-# Downloaded from Grafana dashboard 15761 revision 16
+# Kubernetes / System / API Server dashboard
+# Downloaded from Grafana dashboard 15761 revision 21
+# https://grafana.com/grafana/dashboards/15761
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,37 +9,10 @@ metadata:
   namespace: observability
   labels:
     grafana_dashboard: "1"
-    grafana_folder: "Infrastructure"
+    grafana_folder: "Kubernetes"
 data:
   kubernetes-api-server.json: |-
     {
-      "__elements": [],
-      "__requires": [
-        {
-          "type": "grafana",
-          "id": "grafana",
-          "name": "Grafana",
-          "version": "8.4.4"
-        },
-        {
-          "type": "datasource",
-          "id": "prometheus",
-          "name": "Prometheus",
-          "version": "5.0.0"
-        },
-        {
-          "type": "panel",
-          "id": "timeseries",
-          "name": "Time series",
-          "version": ""
-        },
-        {
-          "type": "panel",
-          "id": "stat",
-          "name": "Stat",
-          "version": ""
-        }
-      ],
       "annotations": {
         "list": [
           {
@@ -58,6 +32,42 @@ data:
               "type": "dashboard"
             },
             "type": "dashboard"
+          },
+          {
+            "datasource": {
+              "type": "datasource",
+              "uid": "grafana"
+            },
+            "enable": true,
+            "hide": false,
+            "iconColor": "#5c4ee5",
+            "name": "terraform",
+            "target": {
+              "limit": 100,
+              "matchAny": false,
+              "tags": [
+                "terraform"
+              ],
+              "type": "tags"
+            }
+          },
+          {
+            "datasource": {
+              "type": "datasource",
+              "uid": "grafana"
+            },
+            "enable": true,
+            "hide": false,
+            "iconColor": "red",
+            "name": "oncall",
+            "target": {
+              "limit": 100,
+              "matchAny": false,
+              "tags": [
+                "oncall"
+              ],
+              "type": "tags"
+            }
           }
         ]
       },
@@ -133,7 +143,7 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "up{job=\"apiserver\", cluster=~\"$$cluster\"}",
+              "expr": "up{cluster=~\"$cluster\", job=~\"$job\"}",
               "interval": "",
               "legendFormat": "{{ instance }}",
               "refId": "A"
@@ -219,7 +229,7 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "apiserver_requested_deprecated_apis{cluster=~\"$$cluster\"}",
+              "expr": "apiserver_requested_deprecated_apis{cluster=~\"$cluster\"}",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -391,8 +401,8 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum by (code) (rate(apiserver_request_total{cluster=~\"$$cluster\"}[$$__rate_interval]))",
-              "interval": "$$resolution",
+              "expr": "sum by (code) (rate(apiserver_request_total{cluster=~\"$cluster\"}[$__rate_interval]))",
+              "interval": "$resolution",
               "legendFormat": "{{ code }}",
               "refId": "A"
             }
@@ -485,8 +495,8 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum by (verb) (rate(apiserver_request_total{cluster=~\"$$cluster\"}[$$__rate_interval]))",
-              "interval": "$$resolution",
+              "expr": "sum by (verb) (rate(apiserver_request_total{cluster=~\"$cluster\"}[$__rate_interval]))",
+              "interval": "$resolution",
               "legendFormat": "{{ verb}}",
               "refId": "A"
             }
@@ -579,8 +589,8 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(apiserver_request_duration_seconds_sum{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])) by (instance)\n/\nsum(rate(apiserver_request_duration_seconds_count{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])) by (instance)",
-              "interval": "$$resolution",
+              "expr": "sum(rate(apiserver_request_duration_seconds_sum{cluster=~\"$cluster\", job=~\"$job\"}[$__rate_interval])) by (instance)\n/\nsum(rate(apiserver_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"$job\"}[$__rate_interval])) by (instance)",
+              "interval": "$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -673,8 +683,8 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(apiserver_request_duration_seconds_sum{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])) by (verb)\n/\nsum(rate(apiserver_request_duration_seconds_count{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])) by (verb)",
-              "interval": "$$resolution",
+              "expr": "sum(rate(apiserver_request_duration_seconds_sum{cluster=~\"$cluster\", job=~\"$job\"}[$__rate_interval])) by (verb)\n/\nsum(rate(apiserver_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"$job\"}[$__rate_interval])) by (verb)",
+              "interval": "$resolution",
               "legendFormat": "{{ verb }}",
               "refId": "A"
             }
@@ -767,8 +777,8 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum by(instance) (rate(apiserver_request_total{code=~\"5..\", job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval]))\n / sum by(instance) (rate(apiserver_request_total{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval]))",
-              "interval": "$$resolution",
+              "expr": "sum by(instance) (rate(apiserver_request_total{code=~\"5..\", cluster=~\"$cluster\", job=~\"$job\"}[$__rate_interval]))\n / (sum by(instance) (rate(apiserver_request_total{cluster=~\"$cluster\", job=~\"$job\"}[$__rate_interval])) > 0)",
+              "interval": "$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -861,8 +871,8 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum by(verb) (rate(apiserver_request_total{code=~\"5..\",job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval]))\n / sum by(verb) (rate(apiserver_request_total{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval]))",
-              "interval": "$$resolution",
+              "expr": "sum by(verb) (rate(apiserver_request_total{code=~\"5..\", cluster=~\"$cluster\", job=~\"$job\"}[$__rate_interval]))\n / (sum by(verb) (rate(apiserver_request_total{cluster=~\"$cluster\", job=~\"$job\"}[$__rate_interval])) > 0)",
+              "interval": "$resolution",
               "legendFormat": "{{ verb }}",
               "refId": "A"
             }
@@ -955,8 +965,8 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(apiserver_request_total{cluster=~\"$$cluster\"}[$$__rate_interval])) by (instance)",
-              "interval": "$$resolution",
+              "expr": "sum(rate(apiserver_request_total{cluster=~\"$cluster\"}[$__rate_interval])) by (instance)",
+              "interval": "$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -1049,8 +1059,8 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(workqueue_depth{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])) by (instance)",
-              "interval": "$$resolution",
+              "expr": "sum(workqueue_depth{cluster=~\"$cluster\", job=~\"$job\"}) by (instance)",
+              "interval": "$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -1113,7 +1123,7 @@ data:
                   }
                 ]
               },
-              "unit": "percentunit"
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -1144,8 +1154,8 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "rate(process_cpu_seconds_total{job=\"apiserver\", cluster=~\"$$cluster\"}[$$__rate_interval])",
-              "interval": "$$resolution",
+              "expr": "rate(process_cpu_seconds_total{cluster=~\"$cluster\", job=~\"$job\"}[$__rate_interval])",
+              "interval": "$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -1238,8 +1248,8 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "process_resident_memory_bytes{job=\"apiserver\", cluster=~\"$$cluster\"}",
-              "interval": "$$resolution",
+              "expr": "process_resident_memory_bytes{cluster=~\"$cluster\", job=~\"$job\"}",
+              "interval": "$resolution",
               "legendFormat": "{{ instance }}",
               "refId": "A"
             }
@@ -1350,6 +1360,29 @@ data:
             "queryValue": "",
             "skipUrlSync": false,
             "type": "custom"
+          },
+          {
+            "current": {},
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "definition": "label_values(apiserver_request_total{cluster=\"$cluster\"}, job)",
+            "hide": 0,
+            "includeAll": false,
+            "multi": true,
+            "name": "job",
+            "options": [],
+            "query": {
+              "qryType": 1,
+              "query": "label_values(apiserver_request_total{cluster=\"$cluster\"}, job)",
+              "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 1,
+            "type": "query"
           }
         ]
       },
@@ -1361,7 +1394,8 @@ data:
       "timezone": "",
       "title": "Kubernetes / System / API Server",
       "uid": "k8s_system_apisrv",
-      "version": 16,
+      "version": 21,
       "weekStart": "",
-      "gnetId": 15761
+      "gnetId": 15761,
+      "id": null
     }
