@@ -34,8 +34,8 @@ controllers:
     pod:
       securityContext:
         fsGroup: 1000
-
-persistence:
+      annotations:
+        secret.reloader.stakater.com/reload: recyclarr-secret
       # Recyclarr stores its config and cache here. The recyclarr.yml is
       # provided via a SOPS secret (see secret.sops.yaml) and mounted as a
       # file at /config/recyclarr.yml. API keys come from Radarr/Sonarr.

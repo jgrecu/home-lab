@@ -18,6 +18,8 @@ spec:
     metadata:
       labels:
         app: immich-exporter
+      annotations:
+        secret.reloader.stakater.com/reload: immich-exporter
     spec:
       securityContext:
         runAsNonRoot: true

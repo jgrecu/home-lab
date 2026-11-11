@@ -2,6 +2,9 @@
 # Helm values for app-template (prowlarr).
 controllers:
   prowlarr:
+    pod:
+      annotations:
+        secret.reloader.stakater.com/reload: prowlarr-secret
     containers:
       app:
         image:

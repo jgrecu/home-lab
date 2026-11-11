@@ -3,6 +3,9 @@
 controllers:
   s3manager:
     strategy: RollingUpdate
+    pod:
+      annotations:
+        secret.reloader.stakater.com/reload: s3manager-secret
     containers:
       app:
         image:

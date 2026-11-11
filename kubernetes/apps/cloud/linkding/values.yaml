@@ -12,6 +12,9 @@ defaultPodOptions:
 
 controllers:
   linkding:
+    pod:
+      annotations:
+        secret.reloader.stakater.com/reload: linkding-secret
     containers:
       app:
         image:

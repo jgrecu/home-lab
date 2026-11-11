@@ -3,6 +3,9 @@
 controllers:
   mongodb:
     strategy: Recreate
+    pod:
+      annotations:
+        secret.reloader.stakater.com/reload: health-auto-export-mongodb-secret
     containers:
       app:
         image:
