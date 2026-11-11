@@ -61,6 +61,7 @@ grimmory_mariadb_password      = "ci-fake-password"
 hae_mongo_password = "ci-fake-password"
 hae_read_token     = "sk-ci-fake"
 hae_write_token    = "sk-ci-fake"
+immich_api_key     = "ci-fake-immich-api-key"
 
 volsync_restic_password = "ci-fake-restic-password"
 volsync_s3_access_key   = "ci-fake-s3-key"

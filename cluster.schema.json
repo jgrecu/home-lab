@@ -480,6 +480,10 @@
       "title": "Hae Write Token",
       "type": "string"
     },
+    "immich_api_key": {
+      "title": "Immich Api Key",
+      "type": "string"
+    },
     "volsync_restic_password": {
       "title": "Volsync Restic Password",
       "type": "string"
@@ -592,6 +596,7 @@
     "hae_mongo_password",
     "hae_read_token",
     "hae_write_token",
+    "immich_api_key",
     "volsync_restic_password",
     "volsync_s3_access_key",
     "volsync_s3_secret_key",

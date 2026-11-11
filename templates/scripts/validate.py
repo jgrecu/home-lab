@@ -115,6 +115,9 @@ class ClusterConfig(BaseModel):
     hae_read_token: str
     hae_write_token: str
 
+    # ── Immich ───────────────────────────────────────────────────────────────
+    immich_api_key: str
+
     # ── Volsync ──────────────────────────────────────────────────────────────
     volsync_restic_password: str
     volsync_s3_access_key: str

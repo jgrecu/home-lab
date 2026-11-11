@@ -198,6 +198,14 @@ hae_read_token  = ""
 hae_write_token = ""
 
 # ============================================================================
+# Immich
+# ============================================================================
+
+# Admin API key for immich-exporter (Grafana dashboard). Create under:
+# Immich → Account Settings → API Keys → New key (admin account, "all" permission)
+immich_api_key = ""
+
+# ============================================================================
 # Volsync Backup Configuration
 # ============================================================================
 
