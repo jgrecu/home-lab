@@ -994,8 +994,8 @@ data:
                 "uid": "${datasource}"
               },
               "expr": "sum(max by (type) (immich_assets))",
-              "instant": false,
-              "range": true,
+              "instant": true,
+              "range": false,
               "refId": "A"
             }
           ],
@@ -1059,8 +1059,8 @@ data:
                 "uid": "${datasource}"
               },
               "expr": "max(immich_assets{type=\"IMAGE\"})",
-              "instant": false,
-              "range": true,
+              "instant": true,
+              "range": false,
               "refId": "A"
             }
           ],
@@ -1124,8 +1124,8 @@ data:
                 "uid": "${datasource}"
               },
               "expr": "max(immich_assets{type=\"VIDEO\"})",
-              "instant": false,
-              "range": true,
+              "instant": true,
+              "range": false,
               "refId": "A"
             }
           ],
@@ -1189,8 +1189,8 @@ data:
                 "uid": "${datasource}"
               },
               "expr": "max(immich_server_usage_bytes)",
-              "instant": false,
-              "range": true,
+              "instant": true,
+              "range": false,
               "refId": "A"
             }
           ],
@@ -1254,8 +1254,8 @@ data:
                 "uid": "${datasource}"
               },
               "expr": "max(immich_people)",
-              "instant": false,
-              "range": true,
+              "instant": true,
+              "range": false,
               "refId": "A"
             }
           ],
@@ -1319,8 +1319,8 @@ data:
                 "uid": "${datasource}"
               },
               "expr": "sum(max by (shared) (immich_albums))",
-              "instant": false,
-              "range": true,
+              "instant": true,
+              "range": false,
               "refId": "A"
             }
           ],
