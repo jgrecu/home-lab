@@ -69,5 +69,6 @@ resources:
   limits:
     memory: 256Mi
 
-podAnnotations:
-  secret.reloader.stakater.com/reload: forgejo-secret
+gitea:
+  podAnnotations:
+    secret.reloader.stakater.com/reload: forgejo-secret

@@ -9,6 +9,10 @@ controllers:
         media-node: "true"
       annotations:
         secret.reloader.stakater.com/reload: sonarr-secret
+    containers:
+      app:
+        image:
+          repository: lscr.io/linuxserver/sonarr
               # renovate: datasource=docker depName=lscr.io/linuxserver/sonarr
           tag: 4.0.20
         env:
