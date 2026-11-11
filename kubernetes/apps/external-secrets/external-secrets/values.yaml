@@ -1,5 +1,6 @@
+installCRDs: true
+
 crds:
-  install: true
   keep: true
 
 serviceMonitor:
