@@ -19,10 +19,6 @@
     '**/*.sops.*',
     'templates/overrides/**',
     'templates/scripts/**',
-    // Generated Helm values are rendered from templates/config/kubernetes/apps/**/values.yaml.j2
-    // Let Renovate update the templates; just configure re-renders them into kubernetes/.
-    'kubernetes/apps/**/values.yaml',
-    'kubernetes/apps/**/values.sops.yaml',
   ],
   argocd: {
     managerFilePatterns: [
