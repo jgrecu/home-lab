@@ -79,6 +79,9 @@ class ClusterConfig(BaseModel):
     # ── Forgejo ──────────────────────────────────────────────────────────────
     forgejo_admin_email: str
 
+    # hae_read_token still used in grafana/values.yaml.j2 datasource config — pending secretKeyRef migration
+    hae_read_token: str
+
     # ── Volsync ──────────────────────────────────────────────────────────────
     volsync_restic_password: str
     volsync_s3_access_key: str
