@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
   - ./postgres.yaml
   - ./scheduledbackup.yaml
-generators:
-  - ./secret-generator.yaml
+  - ./externalsecret.yaml
