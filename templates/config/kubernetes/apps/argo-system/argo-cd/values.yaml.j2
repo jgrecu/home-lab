@@ -56,11 +56,10 @@ configs:
       jsonPointers:
         - /spec/dataSource
         - /spec/dataSourceRef
-
-rbac:
-  policy.default: role:readonly
-  policy.csv: |
-    g, admins, role:admin
+  rbac:
+    policy.default: role:readonly
+    policy.csv: |
+      g, admins, role:admin
 
 controller:
   replicas: 1
