@@ -11,6 +11,14 @@ controllers:
           tag: 0.9.1
         env:
           TZ: "Europe/Madrid"
+          KAVITA__OpenIdConnectSettings__Enabled: "true"
+          KAVITA__OpenIdConnectSettings__Authority: "https://id.jgrecu.dev"
+          KAVITA__OpenIdConnectSettings__ClientId: "978f5405-8156-484d-91a9-bcea851aa60c"
+          KAVITA__OpenIdConnectSettings__Secret:
+            valueFrom:
+              secretKeyRef:
+                name: kavita-secret
+                key: oidc-client-secret
         probes:
           liveness: &probes
             enabled: true
