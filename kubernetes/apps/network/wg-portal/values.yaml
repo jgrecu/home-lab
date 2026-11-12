@@ -103,12 +103,44 @@ config:
   database:
     # PVC is mounted at /app/data; without this wg-portal writes to /data (overlay, lost on restart)
     dsn: /app/data/sqlite.db
+  web:
+    external_url: "https://wg.jgrecu.dev"
+  auth:
+    hide_login_form: false
+    oidc:
+      - provider_name: pocket-id
+        display_name: "Pocket ID"
+        base_url: "https://id.jgrecu.dev"
+        client_id: "${WG_PORTAL_OIDC_CLIENT_ID}"
+        client_secret: "${WG_PORTAL_OIDC_CLIENT_SECRET}"
+        scopes:
+          - openid
+          - profile
+          - email
+          - groups
+        field_map:
+          email: email
+          firstname: given_name
+          lastname: family_name
+        admin_mapping:
+          admin_group_regex: "^admins$"
+        registration_enabled: true
 
 # backend.local_resolvconf_prefix is not exposed by the chart; set via env var instead
 # (resolvconf fails in the container and blocks interface saves when DNS is configured)
 env:
   - name: WG_PORTAL_BACKEND_LOCAL_RESOLVCONF_PREFIX
     value: ""
+  - name: WG_PORTAL_OIDC_CLIENT_ID
+    valueFrom:
+      secretKeyRef:
+        name: wg-portal-secret
+        key: oidc-client-id
+  - name: WG_PORTAL_OIDC_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: wg-portal-secret
+        key: oidc-client-secret
 
 service:
   web:
