@@ -13,6 +13,8 @@ spec:
       targetRevision: "main"
       path: kubernetes/apps/auth/pocket-id
       ref: repo
+      kustomize:
+        buildOptions: "--enable-alpha-plugins --enable-exec --load-restrictor LoadRestrictionsNone"
     - repoURL: https://anza-labs.github.io/charts
       chart: pocket-id
       targetRevision: 2.3.0
