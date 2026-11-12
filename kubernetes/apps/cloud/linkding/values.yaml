@@ -29,6 +29,17 @@ controllers:
               secretKeyRef:
                 name: linkding-secret
                 key: admin-password
+          LD_ENABLE_OIDC: "True"
+          OIDC_OP_AUTHORIZATION_ENDPOINT: "https://id.jgrecu.dev/authorize"
+          OIDC_OP_TOKEN_ENDPOINT: "https://id.jgrecu.dev/api/oidc/token"
+          OIDC_OP_USER_ENDPOINT: "https://id.jgrecu.dev/api/oidc/userinfo"
+          OIDC_OP_JWKS_ENDPOINT: "https://id.jgrecu.dev/.well-known/jwks.json"
+          OIDC_RP_CLIENT_ID: "56db9d5f-542a-47c7-8811-500ac03ce572"
+          OIDC_RP_CLIENT_SECRET:
+            valueFrom:
+              secretKeyRef:
+                name: linkding-secret
+                key: oidc-client-secret
         probes:
           liveness: &probes
             enabled: true
