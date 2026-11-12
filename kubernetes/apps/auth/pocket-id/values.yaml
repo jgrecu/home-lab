@@ -1,0 +1,38 @@
+---
+# Helm values for pocket-id (anza-labs/pocket-id).
+# Sensitive values (host) live in values.sops.yaml.
+# encryptionKey + staticApiKey are managed via ExternalSecret → Vault.
+trustProxy: true
+analyticsDisabled: true
+
+database:
+  connectionString: "file:data/pocket-id.db"
+
+# Chart secret is managed by ExternalSecret; disable chart-created secret
+secret:
+  create: false
+  name: pocket-id
+
+# Longhorn-backed PVC for SQLite DB + uploaded files
+persistence:
+  data:
+    enabled: true
+    storageClass: longhorn
+    accessMode: ReadWriteOnce
+    size: 1Gi
+
+# Litestream disabled — Volsync handles PVC snapshot backup
+backup:
+  enabled: false
+
+# Built-in ingress disabled — HTTPRoute managed separately in config/
+ingress:
+  enabled: false
+
+pocketID:
+  resources:
+    requests:
+      cpu: 15m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
