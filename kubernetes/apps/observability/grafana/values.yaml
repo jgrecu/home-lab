@@ -12,6 +12,10 @@ envFromSecret: grafana-secret
 grafana.ini:
   server:
     root_url: https://grafana.jgrecu.dev
+  # Link OIDC logins to existing local users by email (e.g. the admin account).
+  # Safe here: Pocket ID is self-hosted and users cannot claim arbitrary emails.
+  auth:
+    oauth_allow_insecure_email_lookup: true
   # Pocket ID OIDC. Client ID/secret come from grafana-secret via envFromSecret
   # (GF_AUTH_GENERIC_OAUTH_CLIENT_ID / GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET).
   auth.generic_oauth:
