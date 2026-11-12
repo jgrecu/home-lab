@@ -40,14 +40,14 @@ extraObjects:
         name: vault
         kind: ClusterSecretStore
       target:
-        name: argocd-oidc-secret
-        creationPolicy: Owner
+        name: argocd-secret
+        creationPolicy: Merge
       data:
-        - secretKey: clientID
+        - secretKey: oidc.pocket-id.clientID
           remoteRef:
             key: argocd
             property: oidc-client-id
-        - secretKey: clientSecret
+        - secretKey: oidc.pocket-id.clientSecret
           remoteRef:
             key: argocd
             property: oidc-client-secret

@@ -19,8 +19,8 @@ configs:
     oidc.config: |
       name: Pocket ID
       issuer: https://id.jgrecu.dev
-      clientID: $argocd-oidc-secret:clientID
-      clientSecret: $argocd-oidc-secret:clientSecret
+      clientID: $oidc.pocket-id.clientID
+      clientSecret: $oidc.pocket-id.clientSecret
       requestedScopes:
         - openid
         - profile
