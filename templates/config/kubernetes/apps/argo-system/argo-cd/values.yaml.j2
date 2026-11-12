@@ -16,6 +16,19 @@ configs:
     exec.enabled: false
     admin.enabled: true
     timeout.reconciliation: 180s
+    oidc.config: |
+      name: Pocket ID
+      issuer: https://id.jgrecu.dev
+      clientID: $argocd-oidc-secret:clientID
+      clientSecret: $argocd-oidc-secret:clientSecret
+      requestedScopes:
+        - openid
+        - profile
+        - email
+  rbac:
+    policy.default: role:readonly
+    policy.csv: |
+      g, jeremy, role:admin
     # ksops = kustomize exec plugin; --enable-helm only for the few kustomize helmCharts apps
     # --helm-command: kustomize runs helm with a minimal env (no HELM_PLUGINS), bypass the helm-secrets wrapper
     # --load-restrictor: same as Flux (e.g. volsync/config references ../namespace.yaml)

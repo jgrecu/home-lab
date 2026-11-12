@@ -29,6 +29,28 @@ server:
       - "argo.#{ cloudflare_domain }#"
 
 extraObjects:
+  - apiVersion: external-secrets.io/v1
+    kind: ExternalSecret
+    metadata:
+      name: argocd-oidc-secret
+      namespace: argo-system
+    spec:
+      refreshInterval: 1h
+      secretStoreRef:
+        name: vault
+        kind: ClusterSecretStore
+      target:
+        name: argocd-oidc-secret
+        creationPolicy: Owner
+      data:
+        - secretKey: clientID
+          remoteRef:
+            key: argocd
+            property: oidc-client-id
+        - secretKey: clientSecret
+          remoteRef:
+            key: argocd
+            property: oidc-client-secret
   # GitHub push webhook: only /api/webhook is published on the external gateway
   - apiVersion: gateway.networking.k8s.io/v1
     kind: HTTPRoute
