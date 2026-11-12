@@ -38,6 +38,7 @@ spec:
   # Provides point-in-time recovery with ~5 minute RPO
   backup:
     barmanObjectStore:
+      serverName: immich-postgres
       destinationPath: "s3://cnpg-backups/immich-postgres/"
       endpointURL: "http://seaweedfs-filer.storage.svc.cluster.local:8333"
       s3Credentials:
@@ -47,6 +48,10 @@ spec:
         secretAccessKey:
           name: cnpg-backup-secret
           key: ACCESS_SECRET_KEY
+        region:
+          name: cnpg-backup-secret
+          key: AWS_REGION
       wal:
         compression: gzip
+        maxParallel: 2
     retentionPolicy: "180d"
