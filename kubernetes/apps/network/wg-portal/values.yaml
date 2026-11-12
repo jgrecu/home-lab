@@ -122,6 +122,7 @@ config:
           email: email
           firstname: given_name
           lastname: family_name
+          user_groups: groups
         admin_mapping:
           admin_group_regex: "^admins$"
         registration_enabled: true
