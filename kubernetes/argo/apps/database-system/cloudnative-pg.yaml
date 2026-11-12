@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
-      path: kubernetes/apps/database-system/cloudnative-pg
       ref: repo
     - repoURL: ghcr.io/cloudnative-pg/charts
       chart: cloudnative-pg
@@ -20,6 +19,9 @@ spec:
         releaseName: cloudnative-pg
         valueFiles:
           - $repo/kubernetes/apps/database-system/cloudnative-pg/values.yaml
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/database-system/cloudnative-pg
   destination:
     name: in-cluster
     namespace: database-system

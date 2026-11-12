@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
-      path: kubernetes/apps/storage/longhorn
       ref: repo
     - repoURL: https://charts.longhorn.io
       chart: longhorn
@@ -20,6 +19,9 @@ spec:
         releaseName: longhorn
         valueFiles:
           - $repo/kubernetes/apps/storage/longhorn/values.yaml
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/storage/longhorn
   destination:
     name: in-cluster
     namespace: storage

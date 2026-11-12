@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
       targetRevision: "#{ repository_branch }#"
-      path: kubernetes/apps/cert-manager/cert-manager
       ref: repo
     - repoURL: quay.io/jetstack/charts
       chart: cert-manager
@@ -20,6 +19,9 @@ spec:
         releaseName: cert-manager
         valueFiles:
           - $repo/kubernetes/apps/cert-manager/cert-manager/values.yaml
+    - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
+      targetRevision: "#{ repository_branch }#"
+      path: kubernetes/apps/cert-manager/cert-manager
   destination:
     name: in-cluster
     namespace: cert-manager

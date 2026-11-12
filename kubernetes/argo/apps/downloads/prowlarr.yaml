@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
-      path: kubernetes/apps/downloads/prowlarr
       ref: repo
     - repoURL: ghcr.io/bjw-s-labs/helm
       chart: app-template
@@ -21,6 +20,9 @@ spec:
         valueFiles:
           - $repo/kubernetes/apps/downloads/prowlarr/values.yaml
           - $repo/kubernetes/apps/downloads/prowlarr/values.sops.yaml
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/downloads/prowlarr
   destination:
     name: in-cluster
     namespace: downloads

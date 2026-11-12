@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
       targetRevision: "#{ repository_branch }#"
-      path: kubernetes/apps/downloads/sonarr
       ref: repo
     - repoURL: ghcr.io/bjw-s-labs/helm
       chart: app-template
@@ -21,6 +20,9 @@ spec:
         valueFiles:
           - $repo/kubernetes/apps/downloads/sonarr/values.yaml
           - $repo/kubernetes/apps/downloads/sonarr/values.sops.yaml
+    - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
+      targetRevision: "#{ repository_branch }#"
+      path: kubernetes/apps/downloads/sonarr
   destination:
     name: in-cluster
     namespace: downloads

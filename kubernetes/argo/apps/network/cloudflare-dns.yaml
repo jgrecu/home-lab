@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
-      path: kubernetes/apps/network/cloudflare-dns
       ref: repo
     - repoURL: ghcr.io/home-operations/charts-mirror
       chart: external-dns
@@ -21,6 +20,9 @@ spec:
         valueFiles:
           - $repo/kubernetes/apps/network/cloudflare-dns/values.yaml
           - $repo/kubernetes/apps/network/cloudflare-dns/values.sops.yaml
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/network/cloudflare-dns
   destination:
     name: in-cluster
     namespace: network

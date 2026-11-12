@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
       targetRevision: "#{ repository_branch }#"
-      path: kubernetes/apps/storage/volsync
       ref: repo
     - repoURL: https://backube.github.io/helm-charts
       chart: volsync
@@ -20,6 +19,9 @@ spec:
         releaseName: volsync
         valueFiles:
           - $repo/kubernetes/apps/storage/volsync/values.yaml
+    - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
+      targetRevision: "#{ repository_branch }#"
+      path: kubernetes/apps/storage/volsync
   destination:
     name: in-cluster
     namespace: volsync-system

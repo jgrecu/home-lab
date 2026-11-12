@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
-      path: kubernetes/apps/network/k8s-gateway
       ref: repo
     - repoURL: ghcr.io/k8s-gateway/charts
       chart: k8s-gateway
@@ -21,6 +20,9 @@ spec:
         valueFiles:
           - $repo/kubernetes/apps/network/k8s-gateway/values.yaml
           - $repo/kubernetes/apps/network/k8s-gateway/values.sops.yaml
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/network/k8s-gateway
   destination:
     name: in-cluster
     namespace: network

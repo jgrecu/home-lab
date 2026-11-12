@@ -11,10 +11,7 @@ spec:
   sources:
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
-      path: kubernetes/apps/auth/pocket-id
       ref: repo
-      kustomize:
-        buildOptions: "--enable-alpha-plugins --enable-exec --load-restrictor LoadRestrictionsNone"
     - repoURL: https://anza-labs.github.io/charts
       chart: pocket-id
       targetRevision: 2.3.0
@@ -23,6 +20,9 @@ spec:
         valueFiles:
           - $repo/kubernetes/apps/auth/pocket-id/values.yaml
           - $repo/kubernetes/apps/auth/pocket-id/values.sops.yaml
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/auth/pocket-id
   destination:
     name: in-cluster
     namespace: auth

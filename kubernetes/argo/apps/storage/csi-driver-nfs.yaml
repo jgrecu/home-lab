@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
-      path: kubernetes/apps/storage/csi-driver-nfs
       ref: repo
     - repoURL: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
       chart: csi-driver-nfs
@@ -20,6 +19,9 @@ spec:
         releaseName: csi-driver-nfs
         valueFiles:
           - $repo/kubernetes/apps/storage/csi-driver-nfs/values.yaml
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/storage/csi-driver-nfs
   destination:
     name: in-cluster
     namespace: storage

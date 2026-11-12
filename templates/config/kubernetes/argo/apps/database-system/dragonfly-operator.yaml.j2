@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
       targetRevision: "#{ repository_branch }#"
-      path: kubernetes/apps/database-system/dragonfly
       ref: repo
     - repoURL: ghcr.io/dragonflydb/dragonfly-operator/helm
       chart: dragonfly-operator
@@ -20,6 +19,9 @@ spec:
         releaseName: dragonfly-operator
         valueFiles:
           - $repo/kubernetes/apps/database-system/dragonfly/values.yaml
+    - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
+      targetRevision: "#{ repository_branch }#"
+      path: kubernetes/apps/database-system/dragonfly
   destination:
     name: in-cluster
     namespace: database-system

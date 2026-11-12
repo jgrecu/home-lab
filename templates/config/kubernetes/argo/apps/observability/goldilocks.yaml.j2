@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
       targetRevision: "#{ repository_branch }#"
-      path: kubernetes/apps/observability/goldilocks
       ref: repo
     - repoURL: https://charts.fairwinds.com/stable
       chart: goldilocks
@@ -20,6 +19,9 @@ spec:
         releaseName: goldilocks
         valueFiles:
           - $repo/kubernetes/apps/observability/goldilocks/values.yaml
+    - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
+      targetRevision: "#{ repository_branch }#"
+      path: kubernetes/apps/observability/goldilocks
   destination:
     name: in-cluster
     namespace: observability

@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
-      path: kubernetes/apps/entertainment/immich
       ref: repo
     - repoURL: ghcr.io/immich-app/immich-charts
       chart: immich
@@ -20,6 +19,9 @@ spec:
         releaseName: immich
         valueFiles:
           - $repo/kubernetes/apps/entertainment/immich/values.yaml
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/entertainment/immich
   destination:
     name: in-cluster
     namespace: entertainment

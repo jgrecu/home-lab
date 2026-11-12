@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
       targetRevision: "#{ repository_branch }#"
-      path: kubernetes/apps/woodpecker/woodpecker-agent
       ref: repo
     - repoURL: ghcr.io/bjw-s-labs/helm
       chart: app-template
@@ -20,6 +19,9 @@ spec:
         releaseName: woodpecker-agent
         valueFiles:
           - $repo/kubernetes/apps/woodpecker/woodpecker-agent/values.yaml
+    - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
+      targetRevision: "#{ repository_branch }#"
+      path: kubernetes/apps/woodpecker/woodpecker-agent
   destination:
     name: in-cluster
     namespace: woodpecker

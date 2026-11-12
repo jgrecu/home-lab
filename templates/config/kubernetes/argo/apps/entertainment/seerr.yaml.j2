@@ -11,7 +11,6 @@ spec:
   sources:
     - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
       targetRevision: "#{ repository_branch }#"
-      path: kubernetes/apps/entertainment/seerr
       ref: repo
     - repoURL: ghcr.io/bjw-s-labs/helm
       chart: app-template
@@ -21,6 +20,9 @@ spec:
         valueFiles:
           - $repo/kubernetes/apps/entertainment/seerr/values.yaml
           - $repo/kubernetes/apps/entertainment/seerr/values.sops.yaml
+    - repoURL: "#{ 'ssh://git@github.com/' if repository_visibility == 'private' else 'https://github.com/' }##{ repository_name }#.git"
+      targetRevision: "#{ repository_branch }#"
+      path: kubernetes/apps/entertainment/seerr
   destination:
     name: in-cluster
     namespace: entertainment
