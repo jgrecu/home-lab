@@ -131,16 +131,12 @@ config:
 env:
   - name: WG_PORTAL_BACKEND_LOCAL_RESOLVCONF_PREFIX
     value: ""
-  - name: WG_PORTAL_OIDC_CLIENT_ID
-    valueFrom:
-      secretKeyRef:
-        name: wg-portal-secret
-        key: oidc-client-id
-  - name: WG_PORTAL_OIDC_CLIENT_SECRET
-    valueFrom:
-      secretKeyRef:
-        name: wg-portal-secret
-        key: oidc-client-secret
+
+# Load OIDC credentials from ExternalSecret as env vars for config.yml substitution.
+# envFrom is a separate key from env: and is not overridden by values.sops.yaml.
+envFrom:
+  - secretRef:
+      name: wg-portal-secret
 
 service:
   web:
