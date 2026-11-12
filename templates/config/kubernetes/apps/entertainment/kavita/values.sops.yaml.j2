@@ -1,7 +1,0 @@
----
-# Helm values with the domain (fully encrypted) for app-template (kavita).
-route:
-  app:
-    hostnames: ["kavita.#{ cloudflare_domain }#"]
-    annotations:
-      gethomepage.dev/href: https://kavita.#{ cloudflare_domain }#
