@@ -26,7 +26,6 @@ patches:
         value:
           runAsUser: 0
           runAsNonRoot: false
-          fsGroup: 0
   - target:
       kind: SnapshotSchedule
       name: kopiur-app
