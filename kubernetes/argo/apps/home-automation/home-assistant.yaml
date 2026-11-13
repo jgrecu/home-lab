@@ -19,7 +19,6 @@ spec:
         releaseName: home-assistant
         valueFiles:
           - $repo/kubernetes/apps/home-automation/home-assistant/values.yaml
-          - $repo/kubernetes/apps/home-automation/home-assistant/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/home-automation/home-assistant

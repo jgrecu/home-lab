@@ -19,7 +19,6 @@ spec:
         releaseName: kromgo
         valueFiles:
           - $repo/kubernetes/apps/observability/kromgo/values.yaml
-          - $repo/kubernetes/apps/observability/kromgo/values.sops.yaml
   destination:
     name: in-cluster
     namespace: observability

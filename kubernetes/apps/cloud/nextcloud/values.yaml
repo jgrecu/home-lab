@@ -176,3 +176,18 @@ route:
       gethomepage.dev/name: Nextcloud
       gethomepage.dev/icon: nextcloud.png
       gethomepage.dev/description: Private cloud file sync and sharing
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (nextcloud).
+route:
+  app:
+    hostnames:
+      - nextcloud.jgrecu.dev
+    annotations:
+      gethomepage.dev/href: https://nextcloud.jgrecu.dev
+controllers:
+  nextcloud:
+    containers:
+      app:
+        env:
+          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.jgrecu.dev

@@ -19,7 +19,6 @@ spec:
         releaseName: transmission
         valueFiles:
           - $repo/kubernetes/apps/downloads/transmission/values.yaml
-          - $repo/kubernetes/apps/downloads/transmission/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/downloads/transmission

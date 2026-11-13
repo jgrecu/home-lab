@@ -19,7 +19,6 @@ spec:
         releaseName: homepage
         valueFiles:
           - $repo/kubernetes/apps/default/homepage/values.yaml
-          - $repo/kubernetes/apps/default/homepage/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/default/homepage

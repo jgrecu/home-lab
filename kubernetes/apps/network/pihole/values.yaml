@@ -117,3 +117,12 @@ service:
       dns-udp:
         port: 53
         protocol: UDP
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (pihole).
+controllers:
+  pihole:
+    containers:
+      app:
+        env:
+          VIRTUAL_HOST: pihole.jgrecu.dev

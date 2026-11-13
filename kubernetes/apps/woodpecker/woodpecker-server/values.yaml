@@ -102,3 +102,13 @@ service:
         port: 8000
       grpc:
         port: 9000
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (woodpecker-server).
+controllers:
+  woodpecker-server:
+    containers:
+      app:
+        env:
+          WOODPECKER_GITEA_URL: https://forgejo.jgrecu.dev
+          WOODPECKER_HOST: https://woodpecker.jgrecu.dev

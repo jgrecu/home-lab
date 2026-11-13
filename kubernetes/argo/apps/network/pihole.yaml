@@ -19,7 +19,6 @@ spec:
         releaseName: pihole
         valueFiles:
           - $repo/kubernetes/apps/network/pihole/values.yaml
-          - $repo/kubernetes/apps/network/pihole/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/network/pihole

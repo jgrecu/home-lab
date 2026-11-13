@@ -105,3 +105,16 @@ route:
       - backendRefs:
           - identifier: app
             port: *port
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (homepage).
+route:
+  app:
+    hostnames:
+      - homepage.jgrecu.dev
+controllers:
+  homepage:
+    containers:
+      app:
+        env:
+          HOMEPAGE_ALLOWED_HOSTS: homepage.jgrecu.dev,homepage.default.svc.cluster.local:3000

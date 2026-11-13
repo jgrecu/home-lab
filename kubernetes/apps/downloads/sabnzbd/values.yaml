@@ -78,3 +78,12 @@ route:
       - backendRefs:
           - identifier: app
             port: 8080
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (sabnzbd).
+route:
+  app:
+    hostnames:
+      - sabnzbd.jgrecu.dev
+    annotations:
+      gethomepage.dev/href: https://sabnzbd.jgrecu.dev

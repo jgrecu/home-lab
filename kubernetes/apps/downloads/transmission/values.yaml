@@ -100,3 +100,12 @@ route:
           - identifier: app
             port: 9091
     # Internal only — web UI is available within the cluster only
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (transmission).
+route:
+  app:
+    hostnames:
+      - transmission.jgrecu.dev
+    annotations:
+      gethomepage.dev/href: https://transmission.jgrecu.dev

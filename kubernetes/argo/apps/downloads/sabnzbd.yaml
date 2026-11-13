@@ -19,7 +19,6 @@ spec:
         releaseName: sabnzbd
         valueFiles:
           - $repo/kubernetes/apps/downloads/sabnzbd/values.yaml
-          - $repo/kubernetes/apps/downloads/sabnzbd/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/downloads/sabnzbd

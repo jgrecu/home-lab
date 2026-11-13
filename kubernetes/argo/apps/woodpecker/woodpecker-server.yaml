@@ -19,7 +19,6 @@ spec:
         releaseName: woodpecker-server
         valueFiles:
           - $repo/kubernetes/apps/woodpecker/woodpecker-server/values.yaml
-          - $repo/kubernetes/apps/woodpecker/woodpecker-server/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/woodpecker/woodpecker-server

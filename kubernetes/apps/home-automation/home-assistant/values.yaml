@@ -71,3 +71,12 @@ route:
       gethomepage.dev/name: Home Assistant
       gethomepage.dev/icon: home-assistant.png
       gethomepage.dev/description: Smart home automation platform
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (home-assistant).
+route:
+  app:
+    hostnames:
+      - home-assistant.jgrecu.dev
+    annotations:
+      gethomepage.dev/href: https://home-assistant.jgrecu.dev

@@ -36,3 +36,7 @@ pocketID:
       memory: 64Mi
     limits:
       memory: 256Mi
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for pocket-id.
+host: id.jgrecu.dev

@@ -19,7 +19,6 @@ spec:
         releaseName: wg-portal
         valueFiles:
           - $repo/kubernetes/apps/network/wg-portal/values.yaml
-          - $repo/kubernetes/apps/network/wg-portal/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/network/wg-portal

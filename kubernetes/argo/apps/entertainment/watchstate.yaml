@@ -19,7 +19,6 @@ spec:
         releaseName: watchstate
         valueFiles:
           - $repo/kubernetes/apps/entertainment/watchstate/values.yaml
-          - $repo/kubernetes/apps/entertainment/watchstate/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/entertainment/watchstate

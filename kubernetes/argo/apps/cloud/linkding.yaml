@@ -19,7 +19,6 @@ spec:
         releaseName: linkding
         valueFiles:
           - $repo/kubernetes/apps/cloud/linkding/values.yaml
-          - $repo/kubernetes/apps/cloud/linkding/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/cloud/linkding

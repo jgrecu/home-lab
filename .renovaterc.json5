@@ -25,15 +25,12 @@
       '/(^|/)kubernetes/argo/.+\\.ya?ml(?:\\.j2)?$/',
       '/(^|/)kubernetes/components/[^/]+\\.ya?ml(?:\\.j2)?$/',
       // template sources (the ones Renovate should update)
-      '/(^|/)templates/config/kubernetes/argo/.+\\.ya?ml(\\.j2)?$/',
-      '/(^|/)templates/config/kubernetes/components/[^/]+\\.ya?ml(\\.j2)?$/',
     ],
   },
   helmfile: {
     managerFilePatterns: [
       '/(^|/)helmfile\\.ya?ml(?:\\.gotmpl)?(?:\\.j2)?$/',
       '/(^|/)helmfile\\.d/.+\\.ya?ml(?:\\.gotmpl)?(?:\\.j2)?$/',
-      '/(^|/)templates/config/bootstrap/helmfile\\.d/.+\\.ya?ml(\\.j2)?$/',
     ],
   },
   kubernetes: {
@@ -41,7 +38,6 @@
       // generated output
       '/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/',
       // template sources (the ones Renovate should update)
-      '/(^|/)templates/config/kubernetes/.+\\.ya?ml(\\.j2)?$/',
     ],
   },
   kustomize: {

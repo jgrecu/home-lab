@@ -140,3 +140,12 @@ route:
       gethomepage.dev/name: Linkding
       gethomepage.dev/icon: linkding.png
       gethomepage.dev/description: Self-hosted bookmark manager
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (linkding).
+route:
+  app:
+    hostnames:
+      - linkding.jgrecu.dev
+    annotations:
+      gethomepage.dev/href: https://linkding.jgrecu.dev

@@ -84,3 +84,12 @@ route:
       gethomepage.dev/name: Jellyfin
       gethomepage.dev/icon: jellyfin.png
       gethomepage.dev/description: Media streaming server
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (jellyfin).
+route:
+  app:
+    hostnames:
+      - jellyfin.jgrecu.dev
+    annotations:
+      gethomepage.dev/href: https://jellyfin.jgrecu.dev

@@ -19,7 +19,6 @@ spec:
         releaseName: forgejo
         valueFiles:
           - $repo/kubernetes/apps/forgejo/forgejo/values.yaml
-          - $repo/kubernetes/apps/forgejo/forgejo/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/forgejo/forgejo

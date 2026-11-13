@@ -99,3 +99,12 @@ route:
           - identifier: app
             port: *port
     # Internal only — Radarr/Sonarr reach Prowlarr via ClusterIP
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (prowlarr).
+route:
+  app:
+    hostnames:
+      - prowlarr.jgrecu.dev
+    annotations:
+      gethomepage.dev/href: https://prowlarr.jgrecu.dev

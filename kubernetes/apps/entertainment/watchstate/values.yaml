@@ -67,3 +67,12 @@ route:
       - backendRefs:
           - identifier: app
             port: *port
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (watchstate).
+route:
+  app:
+    hostnames:
+      - watchstate.jgrecu.dev
+    annotations:
+      gethomepage.dev/href: https://watchstate.jgrecu.dev

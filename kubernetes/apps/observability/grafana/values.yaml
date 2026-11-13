@@ -135,3 +135,17 @@ resources:
     memory: 192Mi
   limits:
     memory: 512Mi
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for grafana (grafana).
+route:
+  main:
+    annotations:
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/group: Observability
+      gethomepage.dev/name: Grafana
+      gethomepage.dev/icon: grafana.png
+      gethomepage.dev/description: Metrics visualization platform
+      gethomepage.dev/href: https://grafana.jgrecu.dev
+    hostnames:
+      - grafana.jgrecu.dev

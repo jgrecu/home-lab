@@ -19,7 +19,6 @@ spec:
         releaseName: sonarr
         valueFiles:
           - $repo/kubernetes/apps/downloads/sonarr/values.yaml
-          - $repo/kubernetes/apps/downloads/sonarr/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/downloads/sonarr

@@ -19,7 +19,6 @@ spec:
         releaseName: prowlarr
         valueFiles:
           - $repo/kubernetes/apps/downloads/prowlarr/values.yaml
-          - $repo/kubernetes/apps/downloads/prowlarr/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/downloads/prowlarr

@@ -19,7 +19,6 @@ spec:
         releaseName: k8s-gateway
         valueFiles:
           - $repo/kubernetes/apps/network/k8s-gateway/values.yaml
-          - $repo/kubernetes/apps/network/k8s-gateway/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/network/k8s-gateway

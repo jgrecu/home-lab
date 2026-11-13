@@ -19,7 +19,6 @@ spec:
         releaseName: grafana
         valueFiles:
           - $repo/kubernetes/apps/observability/grafana/values.yaml
-          - $repo/kubernetes/apps/observability/grafana/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/observability/grafana

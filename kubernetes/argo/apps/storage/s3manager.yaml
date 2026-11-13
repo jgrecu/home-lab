@@ -19,7 +19,6 @@ spec:
         releaseName: s3manager
         valueFiles:
           - $repo/kubernetes/apps/storage/s3manager/values.yaml
-          - $repo/kubernetes/apps/storage/s3manager/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/storage/s3manager

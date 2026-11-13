@@ -119,3 +119,12 @@ route:
           - identifier: app
             port: *port
     # Internal only — accessible via ClusterIP from Jackett, Transmission, Jellyseerr
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (sonarr).
+route:
+  app:
+    hostnames:
+      - sonarr.jgrecu.dev
+    annotations:
+      gethomepage.dev/href: https://sonarr.jgrecu.dev

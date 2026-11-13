@@ -19,7 +19,6 @@ spec:
         releaseName: seerr
         valueFiles:
           - $repo/kubernetes/apps/entertainment/seerr/values.yaml
-          - $repo/kubernetes/apps/entertainment/seerr/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/entertainment/seerr

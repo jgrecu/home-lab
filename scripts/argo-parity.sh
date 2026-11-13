@@ -118,16 +118,24 @@ check_app() {
 
 parity_main() {
   if [[ "${1:-}" == "--render-only" ]]; then RENDER_ONLY=true; shift; fi
+  local skip_apps=()
+  while [[ "${1:-}" == "--skip-app" ]]; do skip_apps+=("$2"); shift 2; done
   [[ "$RENDER_ONLY" == "true" || -d "$BASELINE" ]] || { echo "Run scripts/render-flux-baseline.sh first"; exit 1; }
   install_tools
-  local namespaces=("$@") ns file
+  local namespaces=("$@") ns file app_name
   if [[ ${#namespaces[@]} -eq 0 ]]; then
     mapfile -t namespaces < <(find "$REPO_ROOT/kubernetes/argo/apps" -mindepth 1 -maxdepth 1 -type d \
       -exec basename {} \; | sort)
   fi
   for ns in "${namespaces[@]}"; do
     for file in "$REPO_ROOT/kubernetes/argo/apps/$ns"/*.yaml; do
-      [[ -e "$file" ]] && check_app "$file"
+      [[ -e "$file" ]] || continue
+      app_name=$(basename "$file" .yaml)
+      if printf '%s\n' "${skip_apps[@]}" | grep -qx "$app_name"; then
+        RESULTS+=("SKIP $app_name (--skip-app)")
+        continue
+      fi
+      check_app "$file"
     done
   done
   mkdir -p "$PARITY"

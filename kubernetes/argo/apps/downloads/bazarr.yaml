@@ -19,7 +19,6 @@ spec:
         releaseName: bazarr
         valueFiles:
           - $repo/kubernetes/apps/downloads/bazarr/values.yaml
-          - $repo/kubernetes/apps/downloads/bazarr/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/downloads/bazarr

@@ -63,3 +63,17 @@ persistence:
     globalMounts:
       - path: /etc/cloudflared/config.yaml
         subPath: config.yaml
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (cloudflare-tunnel).
+configMaps:
+  config:
+    data:
+      config.yaml: |-
+        ingress:
+          - hostname: "*.jgrecu.dev"
+            originRequest:
+              http2Origin: true
+              originServerName: external.jgrecu.dev
+            service: https://envoy-external.{{ .Release.Namespace }}.svc.cluster.local:443
+          - service: http_status:404

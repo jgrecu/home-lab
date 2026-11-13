@@ -19,7 +19,6 @@ spec:
         releaseName: pocket-id
         valueFiles:
           - $repo/kubernetes/apps/auth/pocket-id/values.yaml
-          - $repo/kubernetes/apps/auth/pocket-id/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/auth/pocket-id

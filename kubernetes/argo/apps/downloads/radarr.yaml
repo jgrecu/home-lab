@@ -19,7 +19,6 @@ spec:
         releaseName: radarr
         valueFiles:
           - $repo/kubernetes/apps/downloads/radarr/values.yaml
-          - $repo/kubernetes/apps/downloads/radarr/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/downloads/radarr

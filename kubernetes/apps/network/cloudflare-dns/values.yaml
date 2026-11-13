@@ -29,3 +29,8 @@ serviceMonitor:
   enabled: true
 podAnnotations:
   secret.reloader.stakater.com/reload: *secret
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for external-dns (cloudflare-dns).
+domainFilters:
+  - jgrecu.dev

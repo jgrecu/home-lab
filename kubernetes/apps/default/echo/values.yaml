@@ -60,3 +60,10 @@ route:
       - backendRefs:
           - identifier: app
             port: *port
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (echo).
+route:
+  app:
+    hostnames:
+      - '{{ .Release.Name }}.jgrecu.dev'

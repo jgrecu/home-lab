@@ -90,3 +90,18 @@ route:
       gethomepage.dev/name: Health Auto Export
       gethomepage.dev/icon: apple-health.png
       gethomepage.dev/description: Apple Health data ingestion
+
+# --- merged from values.sops.yaml ---
+# Helm values with the domain (fully encrypted) for app-template (health-auto-export).
+route:
+  app:
+    hostnames:
+      - hae.jgrecu.dev
+    annotations:
+      gethomepage.dev/href: https://hae.jgrecu.dev
+controllers:
+  health-auto-export:
+    containers:
+      app:
+        image:
+          repository: forgejo.jgrecu.dev/jeremy/health-auto-export

@@ -19,7 +19,6 @@ spec:
         releaseName: health-auto-export
         valueFiles:
           - $repo/kubernetes/apps/health/health-auto-export/values.yaml
-          - $repo/kubernetes/apps/health/health-auto-export/values.sops.yaml
     - repoURL: "https://github.com/jgrecu/home-lab.git"
       targetRevision: "main"
       path: kubernetes/apps/health/health-auto-export
