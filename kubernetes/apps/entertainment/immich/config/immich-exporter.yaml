@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: immich-exporter
-          image: ghcr.io/moond4rk/immich-exporter:1.4.0 # datasource=docker depName=ghcr.io/moond4rk/immich-exporter
+          image: ghcr.io/moond4rk/immich-exporter:1.5.0 # datasource=docker depName=ghcr.io/moond4rk/immich-exporter
           env:
             - name: IMMICH_BASE_URL
               value: "http://immich-server.entertainment.svc.cluster.local:2283/api"
