@@ -15,4 +15,3 @@ spec:
     runOnCreate: false
     concurrencyPolicy: Forbid
   failedJobsHistoryLimit: 3
-  suspend: false
