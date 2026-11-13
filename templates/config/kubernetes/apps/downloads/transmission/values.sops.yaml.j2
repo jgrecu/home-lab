@@ -1,7 +1,0 @@
----
-# Helm values with the domain (fully encrypted) for app-template (transmission).
-route:
-  app:
-    hostnames: ["transmission.#{ cloudflare_domain }#"]
-    annotations:
-      gethomepage.dev/href: https://transmission.#{ cloudflare_domain }#

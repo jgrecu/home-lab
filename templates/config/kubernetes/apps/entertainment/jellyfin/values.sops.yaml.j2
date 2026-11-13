@@ -1,7 +1,0 @@
----
-# Helm values with the domain (fully encrypted) for app-template (jellyfin).
-route:
-  app:
-    hostnames: ["jellyfin.#{ cloudflare_domain }#"]
-    annotations:
-      gethomepage.dev/href: https://jellyfin.#{ cloudflare_domain }#

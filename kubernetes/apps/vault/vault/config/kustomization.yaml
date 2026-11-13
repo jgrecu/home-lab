@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
   - ./prometheusrule.yaml
   - ./raft-snapshot.yaml
+  - ./externalsecret.yaml
 generators:
   - ./secret-generator.yaml

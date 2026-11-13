@@ -48,5 +48,6 @@ patches:
       - op: replace
         path: /spec/restic/cacheCapacity
         value: 256Mi
-generators:
-  - ./secret-generator.yaml
+resources:
+  - ./externalsecret.yaml
+  - ./externalsecret-r2.yaml

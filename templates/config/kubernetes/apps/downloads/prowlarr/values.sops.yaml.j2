@@ -1,7 +1,0 @@
----
-# Helm values with the domain (fully encrypted) for app-template (prowlarr).
-route:
-  app:
-    hostnames: ["prowlarr.#{ cloudflare_domain }#"]
-    annotations:
-      gethomepage.dev/href: https://prowlarr.#{ cloudflare_domain }#

@@ -58,5 +58,6 @@ patches:
       - op: replace
         path: /spec/restic/repository
         value: linkding-data-r2-restic-secret
-generators:
-  - ./secret-generator.yaml
+resources:
+  - ./externalsecret.yaml
+  - ./externalsecret-r2.yaml

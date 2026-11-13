@@ -45,5 +45,6 @@ patches:
       - op: replace
         path: /spec/restic/capacity
         value: 2Gi
-generators:
-  - ./secret-generator.yaml
+resources:
+  - ./externalsecret.yaml
+  - ./externalsecret-r2.yaml

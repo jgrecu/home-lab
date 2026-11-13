@@ -54,5 +54,6 @@ patches:
       - op: replace
         path: /spec/restic/repository
         value: health-auto-export-mongodb-r2-restic-secret
-generators:
-  - ./secret-generator.yaml
+resources:
+  - ./externalsecret.yaml
+  - ./externalsecret-r2.yaml

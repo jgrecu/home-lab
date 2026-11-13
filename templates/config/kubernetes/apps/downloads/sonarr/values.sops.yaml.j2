@@ -1,7 +1,0 @@
----
-# Helm values with the domain (fully encrypted) for app-template (sonarr).
-route:
-  app:
-    hostnames: ["sonarr.#{ cloudflare_domain }#"]
-    annotations:
-      gethomepage.dev/href: https://sonarr.#{ cloudflare_domain }#

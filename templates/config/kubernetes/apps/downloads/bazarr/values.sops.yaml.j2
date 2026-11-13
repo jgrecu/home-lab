@@ -1,7 +1,0 @@
----
-# Helm values with the domain (fully encrypted) for app-template (bazarr).
-route:
-  app:
-    hostnames: ["bazarr.#{ cloudflare_domain }#"]
-    annotations:
-      gethomepage.dev/href: https://bazarr.#{ cloudflare_domain }#

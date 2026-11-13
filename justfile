@@ -25,27 +25,3 @@ log lvl msg *args:
 reconcile:
     kubectl -n argo-system annotate applications --all argocd.argoproj.io/refresh=hard --overwrite
 
-# === template ===
-
-mod template "templates"
-
-# Pre-flight check: verify all required files exist and cluster.toml is valid
-[doc("Pre-flight check — verify required files and validate cluster.toml")]
-doctor:
-    just template doctor
-
-# Render and validate all configuration files (overwrites kubernetes/)
-[confirm("Any conflicting files in the kubernetes directory will be overwritten... continue?")]
-[doc("Render templates, encrypt secrets, validate manifests")]
-configure:
-    just template configure
-
-# Initialise new cluster configuration from cluster.sample.toml
-[doc("Create cluster.toml, age key, deploy key, and push token")]
-init:
-    just template init
-
-# Regenerate cluster.schema.json from the Pydantic validator
-[doc("Regenerate cluster.schema.json (run after changing validate.py)")]
-schema:
-    just template schema

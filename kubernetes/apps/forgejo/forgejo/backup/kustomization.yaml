@@ -67,5 +67,6 @@ patches:
       - op: replace
         path: /spec/restic/moverResources/requests/memory
         value: 1Gi
-generators:
-  - ./secret-generator.yaml
+resources:
+  - ./externalsecret.yaml
+  - ./externalsecret-r2.yaml

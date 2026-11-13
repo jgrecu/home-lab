@@ -1,9 +1,0 @@
----
-# Helm values with the domain (fully encrypted) for app-template (woodpecker-server).
-controllers:
-  woodpecker-server:
-    containers:
-      app:
-        env:
-          WOODPECKER_GITEA_URL: "https://forgejo.#{ cloudflare_domain }#"
-          WOODPECKER_HOST: "https://woodpecker.#{ cloudflare_domain }#"

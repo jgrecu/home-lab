@@ -1,7 +1,0 @@
----
-# Helm values with the domain (fully encrypted) for app-template (home-assistant).
-route:
-  app:
-    hostnames: ["home-assistant.#{ cloudflare_domain }#"]
-    annotations:
-      gethomepage.dev/href: https://home-assistant.#{ cloudflare_domain }#
