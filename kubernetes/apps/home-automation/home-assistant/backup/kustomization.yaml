@@ -26,6 +26,9 @@ patches:
         value:
           runAsUser: 0
           runAsNonRoot: false
+      - op: add
+        path: /spec/mover/privilegedMode
+        value: true
   - target:
       kind: SnapshotSchedule
       name: kopiur-app
