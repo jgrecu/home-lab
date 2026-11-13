@@ -1,0 +1,32 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloud-kopiur
+  namespace: argo-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: kubernetes
+  sources:
+    - repoURL: "https://github.com/jgrecu/home-lab.git"
+      targetRevision: "main"
+      path: kubernetes/apps/cloud/kopiur
+  destination:
+    name: in-cluster
+    namespace: cloud
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+      - PruneLast=true
+      - RespectIgnoreDifferences=true

@@ -1,68 +1,36 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: entertainment
 components:
-  - ../../../../components/volsync
+  - ../../../../components/kopiur/app
 patches:
   - target:
-      kind: ReplicationSource
-      name: volsync-local
+      kind: SnapshotPolicy
+      name: kopiur-app
     patch: |
       - op: replace
         path: /metadata/name
-        value: jellyfin-config-backup
-      - op: replace
-        path: /metadata/namespace
-        value: entertainment
-      - op: replace
-        path: /spec/sourcePVC
         value: jellyfin
       - op: replace
-        path: /spec/trigger/schedule
-        value: "0 6 * * *"
+        path: /spec/sources/0/pvc/name
+        value: jellyfin
       - op: replace
-        path: /spec/restic/repository
-        value: jellyfin-config-restic-secret
-      - op: replace
-        path: /spec/restic/capacity
-        value: 10Gi
-      - op: replace
-        path: /spec/restic/cacheCapacity
-        value: 1Gi
-      - op: replace
-        path: /spec/restic/moverResources/limits/memory
+        path: /spec/mover/resources/requests/memory
         value: 512Mi
       - op: replace
-        path: /spec/restic/moverResources/requests/memory
-        value: 256Mi
+        path: /spec/mover/resources/limits/memory
+        value: 1Gi
   - target:
-      kind: ReplicationSource
-      name: volsync-r2
+      kind: SnapshotSchedule
+      name: kopiur-app
     patch: |
       - op: replace
         path: /metadata/name
-        value: jellyfin-config-backup-r2
-      - op: replace
-        path: /metadata/namespace
-        value: entertainment
-      - op: replace
-        path: /spec/sourcePVC
         value: jellyfin
       - op: replace
-        path: /spec/restic/repository
-        value: jellyfin-config-r2-restic-secret
+        path: /spec/policyRef/name
+        value: jellyfin
       - op: replace
-        path: /spec/restic/capacity
-        value: 10Gi
-      - op: replace
-        path: /spec/restic/cacheCapacity
-        value: 2Gi
-      - op: replace
-        path: /spec/restic/moverResources/limits/memory
-        value: 1Gi
-      - op: replace
-        path: /spec/restic/moverResources/requests/memory
-        value: 512Mi
-resources:
-  - ./externalsecret.yaml
-  - ./externalsecret-r2.yaml
+        path: /spec/schedule/cron
+        value: "0 6 * * *"

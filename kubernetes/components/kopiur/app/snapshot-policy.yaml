@@ -1,0 +1,33 @@
+---
+# Base SnapshotPolicy. Apps patch: metadata.name, spec.sources[0].pvc.name.
+# Apps with non-default memory requirements also patch spec.mover.resources.
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: kopiur-app
+  namespace: placeholder
+spec:
+  repository:
+    kind: Repository
+    name: kopiur-primary
+  copyMethod: Snapshot
+  volumeSnapshotClassName: longhorn
+  sources:
+    - pvc:
+        name: placeholder-pvc
+      readOnly: true
+  retention:
+    keepLatest: 5
+    keepDaily: 7
+    keepWeekly: 8
+    keepMonthly: 6
+  compression:
+    compressor: zstd
+  mover:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+  suspend: false

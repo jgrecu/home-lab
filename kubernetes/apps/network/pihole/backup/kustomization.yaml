@@ -1,56 +1,36 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: network
 components:
-  - ../../../../components/volsync
+  - ../../../../components/kopiur/app
 patches:
   - target:
-      kind: ReplicationSource
-      name: volsync-local
+      kind: SnapshotPolicy
+      name: kopiur-app
     patch: |
       - op: replace
         path: /metadata/name
-        value: pihole-config-backup
+        value: pihole
       - op: replace
-        path: /metadata/namespace
-        value: network
-      - op: replace
-        path: /spec/sourcePVC
+        path: /spec/sources/0/pvc/name
         value: pihole-config
       - op: replace
-        path: /spec/trigger/schedule
-        value: "0 1 * * *"
-      - op: replace
-        path: /spec/restic/repository
-        value: pihole-config-restic-secret
-      - op: replace
-        path: /spec/restic/capacity
-        value: 2Gi
-      - op: replace
-        path: /spec/restic/moverResources/limits/memory
-        value: 512Mi
-      - op: replace
-        path: /spec/restic/moverResources/requests/memory
+        path: /spec/mover/resources/requests/memory
         value: 256Mi
+      - op: replace
+        path: /spec/mover/resources/limits/memory
+        value: 512Mi
   - target:
-      kind: ReplicationSource
-      name: volsync-r2
+      kind: SnapshotSchedule
+      name: kopiur-app
     patch: |
       - op: replace
         path: /metadata/name
-        value: pihole-config-backup-r2
+        value: pihole
       - op: replace
-        path: /metadata/namespace
-        value: network
+        path: /spec/policyRef/name
+        value: pihole
       - op: replace
-        path: /spec/sourcePVC
-        value: pihole-config
-      - op: replace
-        path: /spec/restic/repository
-        value: pihole-config-r2-restic-secret
-      - op: replace
-        path: /spec/restic/capacity
-        value: 2Gi
-resources:
-  - ./externalsecret.yaml
-  - ./externalsecret-r2.yaml
+        path: /spec/schedule/cron
+        value: "0 1 * * *"

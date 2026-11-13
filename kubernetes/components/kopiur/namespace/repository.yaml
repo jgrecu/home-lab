@@ -1,0 +1,37 @@
+---
+# Base Repository pointing to local SeaweedFS.
+# Namespace kustomizations set their own prefix via patch.
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: Repository
+metadata:
+  name: kopiur-primary
+  namespace: placeholder
+spec:
+  backend:
+    s3:
+      bucket: volsync-backups
+      prefix: placeholder/
+      endpoint: seaweedfs-filer.storage.svc.cluster.local:8333
+      region: us-east-1
+      tls:
+        disableTls: true
+      auth:
+        secretRef:
+          name: kopiur-seaweedfs-creds
+  encryption:
+    passwordSecretRef:
+      name: kopiur-seaweedfs-creds
+      key: KOPIA_PASSWORD
+  create:
+    enabled: true
+  moverDefaults:
+    cache:
+      mode: Persistent
+      capacity: 512Mi
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+  suspend: false

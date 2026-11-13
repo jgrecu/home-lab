@@ -1,0 +1,25 @@
+---
+# Helm values for kopiur (home-operations/kopiur v0.10.20).
+# Docs: https://kopiur.home-operations.com/
+# IMPORTANT: Helm upgrade never updates CRDs automatically.
+# After any upgrade run: kubectl apply --server-side -f deploy/crds/
+# Then run: kubectl kopiur doctor
+
+controller:
+  resources:
+    requests:
+      cpu: 15m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+
+webhook:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+
+metrics:
+  enabled: true
