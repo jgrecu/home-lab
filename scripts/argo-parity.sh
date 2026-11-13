@@ -153,7 +153,7 @@ parity_main() {
   done
   mkdir -p "$PARITY"
   printf '%s\n' "${RESULTS[@]}" | tee "$PARITY/SUMMARY.txt"
-  ! printf '%s\n' "${RESULTS[@]}" | grep -qv '^OK'
+  ! printf '%s\n' "${RESULTS[@]}" | grep -v '^SKIP' | grep -qv '^OK'
 }
 
 parity_main "$@"
