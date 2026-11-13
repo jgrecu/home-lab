@@ -37,6 +37,6 @@ releases:
   - name: argo-cd
     namespace: argo-system
     chart: oci://ghcr.io/argoproj/argo-helm/argo-cd
-    version: 10.17.2
+    version: 10.18.0
     values: ['./templates/values.yaml.gotmpl', './templates/secret-values.yaml.gotmpl']
     needs: ['cert-manager/cert-manager']
