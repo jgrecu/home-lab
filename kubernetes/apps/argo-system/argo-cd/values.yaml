@@ -90,6 +90,22 @@ server:
     enabled: true
     serviceMonitor:
       enabled: true
+  # UI/API: LAN only
+  httproute:
+    enabled: true
+    parentRefs:
+      - name: envoy-internal
+        namespace: network
+        sectionName: https
+    annotations:
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/group: Infrastructure
+      gethomepage.dev/name: Argo CD
+      gethomepage.dev/icon: argo-cd.png
+      gethomepage.dev/description: GitOps continuous delivery
+      gethomepage.dev/href: https://argo.jgrecu.dev
+    hostnames:
+      - argo.jgrecu.dev
 
 applicationSet:
   replicas: 1
@@ -203,3 +219,48 @@ repoServer:
           mountPath: /custom-tools
         - name: tmp
           mountPath: /tmp
+
+extraObjects:
+  - apiVersion: external-secrets.io/v1
+    kind: ExternalSecret
+    metadata:
+      name: argocd-oidc-secret
+      namespace: argo-system
+    spec:
+      refreshInterval: 1h
+      secretStoreRef:
+        name: vault
+        kind: ClusterSecretStore
+      target:
+        name: argocd-secret
+        creationPolicy: Merge
+      data:
+        - secretKey: oidc.pocket-id.clientID
+          remoteRef:
+            key: argocd
+            property: oidc-client-id
+        - secretKey: oidc.pocket-id.clientSecret
+          remoteRef:
+            key: argocd
+            property: oidc-client-secret
+  # GitHub push webhook: only /api/webhook published on external gateway
+  - apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: argocd-webhook
+      namespace: argo-system
+    spec:
+      parentRefs:
+        - name: envoy-external
+          namespace: network
+          sectionName: https
+      hostnames:
+        - argo-webhook.jgrecu.dev
+      rules:
+        - matches:
+            - path:
+                type: Exact
+                value: /api/webhook
+          backendRefs:
+            - name: argocd-server
+              port: 80
