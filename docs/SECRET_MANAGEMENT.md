@@ -1,7 +1,7 @@
 # Secret Management Guide
 
-**Last Updated:** 2026-11-11
-**Applies To:** Template-driven Kubernetes homelab with Argo CD GitOps
+**Last Updated:** 2026-11-13
+**Applies To:** Production Kubernetes homelab with Argo CD GitOps
 
 ---
 
@@ -38,20 +38,19 @@ This repository uses a **hybrid secret management** approach:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Bootstrap Secrets — SOPS pipeline (stays git-encrypted)
+### Bootstrap Secret — SOPS (1 file only)
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  cluster.toml (gitignored, plaintext)                           │
-│  Infrastructure config + bootstrap-only secrets                 │
-└────────────────────┬────────────────────────────────────────────┘
-                     │ just configure (makejinja + SOPS)
-                     ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  kubernetes/apps/*/config/*.sops.yaml (encrypted, committed)    │
-│  Decrypted in-cluster by Argo CD repo-server (ksops)            │
-└─────────────────────────────────────────────────────────────────┘
+vault-kms.sops.yaml  (AWS KMS credentials — git-encrypted)
+    ↓  decrypted by Argo CD ksops at startup
+Vault auto-unseals
+    ↓  External Secrets Operator (ClusterSecretStore "vault")
+Kubernetes Secrets  ←→  Applications
 ```
+
+The age private key (`bootstrap/sops-age.sops.yaml`) is used only during initial cluster
+bootstrap to provision the in-cluster `sops-age` Secret that Argo CD needs to decrypt
+`vault-kms.sops.yaml` on every sync.
 
 ---
 
@@ -84,20 +83,13 @@ All app secrets — written once with `vault kv put`, never in git:
 | `secret-kv2/health-auto-export-mongodb` | `health-auto-export-mongodb-secret` | health-auto-export-mongodb |
 | `secret-kv2/immich-exporter` | `immich-exporter` | immich |
 
-### Stays SOPS (bootstrap / infrastructure)
+### Stays SOPS (bootstrap only — 1 file)
 
-These are needed before Vault or ESO exist — they can never be sourced from Vault:
+| File | Secret | Why |
+|------|--------|-----|
+| `vault/vault/config/vault-kms.sops.yaml` | AWS KMS credentials | Needed to unseal Vault — cannot bootstrap from Vault |
 
-| File | Secret | Reason |
-|---|---|---|
-| `vault/vault/config/vault-kms.sops.yaml` | AWS KMS credentials | Needed to unseal Vault itself |
-| `bootstrap/sops-age.sops.yaml` | age private key | Needed to decrypt everything else |
-| `argo-system/argo-cd/values.sops.yaml` | Git repo credentials | Needed before ESO exists |
-| `network/cloudflare-tunnel/config/secret.sops.yaml` | `TUNNEL_TOKEN` | Bootstrap networking |
-| `network/cloudflare-dns/config/secret.sops.yaml` | Cloudflare API token | DNS-01 ACME challenges |
-| `cert-manager/cert-manager/config/secret.sops.yaml` | Cloudflare API token | TLS certificate issuance |
-| `vault/vault/backup/` | Vault Raft snapshot R2 credentials | Vault backup |
-| All `backup/secret*.sops.yaml` | Volsync restic + R2 credentials | PVC backups (Task 2b) |
+All other secrets are in Vault. The age key (`bootstrap/sops-age.sops.yaml`) is used only during initial cluster bootstrap.
 
 ---
 
@@ -140,10 +132,6 @@ spec:
         property: key2
 ```
 
-Also create the matching template at `templates/config/kubernetes/apps/<namespace>/<app>/config/externalsecret.yaml.j2` (identical content — no template variables needed for ExternalSecrets).
-
-### Step 3 — Update kustomization
-
 In `kubernetes/apps/<namespace>/<app>/config/kustomization.yaml`, add `externalsecret.yaml` to `resources:` (do not use `generators:`).
 
 ### Step 4 — Reference secret in Helm values
@@ -162,7 +150,6 @@ env:
 
 ```bash
 git add kubernetes/apps/<namespace>/<app>/config/
-git add templates/config/kubernetes/apps/<namespace>/<app>/config/
 git commit -m "feat(<app>): add ESO ExternalSecret"
 git push
 ```
@@ -194,21 +181,19 @@ kubectl -n <namespace> rollout restart deployment <app>
 
 ## Rotating a Bootstrap (SOPS) Secret
 
+The only SOPS-encrypted secret is `kubernetes/apps/vault/vault/config/vault-kms.sops.yaml`
+(AWS KMS credentials for Vault auto-unseal). Edit it directly with `sops`:
+
 ```bash
-# 1. Update cluster.toml
-vi cluster.toml
+# 1. Edit in-place (sops decrypts, opens $EDITOR, re-encrypts on save)
+sops kubernetes/apps/vault/vault/config/vault-kms.sops.yaml
 
-# 2. Re-render and re-encrypt
-just configure
+# 2. Verify the file is still encrypted
+sops filestatus kubernetes/apps/vault/vault/config/vault-kms.sops.yaml
 
-# 3. Verify encryption
-git diff kubernetes/ | grep -E "password|token|key" | grep -v "ENC\["
-# Should return nothing
-
-# 4. Commit
-git add kubernetes/apps/<namespace>/<app>/config/secret.sops.yaml
-git add templates/config/kubernetes/apps/<namespace>/<app>/config/secret.sops.yaml.j2
-git commit -m "security(<app>): rotate secret"
+# 3. Commit
+git add kubernetes/apps/vault/vault/config/vault-kms.sops.yaml
+git commit -m "security(vault): rotate AWS KMS credentials"
 git push
 ```
 
@@ -233,7 +218,7 @@ git push
 
 **`.sops.yaml`** (repo root) defines three encryption rules:
 - Talos machine configs: `mac_only_encrypted`
-- `values.sops.yaml`: whole-file encryption (helm-secrets)
+# (removed — values files are now plain YAML; only vault-kms.sops.yaml uses SOPS)
 - All other `*.sops.yaml`: `encrypted_regex: ^(data|stringData|spec|metadata)$`
 
 **Age public key:** `age1vmuwa3m333fmewnm9ltl02qg9sa6675qe4459cctyt7mjcfz6a0q5j4fxt`
@@ -291,9 +276,9 @@ kubectl -n <namespace> rollout restart deployment <app>
 | App API keys (arr stack) | Every 90 days | Vault |
 | App passwords | Every 180 days | Vault |
 | OAuth secrets (Woodpecker) | After team changes | Vault |
-| Cloudflare token | Every 180 days | SOPS (`cluster.toml`) |
+| Cloudflare token | Every 180 days | Vault |
 | WireGuard private key | On compromise only | Vault |
-| Volsync restic password | Every 365 days | SOPS (`cluster.toml`) |
+| Volsync restic password | Every 365 days | Vault |
 | age private key | On compromise only | `age.key` (offline backup) |
 
 ---

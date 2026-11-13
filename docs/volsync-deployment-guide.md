@@ -22,39 +22,24 @@ This will:
 - Create `volsync-backups` bucket in SeaweedFS
 - Generate S3 access keys (if not exists)
 - Grant permissions to the key
-- Update `cluster.toml` with credentials
 
-## Step 2: Add Volsync Configuration to cluster.toml
+## Step 2: Add Secrets to Vault
 
-Edit `cluster.toml` and add the Volsync section (if not already present):
-
-```toml
-# cluster.toml
-
-# ... existing config ...
-
-# Volsync backup configuration
-volsync_restic_password = ""  # Will be encrypted by SOPS
-
-# S3 credentials (set by bootstrap-seaweedfs command)
-volsync_s3_access_key = ""    # Set by bootstrap-seaweedfs
-volsync_s3_secret_key = ""    # Set by bootstrap-seaweedfs, will be encrypted
-```
-
-### Generate Restic Password
+Store the Volsync S3 credentials and restic password in Vault so ESO can sync them into Kubernetes Secrets:
 
 ```bash
-# Generate a secure password for Restic encryption
-openssl rand -base64 32
+# Generate a secure restic password
+RESTIC_PASSWORD=$(openssl rand -base64 32)
 
-# Copy the output and paste it into cluster.toml as volsync_restic_password
-```
+# Store credentials in Vault (adjust keys to match your SeaweedFS bootstrap output)
+vault kv put secret-kv2/volsync/seaweedfs \
+  RESTIC_PASSWORD="$RESTIC_PASSWORD" \
+  AWS_ACCESS_KEY_ID="<seaweedfs-access-key>" \
+  AWS_SECRET_ACCESS_KEY="<seaweedfs-secret-key>"
 
-**Example:**
-```toml
-volsync_restic_password = "your-generated-restic-password-here"
-volsync_s3_access_key = "auto-populated-by-bootstrap"
-volsync_s3_secret_key = "auto-populated-by-bootstrap"
+# Store per-app restic repository paths (one entry per PVC)
+vault kv put secret-kv2/volsync/immich-db \
+  RESTIC_REPOSITORY="s3:http://seaweedfs-filer.storage.svc.cluster.local:8333/volsync-backups/immich-db"
 ```
 
 ## Step 3: Update Kustomization Files
@@ -114,30 +99,21 @@ resources:
   - ./kromgo/ks.yaml
 ```
 
-## Step 4: Generate Kubernetes Manifests
+## Step 4: Add ExternalSecret Manifests
 
-```bash
-# Regenerate all Kubernetes manifests from templates
-# This will encrypt secrets with SOPS automatically
-just configure
-```
-
-This will:
-- Render all templates with your cluster.toml values
-- Encrypt all `*.sops.yaml` files with your age key
-- Validate manifests with kubeconform
+Add `ExternalSecret` manifests to `kubernetes/apps/<namespace>/<app>/backup/` following the pattern in any existing backup directory. ESO will sync the credentials from Vault into Kubernetes Secrets for Volsync to use.
 
 ## Step 5: Commit and Push
 
 ```bash
-# Check what was generated
+# Check what was added
 git status
 
 # Review the changes
 git diff kubernetes/
 
 # Add all changes
-git add kubernetes/ templates/
+git add kubernetes/
 
 # Commit
 git commit -m "feat(volsync): add automated PVC backups to SeaweedFS S3
@@ -187,13 +163,13 @@ entertainment    kavita-config-backup    kavita-config <none>
 observability    grafana-backup          grafana       <none>
 ```
 
-### Check Backup Secrets
+### Check ExternalSecrets Are Synced
 
 ```bash
-# Verify secrets are created (encrypted with SOPS)
-kubectl get secret -n entertainment | grep restic
-kubectl get secret -n default | grep restic
-kubectl get secret -n observability | grep restic
+# Verify ExternalSecrets are synced (STATUS should be SecretSynced / READY True)
+kubectl get externalsecret -n entertainment
+kubectl get externalsecret -n default
+kubectl get externalsecret -n observability
 ```
 
 ## Step 7: Trigger First Backup (Manual)
@@ -318,12 +294,14 @@ kubectl logs -n entertainment -l volsync.backube/replicationsource=immich-db-bac
 # Re-run bootstrap to grant permissions
 just ops bootstrap-seaweedfs
 
-# Regenerate manifests
-just configure
+# Update Vault credentials if they changed
+vault kv patch secret-kv2/volsync/seaweedfs \
+  AWS_ACCESS_KEY_ID="<new-key>" \
+  AWS_SECRET_ACCESS_KEY="<new-secret>"
 
-# Force secret recreation
-kubectl delete secret immich-db-restic-secret -n entertainment
-just reconcile   # Argo CD (self-heal) recreates the secret
+# Force ESO to re-sync the secret
+kubectl annotate externalsecret immich-db-restic -n entertainment \
+  force-sync=$(date +%s) --overwrite
 ```
 
 ### Backup Job Stuck in Pending

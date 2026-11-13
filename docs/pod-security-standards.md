@@ -78,9 +78,10 @@ kubectl describe rs -n <namespace> <replicaset-name>
 
 **When to use:** The application legitimately needs relaxed security (common for legacy apps, CI/CD, home automation).
 
-1. Edit namespace template:
+1. Edit namespace manifest directly:
 ```bash
-# Edit templates/config/kubernetes/apps/<namespace>/namespace.yaml.j2
+# Edit kubernetes/apps/<namespace>/namespace.yaml
+vim kubernetes/apps/<namespace>/namespace.yaml
 ```
 
 2. Change PSS labels:
@@ -92,9 +93,8 @@ metadata:
     pod-security.kubernetes.io/warn: baseline
 ```
 
-3. Regenerate and apply:
+3. Commit and push:
 ```bash
-task configure --yes
 git add -A
 git commit -m "fix(pss): relax <namespace> to baseline for <reason>"
 git push
@@ -166,7 +166,7 @@ spec:
 
 **Namespace:** `downloads` (baseline)  
 **Reason:** Exportarr sidecar lacks security contexts  
-**Template location:** `templates/config/kubernetes/apps/downloads/<app>/`
+**Manifests:** `kubernetes/apps/downloads/<app>/`
 
 #### Pattern 2: CI/CD Runners (Woodpecker, Forgejo Runner)
 
@@ -211,7 +211,7 @@ kubectl get namespace <namespace> -o yaml | grep pod-security
 **Solution:**
 ```bash
 # Check recent namespace changes
-git log --oneline -20 templates/config/kubernetes/apps/<namespace>/namespace.yaml.j2
+git log --oneline -20 kubernetes/apps/<namespace>/namespace.yaml
 
 # Check image changes
 kubectl describe pod -n <namespace> <pod-name> | grep Image:
@@ -276,5 +276,5 @@ kubectl rollout restart deployment <app> -n <namespace>
 
 - [Kubernetes Pod Security Standards Documentation](https://kubernetes.io/docs/concepts/security/pod-security-standards/)
 - [Pod Security Admission](https://kubernetes.io/docs/concepts/security/pod-security-admission/)
-- Cluster namespace templates: `templates/config/kubernetes/apps/*/namespace.yaml.j2`
+- Cluster namespace manifests: `kubernetes/apps/*/namespace.yaml`
 - Troubleshooting guide: `docs/TROUBLESHOOTING.md`

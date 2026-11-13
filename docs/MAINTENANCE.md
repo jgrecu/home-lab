@@ -184,29 +184,25 @@ kubectl port-forward -n observability svc/kube-prometheus-stack-prometheus 9090:
 helm upgrade <release> <chart> -n <namespace> --reuse-values --set image.tag=<new-tag>
 ```
 
-Always prefer GitOps approach (update HelmRelease template, commit, push).
+Always prefer GitOps approach (edit `kubernetes/apps/<namespace>/<app>/values.yaml`, commit, push).
 
 ### Application Configuration Changes
 
-**Template-driven workflow:**
+**GitOps workflow:**
 ```bash
-# 1. Edit template
-vim templates/config/kubernetes/apps/<namespace>/<app>/helmrelease.yaml.j2
+# 1. Edit manifest directly
+vim kubernetes/apps/<namespace>/<app>/values.yaml
 
-# 2. Regenerate manifests
-just configure
+# 2. Commit changes
+git add -A && git commit -m "feat(<app>): update configuration"
 
-# 3. Commit changes
-git add -A
-git commit -m "feat(<app>): update configuration"
-
-# 4. Push
+# 3. Push
 git push
 
-# 5. Force a refresh (optional: the GitHub webhook syncs immediately, polling within 3min)
+# 4. Force a refresh (optional: the GitHub webhook syncs immediately, polling within 3min)
 just reconcile
 
-# 6. Monitor rollout
+# 5. Monitor rollout
 kubectl get pods -n <namespace> --watch
 ```
 
@@ -307,14 +303,28 @@ kubectl run -it --rm s3-debug --image=amazon/aws-cli --restart=Never -- \
 
 ### Review SOPS-Encrypted Secrets
 
-**Rotate encryption keys annually:**
+Only one secret is SOPS-encrypted in this repo:
+`kubernetes/apps/vault/vault/config/vault-kms.sops.yaml` (AWS KMS credentials for Vault
+auto-unseal). All other credentials are stored in Vault and synced by ESO.
+
+**Verify vault-kms.sops.yaml is properly encrypted:**
+```bash
+sops filestatus kubernetes/apps/vault/vault/config/vault-kms.sops.yaml
+```
+
+**Rotate the age key (on compromise or annually):**
 ```bash
 # Generate new age key
 age-keygen -o age-new.key
 
-# Re-encrypt all secrets with new key
-# (Detailed procedure TBD - requires re-encrypting all *.sops.yaml files)
+# Re-encrypt vault-kms.sops.yaml with new key, then update bootstrap/sops-age.sops.yaml
+# and re-apply the in-cluster sops-age Secret:
+sops exec-file bootstrap/sops-age.sops.yaml \
+  'kubectl -n argo-system apply --server-side -f {}'
+kubectl -n argo-system rollout restart deploy/argocd-repo-server
 ```
+
+**For all other secrets:** use `vault kv patch secret-kv2/<app> key=new-value`.
 
 ### Review RBAC Permissions
 

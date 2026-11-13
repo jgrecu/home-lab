@@ -2,7 +2,7 @@
 
 > Self-hosted Kubernetes homelab on Lenovo ThinkCentre M900, powered by Talos Linux and Argo CD GitOps
 
-A beginner-friendly homelab project demonstrating how to run your own Kubernetes cluster for self-hosting applications. Learn GitOps principles, automated deployments, and infrastructure-as-code while building a production-like environment at home.
+A home lab project demonstrating production-grade self-hosting: GitOps continuous delivery, automated secret management, PVC backups, and infrastructure-as-code — running on commodity hardware.
 
 ![Talos](https://img.shields.io/badge/Talos-v1.14.5-blue?logo=talos&logoColor=white)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.37.2-blue?logo=kubernetes&logoColor=white)
@@ -29,95 +29,75 @@ A beginner-friendly homelab project demonstrating how to run your own Kubernetes
 **Hardware:**
 - 2+ nodes (e.g., Lenovo ThinkCentre M900: Core i5 2.5GHz, 512GB SSD, 16GB RAM)
 - Static IP addresses, router access
-- SSD or NVMe drives recommended
 
 **Accounts:**
 - GitHub account
 - Cloudflare account with a domain
+- AWS account (KMS key for Vault auto-unseal)
 
 **Tools** (installed via `mise`):
-- `talosctl` - Talos Linux management
-- `kubectl` - Kubernetes CLI
-- `just` - Task runner
-- `age` - Encryption for secrets (SOPS)
+- `talosctl` — Talos Linux management
+- `kubectl` — Kubernetes CLI
+- `just` — Task runner
+- `sops` / `age` — Secret encryption (bootstrap only)
 
 ### Installation
 
-**1. Clone and configure**
+**1. Clone and install tools**
 
 ```sh
 git clone https://github.com/yourusername/home-lab.git
 cd home-lab
-
-curl https://mise.run | sh
-mise trust
-mise install
-
-just init
+curl https://mise.run | sh && mise trust && mise install
 ```
 
-**2. Configure your cluster**
-
-Edit `cluster.toml` with your:
-- Node IP addresses and hostnames
-- Cloudflare domain and tunnel credentials
-- Network settings (gateway, DNS servers)
-
-**3. Generate manifests**
-
-```sh
-just configure
-```
-
-Generates Kubernetes and Talos configuration from templates.
-
-**4. Bootstrap Talos cluster**
+**2. Bootstrap Talos cluster**
 
 ```sh
 just bootstrap bootstrap-talos
-
-git add -A
-git commit -m "chore: add encrypted secrets"
-git push
 ```
 
-**5. Install applications**
+**3. Install core infrastructure (Argo CD + Vault + ESO)**
 
 ```sh
 just bootstrap bootstrap-apps
-
-kubectl get pods --all-namespaces --watch
 ```
 
-**6. Verify installation**
+**4. Customize your cluster**
+
+Edit manifests directly in `kubernetes/apps/` and `kubernetes/argo/apps/`:
+- Add/remove applications
+- Adjust resources and configurations
+- Secrets go in Vault; reference them with `ExternalSecret` manifests
+
+**5. Push and let Argo CD sync**
 
 ```sh
-just ops status          # Argo CD Applications not Synced/Healthy, failed pods, PVCs
+git add -A && git commit -m "feat: my changes" && git push
 kubectl -n argo-system get applications
-kubectl get pods -A
 ```
 
 ## 💡 Why This Project?
 
-**Template-Driven Configuration** - Change settings in `cluster.toml`, regenerate all configs with `just configure`. Never manually edit generated files.
+**GitOps with Argo CD** — Every change is a git commit. Argo CD continuously reconciles the cluster to match `kubernetes/`. No manual `kubectl apply`.
 
-**Encrypted Secrets** - All secrets encrypted with SOPS (age encryption). Safe to commit to public GitHub. Argo CD decrypts in-cluster (ksops + helm-secrets); even the domain is only stored encrypted.
+**Production-grade secrets (Vault + ESO)** — Credentials live in HashiCorp Vault, synced to Kubernetes by External Secrets Operator. The repo contains only one SOPS-encrypted file (`vault-kms.sops.yaml` — AWS KMS credentials to unseal Vault on startup). Everything else is plain YAML.
 
-**Automated Upgrades** - Tuppr handles Talos and Kubernetes upgrades safely with health checks between nodes. Maintenance windows: Sundays 02:00 UTC.
+**Automated Upgrades** — Tuppr handles Talos and Kubernetes upgrades safely with health checks between nodes. Renovate keeps all Helm charts and container images up to date automatically.
 
-**Learning Platform** - Hands-on GitOps (Argo CD), real Kubernetes operations (kubectl, manifests, debugging), and self-hosting applications (media, monitoring, storage).
+**Reliable Backups** — VolSync backs up every PVC to both SeaweedFS (local) and Cloudflare R2 (offsite) via restic. Backup secrets are stored in Vault.
 
 ## 📖 Documentation
 
 - [Full Documentation](./docs/README.md)
-- [Troubleshooting Guide](./docs/TROUBLESHOOTING.md) - Symptom-driven diagnostics
-- [Maintenance Procedures](./docs/MAINTENANCE.md) - Routine operation checklists
-- [Automated Upgrades (Tuppr)](./docs/tuppr-upgrades.md)
+- [Secret Management (Vault, ESO)](./docs/SECRET_MANAGEMENT.md)
 - [Disaster Recovery](./docs/disaster-recovery.md)
+- [Troubleshooting Guide](./docs/TROUBLESHOOTING.md)
+- [Maintenance Procedures](./docs/MAINTENANCE.md)
+- [Automated Upgrades (Tuppr)](./docs/tuppr-upgrades.md)
 - [Volsync Backups](./docs/volsync-deployment-guide.md)
 - [Pod Security Standards](./docs/pod-security-standards.md)
-- [Secret Management (SOPS, ksops, helm-secrets)](./docs/SECRET_MANAGEMENT.md)
-- [Flux → Argo CD cut-over (2026-11-10)](./docs/argocd-cutover.md)
+- [Resource Tiers](./docs/resource-tiers.md)
 
 ## 🔧 Quick Commands
 
@@ -137,10 +117,13 @@ just ops backup-status
 just ops pvc-usage
 just ops longhorn-status
 just ops restore-pvc <namespace> <pvc-name> <capacity>
+
+# Validate Argo CD rendering
+./scripts/argo-parity.sh --render-only --skip-app vault
 ```
 
 ---
 
 ## 📝 License
 
-MIT License. Built with [cluster-template](https://github.com/onedr0p/cluster-template) by [@onedr0p](https://github.com/onedr0p).
+MIT License.

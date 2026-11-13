@@ -1,17 +1,14 @@
 #!/usr/bin/env bash
-# argo-parity.sh - Render converted Argo CD Applications exactly like the repo-server
-# (helm-secrets wrapper + kustomize/ksops) and diff against the Flux baseline
-# produced by scripts/render-flux-baseline.sh.
-# Usage: ./argo-parity.sh [--render-only] [namespace ...]   (default: every namespace)
-#   --render-only: no Flux baseline; render every Application and validate with
-#                  kubeconform (used by CI). Rendered output is never printed.
+# argo-parity.sh - Render Argo CD Applications exactly like the repo-server
+# (helm-secrets wrapper + kustomize/ksops) and validate with kubeconform.
+# Usage: ./argo-parity.sh [--render-only] [--skip-app <name>] [namespace ...]
+#   --render-only: render every Application and validate with kubeconform (CI mode).
+#                  Rendered output is never printed.
 # Output: .tmp/parity/<ns>/<app>.diff + summary; exit 1 if any app differs or fails.
 
 set -Eeuo pipefail
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-# shellcheck source=scripts/render-flux-baseline.sh
-source "$REPO_ROOT/scripts/render-flux-baseline.sh"   # normalise(), load_domain()
 
 BASELINE=$REPO_ROOT/.tmp/baseline
 PARITY=$REPO_ROOT/.tmp/parity
@@ -25,6 +22,22 @@ KUBECONFORM_ARGS=(-strict -ignore-missing-schemas -summary
   -skip "Gateway,HTTPRoute,Secret,TalosUpgrade,KubernetesUpgrade"
   -schema-location default
   -schema-location "https://kubernetes-schemas.pages.dev/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json")
+
+WORK=$(mktemp -d)
+trap 'rm -rf "$WORK"' EXIT
+
+# Replace Secret values with "<redacted>", normalise: sorted keys + sorted docs
+# shellcheck disable=SC2016  # yq variables, not shell
+normalise() {
+  yq ea -P '[select(. != null)] | (... comments="") | map(select(tag == "!!map" and . != {}))
+    | map(select(.kind == "Secret") |= (
+        (.data // {} | keys) as $d | (.stringData // {} | keys) as $s
+        | del(.data, .stringData, .sops)
+        | .data = ($d + $s | map({(.): "<redacted>"}) | .[] as $i ireduce ({}; . * $i))))
+    | sort_by(.kind, .metadata.namespace // "", .metadata.name)
+    | .[] | sort_keys(..) | split_doc' |
+    awk '/^---$/ { if (prev == "---" || NR == 1) next } { print; prev = $0 }'
+}
 
 install_tools() {
   local os arch p
@@ -120,7 +133,7 @@ parity_main() {
   if [[ "${1:-}" == "--render-only" ]]; then RENDER_ONLY=true; shift; fi
   local skip_apps=()
   while [[ "${1:-}" == "--skip-app" ]]; do skip_apps+=("$2"); shift 2; done
-  [[ "$RENDER_ONLY" == "true" || -d "$BASELINE" ]] || { echo "Run scripts/render-flux-baseline.sh first"; exit 1; }
+  [[ "$RENDER_ONLY" == "true" || -d "$BASELINE" ]] || { echo "No baseline found at $BASELINE; pass --render-only or generate a baseline first"; exit 1; }
   install_tools
   local namespaces=("$@") ns file app_name
   if [[ ${#namespaces[@]} -eq 0 ]]; then

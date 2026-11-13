@@ -569,7 +569,7 @@ kubectl exec -n storage seaweedfs-0 -- weed shell -master=localhost:9333 \
 #### 2. Maintain Off-Cluster Access
 
 - 💾 Keep `kubeconfig` backed up outside cluster
-- 💾 Keep `age.key` (SOPS encryption) backed up securely
+- 💾 Keep `age.key` backed up securely offline — needed to decrypt `vault-kms.sops.yaml` during cluster bootstrap
 - 💾 Keep SeaweedFS admin credentials accessible
 
 #### 3. Practice Recovery Procedures
@@ -629,7 +629,7 @@ kubectl port-forward -n <namespace> svc/<service> 8080:80
 # Port-forward to SeaweedFS S3
 kubectl port-forward -n storage svc/seaweedfs-s3 8333:8333
 
-# Export credentials (get from cluster.toml or SeaweedFS bootstrap output)
+# Export credentials (get from Vault: vault kv get secret-kv2/seaweedfs, or your secure backup)
 export AWS_ACCESS_KEY_ID="your-key"
 export AWS_SECRET_ACCESS_KEY="your-secret"
 

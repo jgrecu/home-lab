@@ -1,118 +1,84 @@
 # Documentation
 
-Documentation for the Talos Lenovo ThinkCentre M900 home lab cluster.
-
-## Backup & Recovery
-
-### Volsync Automated Backups
-
-- **[Volsync Deployment Guide](./volsync-deployment-guide.md)** - Complete guide to deploying Volsync for automated PVC backups
-- **[Volsync Restore Procedures](./volsync-restore-procedures.md)** - Step-by-step restore procedures for disaster recovery
-
-## Quick Start
-
-### Deploy Volsync Backups
-
-```bash
-# 1. Bootstrap SeaweedFS S3 (creates volsync-backups bucket)
-just ops bootstrap-seaweedfs
-
-# 2. Add Volsync config to cluster.toml
-# Edit cluster.toml and add volsync.restic_password
-
-# 3. Regenerate manifests
-just configure
-
-# 4. Commit and push
-git add . && git commit -m "feat(volsync): add automated backups" && git push
-
-# 5. Verify deployment
-kubectl get replicationsource -A
-```
-
-### Restore from Backup
-
-See [Volsync Restore Procedures](./volsync-restore-procedures.md) for detailed instructions.
-
-Quick restore:
-```bash
-# 1. Scale down application
-kubectl scale deployment <app> -n <namespace> --replicas=0
-
-# 2. Create ReplicationDestination
-# See restore guide for examples
-
-# 3. Scale up application
-kubectl scale deployment <app> -n <namespace> --replicas=1
-```
+Documentation for the home lab Kubernetes cluster (3× Lenovo ThinkCentre M900, Talos Linux).
 
 ## Architecture
 
-### Storage Stack
+### Stack
+
+| Layer | Technology |
+|-------|-----------|
+| OS | Talos Linux (immutable, API-driven) |
+| Kubernetes | v1.37.2 |
+| GitOps | Argo CD — reconciles `kubernetes/` from git |
+| Secrets | HashiCorp Vault + External Secrets Operator |
+| Networking | Envoy Gateway, Cloudflare Tunnel, Cilium |
+| Storage | Longhorn (block), SeaweedFS (S3), NFS |
+| Backups | VolSync → SeaweedFS (local) + Cloudflare R2 (offsite) |
+| Upgrades | Tuppr (Talos/K8s), Renovate (images/charts) |
+
+### Secret Management
+
+All credentials live in Vault (`secret-kv2/`). External Secrets Operator syncs them into Kubernetes Secrets. Only one SOPS-encrypted file remains in the repo: `vault-kms.sops.yaml` (AWS KMS key to unseal Vault on startup).
 
 ```
-Applications
-    ↓
-Longhorn (replicated block storage)
-    ↓
-┌─────────┴─────────┐
-│                   │
-Volsync          Direct Access
-(backups)        (live data)
-│
-↓
-SeaweedFS S3
+Vault (KV v2)
+    ↓  External Secrets Operator (ClusterSecretStore)
+Kubernetes Secrets  ←→  Applications
 ```
+
+See [Secret Management](./SECRET_MANAGEMENT.md) for full details.
 
 ### Backup Strategy
 
-- **Longhorn**: Provides replica redundancy across nodes (3 replicas)
-- **Volsync**: Automated daily backups to S3 (7 daily, 4 weekly, 3 monthly)
-- **SeaweedFS**: S3-compatible object storage for backup target
-- **NFS**: Static PVs for media files (backed up at NAS level)
+```
+PVC data
+  ↓  VolSync (restic, daily)
+  ├── SeaweedFS S3 (in-cluster, fast restore)
+  └── Cloudflare R2 (offsite, disaster recovery)
+```
 
-### What Gets Backed Up
+- **22 PVCs** backed up across all namespaces
+- Retention: 7 daily, 4 weekly, 3 monthly (seaweedfs); 7 daily, 8 weekly, 6 monthly (R2)
+- Credentials stored in Vault (`secret-kv2/volsync/`)
 
-✅ **Critical PVCs** (automated with Volsync):
-- Immich database
-- Kavita config
-- Homepage config
-- Grafana database
+## Guides
 
-❌ **Not backed up** (too large or already on NAS):
-- Media files (Jellyfin, Immich photos)
-- Temporary caches
-- Longhorn replicas (already redundant)
+### Operations
 
-## Recovery Objectives
+- **[Maintenance Procedures](./MAINTENANCE.md)** — Routine checklists, upgrade procedures
+- **[Troubleshooting Guide](./TROUBLESHOOTING.md)** — Symptom-driven diagnostics
+- **[Disaster Recovery](./disaster-recovery.md)** — Full cluster rebuild procedures
+- **[Secret Management](./SECRET_MANAGEMENT.md)** — Vault, ESO, SOPS bootstrap
 
-- **RTO (Recovery Time Objective)**: 
-  - Single PVC: 15-30 minutes
-  - Full cluster: 4-6 hours
+### Infrastructure
 
-- **RPO (Recovery Point Objective)**:
-  - Critical DBs: 24 hours (daily backups)
-  - Config files: 24 hours (daily backups)
+- **[Resource Tiers](./resource-tiers.md)** — CPU/memory allocation guidelines
+- **[Pod Security Standards](./pod-security-standards.md)** — Security policies per namespace
+- **[Automated Upgrades (Tuppr)](./tuppr-upgrades.md)** — Talos and Kubernetes upgrade automation
 
-## Maintenance
+### Backup & Recovery
 
-### Monthly Tasks
+- **[Volsync Deployment Guide](./volsync-deployment-guide.md)** — Adding PVC backups
+- **[Volsync Restore Procedures](./volsync-restore-procedures.md)** — Restoring from backup
 
-- [ ] Test backup restore in `backup-test` namespace
-- [ ] Verify all ReplicationSources have recent `lastSyncTime`
-- [ ] Check S3 bucket usage and retention
-- [ ] Review Volsync logs for errors
+## Quick Reference
 
-### Quarterly Tasks
+```bash
+# Check all app health
+kubectl get applications -n argo-system
+just ops status
 
-- [ ] Practice disaster recovery procedure
-- [ ] Update restore documentation if configs changed
-- [ ] Review and adjust retention policies
-- [ ] Validate backup health monitoring alerts
+# Force Argo CD resync
+just reconcile
 
-## Related Resources
+# Check backup status
+just ops backup-status
+kubectl get replicationsource -A
 
-- [Longhorn Documentation](https://longhorn.io/docs/)
-- [Volsync Documentation](https://volsync.readthedocs.io/)
-- [Restic Documentation](https://restic.readthedocs.io/)
-- [SeaweedFS Documentation](https://github.com/seaweedfs/seaweedfs/wiki)
+# Validate cluster rendering (CI equivalent)
+./scripts/argo-parity.sh --render-only --skip-app vault
+
+# Vault status
+kubectl -n vault exec vault-0 -- vault status
+```

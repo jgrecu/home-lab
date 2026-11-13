@@ -200,10 +200,8 @@ watch kubectl get pods -A | grep -v Running | grep -v Completed
 ### Single App Rollback
 
 ```bash
-# Revert specific app template
-git checkout main -- templates/config/kubernetes/apps/<namespace>/<app>/
-task configure --yes
-git commit -m "revert(<app>): rollback resource changes"
+# Revert specific app
+git revert <commit-sha>
 git push
 just reconcile
 ```
@@ -231,19 +229,17 @@ kubectl edit deploy -n <namespace> <app>
 
 1. **Missing Requests Are Critical:** 27 apps had no memory requests - dangerous
 2. **VPA Data is Accurate:** 14 days provided reliable recommendations
-3. **Template-First Workflow:** Regenerating from templates ensures consistency
+3. **GitOps-First Workflow:** All changes via git commits; Argo CD reconciles automatically.
 4. **Monitoring is Essential:** Watch for 24-48 hours after changes
 5. **Document Before/After:** This report will guide future optimizations
 
 ---
 
-## Next Steps
+## Status
 
-1. ✅ **Week 1:** Monitor for OOM events and pod health
-2. ⏳ **Week 2:** Review Grafana dashboards for resource trends
-3. ⏳ **Week 4:** Document any issues encountered
-4. ⏳ **Month 6:** Schedule next VPA optimization review
-5. ⏳ **Ongoing:** Keep Goldilocks collecting data
+✅ **Week 1 monitoring complete** — No OOM events observed after optimization  
+✅ **Resource changes stable** — All apps running with optimized allocations  
+✅ **Ongoing** — Goldilocks collecting data; next review when significant drift detected
 
 ---
 

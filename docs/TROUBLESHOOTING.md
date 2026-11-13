@@ -128,7 +128,7 @@ is empty by design). Helm hooks run as Argo CD sync hooks.
 # Chart version / values used
 yq '.spec.sources' kubernetes/argo/apps/<namespace>/<app>.yaml
 
-# Render the chart locally with the same values (helm-secrets decrypts values.sops.yaml)
+# Render the chart locally with the same values
 ./scripts/argo-parity.sh --render-only <namespace>
 
 # Failed hook jobs
@@ -142,16 +142,17 @@ Argo CD - values derived from `lookup` are empty.
 
 ### SOPS Decryption Errors
 
-**Symptom:** `ComparisonError` mentioning sops/ksops/helm-secrets, or Secrets missing.
+**Symptom:** `ComparisonError` mentioning sops/ksops, or the `vault-kms.sops.yaml` Secret missing in the vault namespace.
 
-Decryption happens in the **repo-server**: ksops (kustomize Secrets / `*.sops.yaml`
-manifests) and helm-secrets (`values.sops.yaml`), both using the age key in
-Secret `argo-system/sops-age`.
+Only **one** file in this repo is SOPS-encrypted: `kubernetes/apps/vault/vault/config/vault-kms.sops.yaml`
+(AWS KMS credentials for Vault auto-unseal). Decryption happens in the Argo CD **repo-server** using
+the age key stored in Secret `argo-system/sops-age`.
 
 ```bash
 # Age key present and mounted
 kubectl -n argo-system get secret sops-age
-kubectl -n argo-system exec deploy/argocd-repo-server -c repo-server -- test -s /sops-age/age.agekey && echo mounted
+kubectl -n argo-system exec deploy/argocd-repo-server -c repo-server -- \
+  test -s /sops-age/age.agekey && echo mounted
 
 # Tools installed by the init container (checksums verified)
 kubectl -n argo-system logs deploy/argocd-repo-server -c download-tools | tail
@@ -159,21 +160,59 @@ kubectl -n argo-system logs deploy/argocd-repo-server -c download-tools | tail
 
 **Common Causes & Solutions:**
 
-1. **Missing / wrong age key:**
+1. **Missing / wrong age key in cluster:**
    ```bash
-   sops exec-file bootstrap/sops-age.sops.yaml 'kubectl -n argo-system apply --server-side -f {}'
+   sops exec-file bootstrap/sops-age.sops.yaml \
+     'kubectl -n argo-system apply --server-side -f {}'
    kubectl -n argo-system rollout restart deploy/argocd-repo-server
    ```
 
-2. **File not encrypted or wrong rule** (`.sops.yaml`: `values.sops.yaml` fully encrypted,
-   other `*.sops.yaml` encrypt `data|stringData|spec|metadata`):
+2. **File not encrypted or wrong rule** (`.sops.yaml` rule: `encrypted_regex: ^(data|stringData|spec|metadata)$`):
    ```bash
-   sops filestatus <file>.sops.yaml
-   just configure                     # renders + encrypts + restores unchanged secrets
+   sops filestatus kubernetes/apps/vault/vault/config/vault-kms.sops.yaml
    ```
 
-3. **Secret listed as a plain resource:** `*.sops.yaml` files must only be listed in the
+3. **vault-kms Secret listed as a plain resource:** The `*.sops.yaml` file must only be listed in the
    ksops generator (`secret-generator.yaml`), never under `resources:`.
+
+### External Secrets / Vault Issues
+
+**Symptom:** Application secrets missing, pods in CrashLoopBackOff due to missing env vars, or
+`ExternalSecretSyncError` / `ExternalSecretNotReady` alerts firing.
+
+All app secrets (everything except `vault-kms.sops.yaml`) are managed by ESO from Vault.
+
+```bash
+# Check all ExternalSecrets across namespaces
+kubectl get externalsecret -A
+
+# Detailed sync error for a specific ExternalSecret
+kubectl describe externalsecret <name> -n <namespace>
+
+# Check ClusterSecretStore is Ready
+kubectl get clustersecretstore vault
+
+# Check ESO pods are healthy
+kubectl -n external-secrets get pods
+
+# Verify Vault is unsealed and ESO can reach it
+kubectl -n vault exec vault-0 -- vault status
+kubectl -n vault exec vault-0 -- vault kv get secret-kv2/<app>
+
+# Check ESO policy in Vault
+kubectl -n vault exec vault-0 -- vault policy read eso-read
+
+# Force immediate ESO re-sync
+kubectl -n <namespace> annotate externalsecret <name> \
+  force-sync=$(date +%s) --overwrite
+```
+
+**Common Causes & Solutions:**
+
+1. **Secret path wrong in Vault:** verify with `vault kv get secret-kv2/<app>`
+2. **ESO policy (`eso-read`) missing a path:** update policy to include `secret-kv2/data/<app>`
+3. **Vault sealed:** `kubectl -n vault exec vault-0 -- vault operator unseal` or check AWS KMS connectivity
+4. **ClusterSecretStore not Ready:** check ESO logs `kubectl -n external-secrets logs -l app.kubernetes.io/name=external-secrets`
 
 ---
 
@@ -218,8 +257,7 @@ kubectl -n <namespace> describe pod <pod-name>
    # Check if OOMKilled
    kubectl -n <namespace> describe pod <pod-name> | grep -i oom
    
-   # Increase memory limit in template
-   # templates/config/kubernetes/apps/<namespace>/<app>/helmrelease.yaml.j2
+   # Increase memory limit in kubernetes/apps/<namespace>/<app>/values.yaml
    resources:
      limits:
        memory: 1Gi  # Increase from current value
@@ -370,26 +408,23 @@ kubectl describe rs -n <namespace> | grep -A 5 "Error creating"
 Most applications (media servers, CI/CD, home automation) cannot meet `restricted` PSS requirements. Use `baseline` instead:
 
 ```bash
-# 1. Edit namespace template
-vi templates/config/kubernetes/apps/<namespace>/namespace.yaml.j2
+# 1. Edit namespace manifest directly
+vi kubernetes/apps/<namespace>/namespace.yaml
 
 # 2. Change PSS labels from 'restricted' to 'baseline'
 pod-security.kubernetes.io/enforce: baseline
 pod-security.kubernetes.io/audit: baseline
 pod-security.kubernetes.io/warn: baseline
 
-# 3. Regenerate manifests
-just configure
-
-# 4. Commit changes
+# 3. Commit and push
 git add -A
 git commit -m "fix(pss): relax <namespace> to baseline for <app-name>"
 git push
 
-# 5. Force reconcile
+# 4. Force reconcile
 just reconcile
 
-# 6. Restart deployment
+# 5. Restart deployment
 kubectl rollout restart deployment <app> -n <namespace>
 ```
 
@@ -544,7 +579,8 @@ kubectl -n <namespace> logs -l app.kubernetes.io/name=volsync --tail=100
    # Verify S3 secret
    kubectl -n <namespace> get secret volsync-restic-secret -o yaml
    
-    # Re-create if needed (from cluster.toml values)
+   # Check / update credentials in Vault
+   vault kv get secret-kv2/volsync/seaweedfs
    ```
 
 ---
@@ -828,7 +864,9 @@ kubectl -n volsync-system logs -l control-plane=volsync --tail=100
    # Check secret exists
    kubectl -n <namespace> get secret volsync-restic-secret
    
-   # Re-create from cluster.toml values
+   # Re-sync from Vault via ESO
+   kubectl -n <namespace> annotate externalsecret <name> \
+     force-sync=$(date +%s) --overwrite
    ```
 
 2. **S3 endpoint unreachable:**
@@ -882,8 +920,9 @@ kubectl -n database-system logs <backup-pod-name>
    # Check backup secret
    kubectl -n database-system get secret <cluster-name>-pgbackrest-secrets
    
-    # Re-create from cluster.toml values
-    ```
+   # Update credentials in Vault if they changed
+   vault kv patch secret-kv2/<cluster-name> key=new-value
+   ```
 
 2. **Storage full:**
    ```bash
@@ -926,9 +965,8 @@ kubectl get pods -A -o json | jq -r '.items[] | select(.status.containerStatuses
 
 1. **Increase CPU limits:**
    ```bash
-   # Edit template to increase CPU limits
-   # templates/config/kubernetes/apps/<namespace>/<app>/helmrelease.yaml.j2
-   
+   # Edit kubernetes/apps/<namespace>/<app>/values.yaml
+
    resources:
      limits:
        cpu: 1000m  # Increase
@@ -1168,17 +1206,16 @@ kubectl -n observability logs -l app.kubernetes.io/name=fluent-bit --tail=100
 
 ### 1. Always Check the Source
 
-**Remember:** This cluster uses GitOps. Always fix issues in templates, not directly in the cluster.
+**Remember:** This cluster uses GitOps. Always fix issues in `kubernetes/`, not directly in the cluster.
 
 ```bash
 # DON'T do this:
 kubectl edit deployment myapp
 
 # DO this instead:
-# 1. Edit templates/config/kubernetes/apps/<namespace>/<app>/values.yaml.j2 (or config/, values.sops.yaml.j2)
-# 2. Run: just configure
-# 3. Commit and push
-# 4. Argo CD syncs automatically (webhook, or within 3 minutes)
+# 1. Edit kubernetes/apps/<namespace>/<app>/values.yaml (or the relevant manifest)
+# 2. Commit and push
+# 3. Argo CD syncs automatically (webhook, or within 3 minutes)
 ```
 
 ### 2. Progressive Debugging
@@ -1310,10 +1347,9 @@ talosctl -n <node-ip> logs <service>
 
 **Remember:** Most issues in this GitOps cluster are resolved by:
 1. Identifying the problem
-2. Fixing the template in `templates/config/`
-3. Running `just configure`
-4. Committing and pushing
-5. Letting Argo CD sync
+2. Editing the manifest in `kubernetes/apps/<namespace>/<app>/`
+3. Committing and pushing
+4. Letting Argo CD sync
 
 Direct cluster edits are temporary and will be overwritten!
 

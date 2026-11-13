@@ -194,7 +194,7 @@ kubectl wait --for=condition=Ready replicationdestination/<app-name>-restore-new
 **Option A**: Update the Helm values in git and let Argo CD sync
 
 ```yaml
-# In the app's values.yaml.j2 (templates/config/kubernetes/apps/<ns>/<app>/)
+# In the app's values.yaml (kubernetes/apps/<ns>/<app>/)
 persistence:
   config:
     existingClaim: <app-name>-restored  # Changed from original
@@ -247,7 +247,7 @@ kubectl delete pvc <original-pvc-name> -n <namespace>
 kubectl create namespace <namespace>
 
 # Recreate Restic secret with S3 credentials
-# Get the secret from your SOPS-encrypted config or password manager
+# Get the secret from Vault: vault kv get secret-kv2/volsync/seaweedfs
 kubectl apply -f - <<EOF
 apiVersion: v1
 kind: Secret

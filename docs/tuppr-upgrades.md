@@ -192,15 +192,10 @@ kubectl delete talosupgrade cluster -n system-upgrade
 #### Option 3: Rollback
 
 ```bash
-# Edit the version in templates
-vim templates/config/talos/talenv.yaml
-# Change: talosVersion: v1.12.6  (rollback)
+# Edit the version directly in the manifest
+vim kubernetes/apps/system-upgrade/tuppr/policies/talosupgrade.yaml
+# Change: version: v1.12.6  (rollback)
 
-vim templates/config/kubernetes/apps/system-upgrade/tuppr/policies/talosupgrade.yaml
-# Change: version: v1.12.6
-
-# Regenerate and commit
-just configure
 git add -A
 git commit -m "rollback: revert Talos to v1.12.6"
 git push
@@ -256,34 +251,25 @@ kubectl describe node <node-name>
 
 ## Updating Target Versions
 
-### 1. Update Templates
+### 1. Edit Manifests Directly
 
-Edit `templates/config/talos/talenv.yaml`:
-```yaml
-talosVersion: v1.13.0
-kubernetesVersion: v1.36.0
-```
-
-Edit `templates/config/kubernetes/apps/system-upgrade/tuppr/policies/talosupgrade.yaml`:
+Edit `kubernetes/apps/system-upgrade/tuppr/policies/talosupgrade.yaml`:
 ```yaml
 spec:
   talos:
     version: v1.13.0
 ```
 
-Edit `templates/config/kubernetes/apps/system-upgrade/tuppr/policies/kubernetesupgrade.yaml`:
+Edit `kubernetes/apps/system-upgrade/tuppr/policies/kubernetesupgrade.yaml`:
 ```yaml
 spec:
   kubernetes:
     version: v1.36.0
 ```
 
-### 2. Regenerate and Commit
+### 2. Commit and Push
 
 ```bash
-# Regenerate manifests
-just configure
-
 # Commit changes
 git add -A
 git commit -m "feat(upgrades): update Talos to v1.13.0 and Kubernetes to v1.36.0"
