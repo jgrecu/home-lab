@@ -21,6 +21,12 @@ patches:
       - op: replace
         path: /spec/mover/resources/limits/memory
         value: 512Mi
+      - op: add
+        path: /spec/mover/securityContext
+        value:
+          runAsUser: 0
+          runAsNonRoot: false
+          fsGroup: 0
   - target:
       kind: SnapshotSchedule
       name: kopiur-app
