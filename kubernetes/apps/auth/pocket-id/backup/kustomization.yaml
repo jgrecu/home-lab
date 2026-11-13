@@ -25,7 +25,7 @@ patches:
         value: pocket-id-data-restic-secret
       - op: replace
         path: /spec/restic/capacity
-        value: 2Gi
+        value: 1Gi
   - target:
       kind: ReplicationSource
       name: volsync-r2
@@ -44,7 +44,7 @@ patches:
         value: pocket-id-data-r2-restic-secret
       - op: replace
         path: /spec/restic/capacity
-        value: 2Gi
+        value: 1Gi
 resources:
   - ./externalsecret.yaml
   - ./externalsecret-r2.yaml
