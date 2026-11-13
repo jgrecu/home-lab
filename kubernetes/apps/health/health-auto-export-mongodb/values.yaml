@@ -11,7 +11,7 @@ controllers:
         image:
           repository: docker.io/mongo
               # renovate: datasource=docker depName=docker.io/mongo
-          tag: "9.0.4"
+          tag: "9.0.8"
         env:
           MONGO_INITDB_ROOT_USERNAME:
             valueFrom:
