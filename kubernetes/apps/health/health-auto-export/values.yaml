@@ -10,6 +10,7 @@ controllers:
       app:
         image:
           tag: "v0.2.1"
+          repository: forgejo.jgrecu.dev/jeremy/health-auto-export
         env:
           NODE_ENV: production
           MONGO_HOST: health-auto-export-mongodb.health.svc.cluster.local
@@ -57,7 +58,8 @@ controllers:
               periodSeconds: 10
         securityContext:
           allowPrivilegeEscalation: false
-          capabilities: {drop: ["ALL"]}
+          capabilities:
+            drop: ["ALL"]
           runAsUser: 65534
           runAsGroup: 65534
           runAsNonRoot: true
@@ -67,13 +69,11 @@ controllers:
             memory: 32Mi
           limits:
             memory: 128Mi
-
 service:
   app:
     ports:
       http:
         port: *port
-
 route:
   app:
     parentRefs:
@@ -90,18 +90,6 @@ route:
       gethomepage.dev/name: Health Auto Export
       gethomepage.dev/icon: apple-health.png
       gethomepage.dev/description: Apple Health data ingestion
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (health-auto-export).
-route:
-  app:
+      gethomepage.dev/href: https://hae.jgrecu.dev
     hostnames:
       - hae.jgrecu.dev
-    annotations:
-      gethomepage.dev/href: https://hae.jgrecu.dev
-controllers:
-  health-auto-export:
-    containers:
-      app:
-        image:
-          repository: forgejo.jgrecu.dev/jeremy/health-auto-export

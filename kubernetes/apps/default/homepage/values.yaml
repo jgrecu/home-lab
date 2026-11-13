@@ -27,16 +27,19 @@ controllers:
           readiness: *probes
         securityContext:
           allowPrivilegeEscalation: false
-          capabilities: {drop: ["ALL"]}
+          capabilities:
+            drop: ["ALL"]
         resources:
           requests:
             cpu: 20m
             memory: 256Mi
           limits:
             memory: 2Gi
+        env:
+          HOMEPAGE_ALLOWED_HOSTS: homepage.jgrecu.dev,homepage.default.svc.cluster.local:3000
 persistence:
-      # Persistent storage for logs and other runtime data
-      # Mount to /data instead of /app/config to avoid conflicts with ConfigMaps
+  # Persistent storage for logs and other runtime data
+  # Mount to /data instead of /app/config to avoid conflicts with ConfigMaps
   config:
     type: persistentVolumeClaim
     storageClass: longhorn
@@ -44,8 +47,7 @@ persistence:
     accessMode: ReadWriteOnce
     globalMounts:
       - path: /data
-
-      # Kubernetes integration config
+        # Kubernetes integration config
   kubernetes-config:
     type: configMap
     name: homepage-config
@@ -53,8 +55,7 @@ persistence:
       - path: /app/config/kubernetes.yaml
         subPath: kubernetes.yaml
         readOnly: true
-
-      # Services configuration
+        # Services configuration
   services-config:
     type: configMap
     name: homepage-services
@@ -62,8 +63,7 @@ persistence:
       - path: /app/config/services.yaml
         subPath: services.yaml
         readOnly: true
-
-      # Bookmarks configuration
+        # Bookmarks configuration
   bookmarks-config:
     type: configMap
     name: homepage-bookmarks
@@ -71,8 +71,7 @@ persistence:
       - path: /app/config/bookmarks.yaml
         subPath: bookmarks.yaml
         readOnly: true
-
-      # Settings configuration
+        # Settings configuration
   settings-config:
     type: configMap
     name: homepage-settings
@@ -80,8 +79,7 @@ persistence:
       - path: /app/config/settings.yaml
         subPath: settings.yaml
         readOnly: true
-
-      # Widgets configuration
+        # Widgets configuration
   widgets-config:
     type: configMap
     name: homepage-widgets
@@ -96,7 +94,7 @@ service:
         port: &port 3000
 route:
   app:
-        # Using the internal gateway — Homepage is a private dashboard, not public
+    # Using the internal gateway — Homepage is a private dashboard, not public
     parentRefs:
       - name: envoy-internal
         namespace: network
@@ -105,16 +103,5 @@ route:
       - backendRefs:
           - identifier: app
             port: *port
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (homepage).
-route:
-  app:
     hostnames:
       - homepage.jgrecu.dev
-controllers:
-  homepage:
-    containers:
-      app:
-        env:
-          HOMEPAGE_ALLOWED_HOSTS: homepage.jgrecu.dev,homepage.default.svc.cluster.local:3000

@@ -2,14 +2,14 @@
 # Helm values for app-template (home-assistant).
 controllers:
   home-assistant:
-        # Recreate — RWO PVC cannot be mounted by two pods simultaneously.
-        # HA also does not support running multiple instances.
+    # Recreate — RWO PVC cannot be mounted by two pods simultaneously.
+    # HA also does not support running multiple instances.
     strategy: Recreate
     containers:
       app:
         image:
           repository: ghcr.io/home-assistant/home-assistant
-              # renovate: datasource=docker depName=ghcr.io/home-assistant/home-assistant
+          # renovate: datasource=docker depName=ghcr.io/home-assistant/home-assistant
           tag: "2026.11.1"
         env:
           TZ: "Europe/Madrid"
@@ -18,8 +18,8 @@ controllers:
             enabled: true
             custom: true
             spec:
-                  # HA's /api/ endpoint requires auth; use tcp probe to avoid
-                  # false negatives during startup and token-less health checks
+              # HA's /api/ endpoint requires auth; use tcp probe to avoid
+              # false negatives during startup and token-less health checks
               tcpSocket:
                 port: &port 8123
               initialDelaySeconds: 60
@@ -37,10 +37,9 @@ controllers:
             memory: 512Mi
           limits:
             memory: 1Gi
-
 persistence:
-      # All HA config lives here: configuration.yaml, automations.yaml,
-      # scripts, blueprints, custom_components, and the SQLite database.
+  # All HA config lives here: configuration.yaml, automations.yaml,
+  # scripts, blueprints, custom_components, and the SQLite database.
   config:
     type: persistentVolumeClaim
     storageClass: longhorn
@@ -48,13 +47,11 @@ persistence:
     accessMode: ReadWriteOnce
     globalMounts:
       - path: /config
-
 service:
   app:
     ports:
       http:
         port: *port
-
 route:
   app:
     parentRefs:
@@ -71,12 +68,6 @@ route:
       gethomepage.dev/name: Home Assistant
       gethomepage.dev/icon: home-assistant.png
       gethomepage.dev/description: Smart home automation platform
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (home-assistant).
-route:
-  app:
+      gethomepage.dev/href: https://home-assistant.jgrecu.dev
     hostnames:
       - home-assistant.jgrecu.dev
-    annotations:
-      gethomepage.dev/href: https://home-assistant.jgrecu.dev

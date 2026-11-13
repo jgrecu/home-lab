@@ -3,6 +3,9 @@
 # Domain-bearing settings (HTTPRoutes, webhook secret) live in values.sops.yaml (fully encrypted).
 fullnameOverride: argocd
 
+global:
+  domain: argo.jgrecu.dev
+
 crds:
   install: true
   keep: true # never delete Applications by uninstalling the chart
@@ -30,6 +33,7 @@ configs:
     # ksops = kustomize exec plugin; --enable-helm only for the few kustomize helmCharts apps
     # --helm-command: kustomize runs helm with a minimal env (no HELM_PLUGINS), bypass the helm-secrets wrapper
     # --load-restrictor: same as Flux (e.g. volsync/config references ../namespace.yaml)
+    url: https://argo.jgrecu.dev
     kustomize.buildOptions: "--enable-alpha-plugins --enable-exec --enable-helm --helm-command /usr/local/bin/helm --load-restrictor LoadRestrictionsNone"
     helm.valuesFileSchemes: >-
       secrets+age-import, secrets+age-import-kubernetes,
@@ -199,74 +203,3 @@ repoServer:
           mountPath: /custom-tools
         - name: tmp
           mountPath: /tmp
-
-# --- merged from values.sops.yaml ---
-# Fully encrypted by sops (.sops.yaml rule for values.sops.yaml): keeps the domain out of git.
-global:
-  domain: argo.jgrecu.dev
-configs:
-  cm:
-    url: https://argo.jgrecu.dev
-  secret:
-    # GitHub webhook secret (Settings → Webhooks → https://argo-webhook.<domain>/api/webhook)
-server:
-  # UI/API: LAN only
-  httproute:
-    enabled: true
-    parentRefs:
-      - name: envoy-internal
-        namespace: network
-        sectionName: https
-    annotations:
-      gethomepage.dev/enabled: "true"
-      gethomepage.dev/group: Infrastructure
-      gethomepage.dev/name: Argo CD
-      gethomepage.dev/icon: argo-cd.png
-      gethomepage.dev/description: GitOps continuous delivery
-      gethomepage.dev/href: https://argo.jgrecu.dev
-    hostnames:
-      - argo.jgrecu.dev
-extraObjects:
-  - apiVersion: external-secrets.io/v1
-    kind: ExternalSecret
-    metadata:
-      name: argocd-oidc-secret
-      namespace: argo-system
-    spec:
-      refreshInterval: 1h
-      secretStoreRef:
-        name: vault
-        kind: ClusterSecretStore
-      target:
-        name: argocd-secret
-        creationPolicy: Merge
-      data:
-        - secretKey: oidc.pocket-id.clientID
-          remoteRef:
-            key: argocd
-            property: oidc-client-id
-        - secretKey: oidc.pocket-id.clientSecret
-          remoteRef:
-            key: argocd
-            property: oidc-client-secret
-  # GitHub push webhook: only /api/webhook is published on the external gateway
-  - apiVersion: gateway.networking.k8s.io/v1
-    kind: HTTPRoute
-    metadata:
-      name: argocd-webhook
-      namespace: argo-system
-    spec:
-      parentRefs:
-        - name: envoy-external
-          namespace: network
-          sectionName: https
-      hostnames:
-        - argo-webhook.jgrecu.dev
-      rules:
-        - matches:
-            - path:
-                type: Exact
-                value: /api/webhook
-          backendRefs:
-            - name: argocd-server
-              port: 80

@@ -9,12 +9,12 @@ controllers:
       app:
         image:
           repository: ghcr.io/lingarr-translate/lingarr
-              # renovate: datasource=docker depName=ghcr.io/lingarr-translate/lingarr
+          # renovate: datasource=docker depName=ghcr.io/lingarr-translate/lingarr
           tag: 1.4.1
         env:
           TZ: "Europe/Madrid"
           ASPNETCORE_URLS: "http://+:9876"
-              # PostgreSQL connection via CNPG-managed cluster
+          # PostgreSQL connection via CNPG-managed cluster
           DB_CONNECTION: "postgresql"
           DB_HOST: "lingarr-postgres-rw"
           DB_PORT: "5432"
@@ -23,24 +23,24 @@ controllers:
           DB_PASSWORD:
             valueFrom:
               secretKeyRef:
-                    # Auto-created by CNPG operator from the Cluster resource
+                # Auto-created by CNPG operator from the Cluster resource
                 name: lingarr-postgres-app
                 key: password
-              # Radarr integration
+                # Radarr integration
           RADARR_URL: "http://radarr.downloads.svc.cluster.local:7878"
           RADARR_API_KEY:
             valueFrom:
               secretKeyRef:
                 name: lingarr-secret
                 key: radarr-api-key
-              # Sonarr integration
+                # Sonarr integration
           SONARR_URL: "http://sonarr.downloads.svc.cluster.local:8989"
           SONARR_API_KEY:
             valueFrom:
               secretKeyRef:
                 name: lingarr-secret
                 key: sonarr-api-key
-              # Opt out of anonymous telemetry
+                # Opt out of anonymous telemetry
           TELEMETRY_ENABLED: "false"
         probes:
           liveness: &probes
@@ -64,7 +64,6 @@ controllers:
             memory: 256Mi
           limits:
             memory: 512Mi
-
 persistence:
   config:
     type: persistentVolumeClaim
@@ -73,21 +72,18 @@ persistence:
     accessMode: ReadWriteOnce
     globalMounts:
       - path: /app/config
-
-      # Shared NFS media library — Lingarr reads existing subtitles and
-      # writes translated output alongside video files.
+        # Shared NFS media library — Lingarr reads existing subtitles and
+        # writes translated output alongside video files.
   media:
     type: persistentVolumeClaim
     existingClaim: media-library
     globalMounts:
       - path: /media
-
 service:
   app:
     ports:
       http:
         port: *port
-
 route:
   app:
     annotations:
@@ -96,6 +92,7 @@ route:
       gethomepage.dev/name: Lingarr
       gethomepage.dev/icon: https://raw.githubusercontent.com/lingarr-translate/lingarr/main/Lingarr/Client/public/android-chrome-512x512.png
       gethomepage.dev/description: Automated subtitle translation
+      gethomepage.dev/href: https://lingarr.jgrecu.dev
     parentRefs:
       - name: envoy-internal
         namespace: network
@@ -104,12 +101,5 @@ route:
       - backendRefs:
           - identifier: app
             port: *port
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (lingarr).
-route:
-  app:
     hostnames:
       - lingarr.jgrecu.dev
-    annotations:
-      gethomepage.dev/href: https://lingarr.jgrecu.dev

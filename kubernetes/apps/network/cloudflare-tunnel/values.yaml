@@ -13,8 +13,8 @@ controllers:
         env:
           NO_AUTOUPDATE: true
           TUNNEL_METRICS: 0.0.0.0:8080
-          TUNNEL_POST_QUANTUM: true     # disable when using http2
-          TUNNEL_TRANSPORT_PROTOCOL: quic     # or http2
+          TUNNEL_POST_QUANTUM: true # disable when using http2
+          TUNNEL_TRANSPORT_PROTOCOL: quic # or http2
         envFrom:
           - secretRef:
               name: cloudflare-tunnel-secret
@@ -35,7 +35,8 @@ controllers:
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
-          capabilities: {drop: ["ALL"]}
+          capabilities:
+            drop: ["ALL"]
         resources:
           requests:
             cpu: 15m
@@ -63,9 +64,6 @@ persistence:
     globalMounts:
       - path: /etc/cloudflared/config.yaml
         subPath: config.yaml
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (cloudflare-tunnel).
 configMaps:
   config:
     data:

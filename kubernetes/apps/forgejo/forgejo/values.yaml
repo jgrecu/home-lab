@@ -11,9 +11,12 @@ gitea:
     server:
       SSH_PORT: 22
       DISABLE_SSH: "false"
+      ROOT_URL: https://forgejo.jgrecu.dev
+      DOMAIN: forgejo.jgrecu.dev
+      SSH_DOMAIN: forgejo.jgrecu.dev
     database:
       DB_TYPE: postgres
-          # CloudNativePG creates a service named <cluster>-rw for the primary
+      # CloudNativePG creates a service named <cluster>-rw for the primary
       HOST: "forgejo-postgres-rw:5432"
       NAME: forgejo
       USER: forgejo
@@ -27,12 +30,12 @@ gitea:
       TYPE: redis
       CONN_STR: redis://dragonfly.database-system.svc.cluster.local:6379/2
     packages:
-          # Enables the built-in container registry.
-          # Push/pull images: forgejo.<domain>/username/image:tag
+      # Enables the built-in container registry.
+      # Push/pull images: forgejo.<domain>/username/image:tag
       ENABLED: "true"
     actions:
-          # Enables Forgejo Actions (GitHub Actions-compatible CI/CD).
-          # Runners must register separately — see forgejo-runner app.
+      # Enables Forgejo Actions (GitHub Actions-compatible CI/CD).
+      # Runners must register separately — see forgejo-runner app.
       ENABLED: "true"
       DEFAULT_ACTIONS_URL: "https://code.forgejo.org"
       # Inject the database password from the CNPG-generated secret.
@@ -44,39 +47,25 @@ gitea:
         secretKeyRef:
           name: forgejo-postgres-app
           key: password
-
 persistence:
   enabled: true
   storageClass: longhorn
   size: 20Gi
-
-    # PostgreSQL is managed by CloudNativePG — disable the subcharts
+  # PostgreSQL is managed by CloudNativePG — disable the subcharts
 postgresql:
   enabled: false
 postgresql-ha:
   enabled: false
-
-    # Redis is handled by shared Dragonfly instance
+  # Redis is handled by shared Dragonfly instance
 redis-cluster:
   enabled: false
-
-    # Route managed separately via httproute.yaml
+  # Route managed separately via httproute.yaml
 route:
   enabled: false
-
-    # Container resources
+  # Container resources
 resources:
   requests:
     cpu: 15m
     memory: 128Mi
   limits:
     memory: 256Mi
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for forgejo (forgejo).
-gitea:
-  config:
-    server:
-      ROOT_URL: https://forgejo.jgrecu.dev
-      DOMAIN: forgejo.jgrecu.dev
-      SSH_DOMAIN: forgejo.jgrecu.dev

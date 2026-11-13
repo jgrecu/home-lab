@@ -9,11 +9,11 @@ controllers:
       app:
         image:
           repository: lscr.io/linuxserver/bazarr
-              # renovate: datasource=docker depName=lscr.io/linuxserver/bazarr
+          # renovate: datasource=docker depName=lscr.io/linuxserver/bazarr
           tag: 1.6.2
         env:
           TZ: "Europe/Madrid"
-              # LinuxServer: drop to this UID/GID after s6-overlay init
+          # LinuxServer: drop to this UID/GID after s6-overlay init
           PUID: "1000"
           PGID: "1000"
         probes:
@@ -27,8 +27,8 @@ controllers:
               initialDelaySeconds: 30
               periodSeconds: 30
           readiness: *probes
-            # LinuxServer images use s6-overlay which starts as root and drops
-            # to PUID/PGID. Do not drop all capabilities or the init will fail.
+          # LinuxServer images use s6-overlay which starts as root and drops
+          # to PUID/PGID. Do not drop all capabilities or the init will fail.
         securityContext:
           allowPrivilegeEscalation: false
         resources:
@@ -37,7 +37,6 @@ controllers:
             memory: 320Mi
           limits:
             memory: 640Mi
-
       exportarr:
         image:
           repository: ghcr.io/onedr0p/exportarr
@@ -59,7 +58,6 @@ controllers:
             memory: 64Mi
           limits:
             memory: 128Mi
-
 persistence:
   config:
     type: persistentVolumeClaim
@@ -68,16 +66,14 @@ persistence:
     accessMode: ReadWriteOnce
     globalMounts:
       - path: /config
-
-      # NFS media library — Bazarr writes subtitles directly to /media/Films and /media/Series
-      # where Radarr/Sonarr have already placed the video files.
-      # Uses shared static PV pointing to /videos on NAS
+        # NFS media library — Bazarr writes subtitles directly to /media/Films and /media/Series
+        # where Radarr/Sonarr have already placed the video files.
+        # Uses shared static PV pointing to /videos on NAS
   media:
     type: persistentVolumeClaim
     existingClaim: media-library
     globalMounts:
       - path: /media
-
 service:
   app:
     ports:
@@ -85,7 +81,6 @@ service:
         port: *port
       metrics:
         port: 9707
-
 route:
   app:
     annotations:
@@ -94,6 +89,7 @@ route:
       gethomepage.dev/name: Bazarr
       gethomepage.dev/icon: bazarr.png
       gethomepage.dev/description: Subtitle manager for Radarr and Sonarr
+      gethomepage.dev/href: https://bazarr.jgrecu.dev
     parentRefs:
       - name: envoy-internal
         namespace: network
@@ -102,12 +98,5 @@ route:
       - backendRefs:
           - identifier: app
             port: *port
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (bazarr).
-route:
-  app:
     hostnames:
       - bazarr.jgrecu.dev
-    annotations:
-      gethomepage.dev/href: https://bazarr.jgrecu.dev

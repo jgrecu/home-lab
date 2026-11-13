@@ -9,7 +9,7 @@ controllers:
           repository: ghcr.io/kashalls/kromgo
           tag: v0.10.0
         env:
-              # Prometheus endpoint to query metrics from
+          # Prometheus endpoint to query metrics from
           PROMETHEUS_URL: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090
           PORT: &port 8080
           HEALTH_PORT: &healthPort 8888
@@ -32,7 +32,8 @@ controllers:
                 port: *healthPort
         securityContext:
           allowPrivilegeEscalation: false
-          capabilities: {drop: ["ALL"]}
+          capabilities:
+            drop: ["ALL"]
           readOnlyRootFilesystem: true
         resources:
           requests:
@@ -40,7 +41,6 @@ controllers:
             memory: 100Mi
           limits:
             memory: 256Mi
-
 configMaps:
   config:
     data:
@@ -84,7 +84,6 @@ configMaps:
             suffix: " pods"
             colors:
               - { color: "green", min: 1, max: 9999 }
-
 persistence:
   config:
     type: configMap
@@ -93,7 +92,6 @@ persistence:
       - path: /kromgo/config.yaml
         subPath: config.yaml
         readOnly: true
-
 service:
   app:
     ports:
@@ -101,12 +99,11 @@ service:
         port: *port
       health:
         port: *healthPort
-
 route:
   app:
-        # Internal only — badges are generated from the internal URL and
-        # embedded in READMEs or dashboards. No public exposure needed.
-        # No homepage entry — Kromgo has no UI, just API endpoints for badges.
+    # Internal only — badges are generated from the internal URL and
+    # embedded in READMEs or dashboards. No public exposure needed.
+    # No homepage entry — Kromgo has no UI, just API endpoints for badges.
     parentRefs:
       - name: envoy-internal
         namespace: network
@@ -115,10 +112,5 @@ route:
       - backendRefs:
           - identifier: app
             port: *port
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (kromgo).
-route:
-  app:
     hostnames:
       - kromgo.jgrecu.dev

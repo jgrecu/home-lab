@@ -10,7 +10,7 @@ controllers:
       app:
         image:
           repository: cloudlena/s3manager
-              # renovate: datasource=docker depName=cloudlena/s3manager
+          # renovate: datasource=docker depName=cloudlena/s3manager
           tag: v0.13.0
         env:
           ENDPOINT: "seaweedfs-filer.storage.svc.cluster.local:8333"
@@ -42,7 +42,8 @@ controllers:
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
-          capabilities: {drop: ["ALL"]}
+          capabilities:
+            drop: ["ALL"]
         resources:
           requests:
             cpu: 15m
@@ -75,12 +76,6 @@ route:
       gethomepage.dev/group: "Storage"
       gethomepage.dev/description: "Browse SeaweedFS S3 buckets"
       gethomepage.dev/icon: "minio.png"
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (s3manager).
-route:
-  app:
+      gethomepage.dev/href: https://s3.jgrecu.dev
     hostnames:
       - s3.jgrecu.dev
-    annotations:
-      gethomepage.dev/href: https://s3.jgrecu.dev

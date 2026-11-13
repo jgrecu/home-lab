@@ -6,7 +6,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/arabcoders/watchstate
-              # renovate: datasource=docker depName=ghcr.io/arabcoders/watchstate
+          # renovate: datasource=docker depName=ghcr.io/arabcoders/watchstate
           tag: v1.10.12
         env:
           TZ: "Europe/Madrid"
@@ -30,12 +30,10 @@ controllers:
             memory: 325Mi
           limits:
             memory: 512Mi
-
 defaultPodOptions:
   securityContext:
     fsGroup: 1000
     fsGroupChangePolicy: "Always"
-
 persistence:
   config:
     type: persistentVolumeClaim
@@ -44,13 +42,11 @@ persistence:
     accessMode: ReadWriteOnce
     globalMounts:
       - path: /config
-
 service:
   app:
     ports:
       http:
         port: *port
-
 route:
   app:
     annotations:
@@ -59,6 +55,7 @@ route:
       gethomepage.dev/group: "Entertainment"
       gethomepage.dev/description: "Media watch state sync"
       gethomepage.dev/icon: "mdi-eye-check"
+      gethomepage.dev/href: https://watchstate.jgrecu.dev
     parentRefs:
       - name: envoy-internal
         namespace: network
@@ -67,12 +64,5 @@ route:
       - backendRefs:
           - identifier: app
             port: *port
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (watchstate).
-route:
-  app:
     hostnames:
       - watchstate.jgrecu.dev
-    annotations:
-      gethomepage.dev/href: https://watchstate.jgrecu.dev

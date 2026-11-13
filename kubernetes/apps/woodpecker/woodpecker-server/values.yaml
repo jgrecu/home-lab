@@ -9,14 +9,14 @@ controllers:
           repository: woodpeckerci/woodpecker-server
           tag: v3.20.1
         env:
-              # Database
+          # Database
           WOODPECKER_DATABASE_DRIVER: postgres
           WOODPECKER_DATABASE_DATASOURCE:
             valueFrom:
               secretKeyRef:
                 name: woodpecker-postgres-app
                 key: uri
-              # Forgejo OAuth Integration
+                # Forgejo OAuth Integration
           WOODPECKER_GITEA: "true"
           WOODPECKER_GITEA_CLIENT:
             valueFrom:
@@ -28,18 +28,20 @@ controllers:
               secretKeyRef:
                 name: woodpecker-server-secret
                 key: gitea-client-secret
-              # Server Configuration
+                # Server Configuration
           WOODPECKER_SERVER_ADDR: ":8000"
           WOODPECKER_GRPC_ADDR: ":9000"
           WOODPECKER_ADMIN: "jeremy"
-              # Agent Authentication
+          # Agent Authentication
           WOODPECKER_AGENT_SECRET:
             valueFrom:
               secretKeyRef:
                 name: woodpecker-server-secret
                 key: agent-secret
-              # Privileged Plugins
+                # Privileged Plugins
           WOODPECKER_PLUGINS_PRIVILEGED: "woodpeckerci/plugin-docker-buildx:*,woodpeckerci/plugin-docker:*,plugins/docker:*"
+          WOODPECKER_GITEA_URL: https://forgejo.jgrecu.dev
+          WOODPECKER_HOST: https://woodpecker.jgrecu.dev
         probes:
           startup:
             enabled: true
@@ -50,7 +52,7 @@ controllers:
                 port: 8000
               initialDelaySeconds: 10
               periodSeconds: 5
-              failureThreshold: 30      # 150 seconds total to start
+              failureThreshold: 30 # 150 seconds total to start
           liveness:
             enabled: true
             custom: true
@@ -71,7 +73,8 @@ controllers:
               periodSeconds: 5
         securityContext:
           allowPrivilegeEscalation: false
-          capabilities: {drop: ["ALL"]}
+          capabilities:
+            drop: ["ALL"]
           runAsUser: 1000
           runAsGroup: 1000
           runAsNonRoot: true
@@ -102,13 +105,3 @@ service:
         port: 8000
       grpc:
         port: 9000
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (woodpecker-server).
-controllers:
-  woodpecker-server:
-    containers:
-      app:
-        env:
-          WOODPECKER_GITEA_URL: https://forgejo.jgrecu.dev
-          WOODPECKER_HOST: https://woodpecker.jgrecu.dev

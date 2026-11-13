@@ -2,10 +2,10 @@
 # Helm values for app-template (transmission).
 controllers:
   transmission:
-        # IMPORTANT: Transmission, Radarr, and Sonarr all share the media-downloads
-        # PVC, which is ReadWriteOnce. They must all land on the same node.
-        # Label your chosen node before deploying:
-        #   kubectl label node <node-name> media-node=true
+    # IMPORTANT: Transmission, Radarr, and Sonarr all share the media-downloads
+    # PVC, which is ReadWriteOnce. They must all land on the same node.
+    # Label your chosen node before deploying:
+    #   kubectl label node <node-name> media-node=true
     pod:
       nodeSelector:
         media-node: "true"
@@ -13,15 +13,15 @@ controllers:
       app:
         image:
           repository: lscr.io/linuxserver/transmission
-              # renovate: datasource=docker depName=lscr.io/linuxserver/transmission
+          # renovate: datasource=docker depName=lscr.io/linuxserver/transmission
           tag: 4.1.4
         env:
           TZ: "Europe/Madrid"
-              # LinuxServer: drop to this UID/GID after s6-overlay init
+          # LinuxServer: drop to this UID/GID after s6-overlay init
           PUID: "1000"
           PGID: "1000"
-              # Transmission peer port — open this on your router for better
-              # connectivity. Must match the service port below.
+          # Transmission peer port — open this on your router for better
+          # connectivity. Must match the service port below.
           PEERPORT: "51413"
         probes:
           liveness:
@@ -44,7 +44,6 @@ controllers:
             memory: 192Mi
           limits:
             memory: 512Mi
-
 persistence:
   config:
     type: persistentVolumeClaim
@@ -53,23 +52,21 @@ persistence:
     accessMode: ReadWriteOnce
     globalMounts:
       - path: /config
-
-      # Shared download staging area. Radarr/Sonarr watch this path and move
-      # completed downloads to NFS. All three apps must be on the same node
-      # because this PVC is ReadWriteOnce.
+        # Shared download staging area. Radarr/Sonarr watch this path and move
+        # completed downloads to NFS. All three apps must be on the same node
+        # because this PVC is ReadWriteOnce.
   downloads:
     type: persistentVolumeClaim
     existingClaim: media-downloads
     globalMounts:
       - path: /downloads
-
 service:
   app:
     ports:
       http:
         port: *port
-      # Expose the peer port for incoming torrent connections.
-      # Forward this port on your router to your cluster's gateway IP.
+        # Expose the peer port for incoming torrent connections.
+        # Forward this port on your router to your cluster's gateway IP.
   peer:
     controller: transmission
     type: LoadBalancer
@@ -82,7 +79,6 @@ service:
       peer-udp:
         port: 51413
         protocol: UDP
-
 route:
   app:
     annotations:
@@ -91,6 +87,7 @@ route:
       gethomepage.dev/name: Transmission
       gethomepage.dev/icon: transmission.png
       gethomepage.dev/description: BitTorrent client
+      gethomepage.dev/href: https://transmission.jgrecu.dev
     parentRefs:
       - name: envoy-internal
         namespace: network
@@ -99,13 +96,6 @@ route:
       - backendRefs:
           - identifier: app
             port: 9091
-    # Internal only — web UI is available within the cluster only
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (transmission).
-route:
-  app:
+            # Internal only — web UI is available within the cluster only
     hostnames:
       - transmission.jgrecu.dev
-    annotations:
-      gethomepage.dev/href: https://transmission.jgrecu.dev

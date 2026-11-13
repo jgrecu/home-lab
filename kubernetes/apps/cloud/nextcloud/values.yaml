@@ -12,17 +12,17 @@ controllers:
           repository: nextcloud
           tag: 35.0.2-apache
         env:
-              # Initial admin account — only used on first boot.
-              # After init, credentials are stored in the Longhorn PVC.
+          # Initial admin account — only used on first boot.
+          # After init, credentials are stored in the Longhorn PVC.
           NEXTCLOUD_ADMIN_USER: admin
           NEXTCLOUD_ADMIN_PASSWORD:
             valueFrom:
               secretKeyRef:
                 name: nextcloud-secret
                 key: admin-password
-              # Trusted domain — must match your actual hostname exactly
+                # Trusted domain — must match your actual hostname exactly
           NEXTCLOUD_DATA_DIR: /var/www/html/data
-              # PostgreSQL connection via CNPG-managed cluster
+          # PostgreSQL connection via CNPG-managed cluster
           POSTGRES_HOST: nextcloud-postgres-rw
           POSTGRES_DB: nextcloud
           POSTGRES_USER: nextcloud
@@ -31,15 +31,16 @@ controllers:
               secretKeyRef:
                 name: nextcloud-postgres-app
                 key: password
-              # Redis for file locking and session caching.
-              # Without Redis, Nextcloud uses DB-level locking which is slow.
-              # Using shared Dragonfly instance from database-system namespace.
+                # Redis for file locking and session caching.
+                # Without Redis, Nextcloud uses DB-level locking which is slow.
+                # Using shared Dragonfly instance from database-system namespace.
           REDIS_HOST: dragonfly.database-system.svc.cluster.local
           REDIS_HOST_PORT: "6379"
-              # PHP memory limit — 512Mi covers most workloads including
-              # thumbnail generation and file uploads
+          # PHP memory limit — 512Mi covers most workloads including
+          # thumbnail generation and file uploads
           PHP_MEMORY_LIMIT: 512M
           PHP_UPLOAD_LIMIT: 10G
+          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.jgrecu.dev
         probes:
           liveness: &probes
             enabled: true
@@ -56,7 +57,7 @@ controllers:
               timeoutSeconds: 10
               failureThreshold: 5
           readiness: *probes
-            # Nextcloud requires root and CHOWN capability for rsync during init
+          # Nextcloud requires root and CHOWN capability for rsync during init
         securityContext:
           runAsUser: 0
           runAsGroup: 0
@@ -66,11 +67,10 @@ controllers:
             memory: 1Gi
           limits:
             memory: 2Gi
-
-      # Nextcloud requires background jobs for notifications, sharing cleanup,
-      # previews, and other housekeeping. This cronjob runs every 5 minutes.
-      # It uses the same image and persistence as the main app so it has
-      # access to config and data.
+            # Nextcloud requires background jobs for notifications, sharing cleanup,
+            # previews, and other housekeeping. This cronjob runs every 5 minutes.
+            # It uses the same image and persistence as the main app so it has
+            # access to config and data.
   cron:
     type: cronjob
     cronjob:
@@ -93,7 +93,7 @@ controllers:
           tag: 35.0.2-apache
         command: ["su", "-s", "/bin/bash", "www-data", "-c", "php -f /var/www/html/cron.php"]
         env:
-              # Database connection - required for cron jobs to access Nextcloud DB
+          # Database connection - required for cron jobs to access Nextcloud DB
           POSTGRES_HOST: nextcloud-postgres-rw
           POSTGRES_DB: nextcloud
           POSTGRES_USER: nextcloud
@@ -102,10 +102,10 @@ controllers:
               secretKeyRef:
                 name: nextcloud-postgres-app
                 key: password
-              # Redis for caching and locking
+                # Redis for caching and locking
           REDIS_HOST: dragonfly.database-system.svc.cluster.local
           REDIS_HOST_PORT: "6379"
-              # PHP settings
+          # PHP settings
           PHP_MEMORY_LIMIT: 512M
         securityContext:
           runAsUser: 0
@@ -116,11 +116,10 @@ controllers:
             memory: 300Mi
           limits:
             memory: 512Mi
-
 persistence:
-      # Nextcloud installation + config stored on Longhorn.
-      # This includes: nextcloud source code, config/config.php, apps/, themes/
-      # Survives pod restarts. Longhorn handles replication across nodes.
+  # Nextcloud installation + config stored on Longhorn.
+  # This includes: nextcloud source code, config/config.php, apps/, themes/
+  # Survives pod restarts. Longhorn handles replication across nodes.
   html:
     type: persistentVolumeClaim
     storageClass: longhorn
@@ -128,17 +127,15 @@ persistence:
     accessMode: ReadWriteOnce
     globalMounts:
       - path: /var/www/html
-
-      # User data on NFS — documents, photos, videos uploaded by users.
-      # Uses static PV pointing directly to /nextcloud on NAS.
+        # User data on NFS — documents, photos, videos uploaded by users.
+        # Uses static PV pointing directly to /nextcloud on NAS.
   data:
     type: persistentVolumeClaim
     existingClaim: nextcloud-nfs-data
     globalMounts:
       - path: /var/www/html/data
-
-      # Custom config mounted from ConfigMap — persists trusted_domains,
-      # trusted_proxies, and overwrite settings across reinstalls.
+        # Custom config mounted from ConfigMap — persists trusted_domains,
+        # trusted_proxies, and overwrite settings across reinstalls.
   custom-config:
     type: configMap
     name: nextcloud-custom-config
@@ -146,14 +143,12 @@ persistence:
       - path: /var/www/html/config/custom.config.php
         subPath: custom.config.php
         readOnly: true
-
 service:
   app:
     controller: nextcloud
     ports:
       http:
         port: *port
-
 route:
   app:
     parentRefs:
@@ -176,18 +171,6 @@ route:
       gethomepage.dev/name: Nextcloud
       gethomepage.dev/icon: nextcloud.png
       gethomepage.dev/description: Private cloud file sync and sharing
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (nextcloud).
-route:
-  app:
+      gethomepage.dev/href: https://nextcloud.jgrecu.dev
     hostnames:
       - nextcloud.jgrecu.dev
-    annotations:
-      gethomepage.dev/href: https://nextcloud.jgrecu.dev
-controllers:
-  nextcloud:
-    containers:
-      app:
-        env:
-          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.jgrecu.dev

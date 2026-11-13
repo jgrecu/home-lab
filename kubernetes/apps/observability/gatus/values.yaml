@@ -2,7 +2,7 @@
 # Helm values for app-template (gatus).
 controllers:
   gatus:
-        # Recreate strategy required: RWO PVC cannot be attached to multiple pods
+    # Recreate strategy required: RWO PVC cannot be attached to multiple pods
     strategy: Recreate
     containers:
       app:
@@ -10,7 +10,7 @@ controllers:
           repository: ghcr.io/twin/gatus
           tag: v5.38.0
         env:
-              # Tell Gatus where its config file lives
+          # Tell Gatus where its config file lives
           GATUS_CONFIG_PATH: /config/config.yaml
         probes:
           liveness: &probes
@@ -25,7 +25,8 @@ controllers:
           readiness: *probes
         securityContext:
           allowPrivilegeEscalation: false
-          capabilities: {drop: ["ALL"]}
+          capabilities:
+            drop: ["ALL"]
           readOnlyRootFilesystem: true
         resources:
           requests:
@@ -33,16 +34,15 @@ controllers:
             memory: 100Mi
           limits:
             memory: 256Mi
-
 persistence:
-      # Config file from the ConfigMap defined above
+  # Config file from the ConfigMap defined above
   config:
     type: configMap
     identifier: config
     globalMounts:
       - path: /config
         readOnly: true
-      # SQLite database for storing uptime history
+        # SQLite database for storing uptime history
   data:
     type: persistentVolumeClaim
     storageClass: longhorn
@@ -50,13 +50,11 @@ persistence:
     accessMode: ReadWriteOnce
     globalMounts:
       - path: /data
-
 service:
   app:
     ports:
       http:
         port: *port
-
 route:
   app:
     annotations:
@@ -65,6 +63,7 @@ route:
       gethomepage.dev/group: "Observability"
       gethomepage.dev/description: "Status page and uptime monitoring"
       gethomepage.dev/icon: "gatus.png"
+      gethomepage.dev/href: https://gatus.jgrecu.dev
     parentRefs:
       - name: envoy-internal
         namespace: network
@@ -73,19 +72,12 @@ route:
       - backendRefs:
           - identifier: app
             port: *port
-
-# --- merged from values.sops.yaml ---
-# Helm values with the domain (fully encrypted) for app-template (gatus).
-route:
-  app:
     hostnames:
       - gatus.jgrecu.dev
-    annotations:
-      gethomepage.dev/href: https://gatus.jgrecu.dev
 configMaps:
   config:
     data:
-      config.yaml: |
+      config.yaml: |-
         # Gatus status page configuration.
         # Add an entry per service you want to monitor.
         # Gatus checks each endpoint on the defined interval and
