@@ -13,7 +13,7 @@ server:
   image:
     repository: hashicorp/vault
         # Pinned to match work environment
-    tag: "2.2.1"
+    tag: "2.2.2"
     pullPolicy: IfNotPresent
 
       # HA mode with integrated Raft storage (single replica: 1–2 node cluster).
