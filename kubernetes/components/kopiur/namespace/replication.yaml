@@ -13,7 +13,6 @@ spec:
   destination:
     s3:
       bucket: homelab-volsync
-      prefix: placeholder/
       endpoint: b27b804460d838473e1d76de2194d12f.eu.r2.cloudflarestorage.com
       region: auto
       auth:
@@ -24,5 +23,5 @@ spec:
     jitter: 1h
   sync:
     parallel: 8
-    deleteExtra: true
+    deleteExtra: false
   suspend: false

@@ -12,10 +12,3 @@ patches:
       - op: replace
         path: /spec/backend/s3/prefix
         value: entertainment/
-  - target:
-      kind: RepositoryReplication
-      name: kopiur-r2-replication
-    patch: |
-      - op: replace
-        path: /spec/destination/s3/prefix
-        value: entertainment/

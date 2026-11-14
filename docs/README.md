@@ -14,7 +14,7 @@ Documentation for the home lab Kubernetes cluster (3× Lenovo ThinkCentre M900, 
 | Secrets | HashiCorp Vault + External Secrets Operator |
 | Networking | Envoy Gateway, Cloudflare Tunnel, Cilium |
 | Storage | Longhorn (block), SeaweedFS (S3), NFS |
-| Backups | Kopiur → SeaweedFS (local) + Cloudflare R2 (offsite mirror) |
+| Backups | VolSync → SeaweedFS (local) + Cloudflare R2 (offsite) |
 | Upgrades | Tuppr (Talos/K8s), Renovate (images/charts) |
 
 ### Secret Management
@@ -33,15 +33,14 @@ See [Secret Management](./SECRET_MANAGEMENT.md) for full details.
 
 ```
 PVC data
-  ↓  Kopiur (Kopia snapshots, daily)
-  ├── SeaweedFS S3 (in-cluster, primary repository)
-  └── Cloudflare R2 (offsite, repository mirror)
+  ↓  VolSync (restic, daily)
+  ├── SeaweedFS S3 (in-cluster, fast restore)
+  └── Cloudflare R2 (offsite, disaster recovery)
 ```
 
 - **22 PVCs** backed up across all namespaces
-- Retention per app: 5 latest, 7 daily, 4 weekly, 3 monthly restore points
-- R2 mirrors each namespace repository; `deleteExtra: true` keeps its object prefix aligned with SeaweedFS
-- Credentials stored in Vault (`secret-kv2/kopiur/`)
+- Retention: 7 daily, 4 weekly, 3 monthly (seaweedfs); 7 daily, 8 weekly, 6 monthly (R2)
+- Credentials stored in Vault (`secret-kv2/volsync/`)
 
 ## Guides
 

@@ -109,20 +109,13 @@ bootstrap-seaweedfs:
 restore-pvc NAMESPACE PVC CAPACITY:
     bash "{{REPO_ROOT}}/scripts/restore-pvc.sh" "{{NAMESPACE}}" "{{PVC}}" "{{CAPACITY}}"
 
-# Show Kopiur repositories, schedules, snapshots, and R2 replication status
+# Show Volsync backup status for all PVCs
 backup-status:
     #!/usr/bin/env bash
     set -euo pipefail
-    gum style --foreground 212 --bold "Kopiur Status"
-    kubectl kopiur status -A
-
-    echo ""
-    gum style --foreground 212 --bold "Snapshots"
-    kubectl get snapshots -A
-
-    echo ""
-    gum style --foreground 212 --bold "R2 Repository Replication"
-    kubectl get repositoryreplications -A
+    gum style --foreground 212 --bold "Volsync Backup Status"
+    kubectl get replicationsource -A \
+        -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name,SOURCE_PVC:.spec.sourcePVC,LAST_SYNC:.status.lastSyncTime,NEXT_SYNC:.status.nextSyncTime
 
 # Show PVC capacity and storage class across all namespaces
 pvc-usage:
