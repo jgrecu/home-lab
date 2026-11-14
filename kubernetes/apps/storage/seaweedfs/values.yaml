@@ -55,13 +55,13 @@ volume:
   logs:
     type: emptyDir
       # Resource constraints - Tier 3 storage infrastructure
-      # Based on VPA: 15m/121Mi observed
+      # Based on VPA: 15m/121Mi observed; limit raised to 512Mi after OOMKill under concurrent VolSync load
   resources:
     requests:
       cpu: 15m
       memory: 128Mi
     limits:
-      memory: 256Mi
+      memory: 512Mi
   livenessProbe:
     enabled: true
     initialDelaySeconds: 30
