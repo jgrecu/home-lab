@@ -19,7 +19,7 @@
     '**/*.sops.*',
     'templates/overrides/**',
     'templates/scripts/**',
-    '**/.terraform.lock.hcl',
+    'ops/terraform/**',
   ],
   argocd: {
     managerFilePatterns: [
