@@ -1,36 +1,50 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: downloads
 components:
-  - ../../../../components/kopiur/app
+  - ../../../../components/volsync
 patches:
   - target:
-      kind: SnapshotPolicy
-      name: kopiur-app
+      kind: ReplicationSource
+      name: volsync-local
     patch: |
       - op: replace
         path: /metadata/name
+        value: radarr-config-backup
+      - op: replace
+        path: /metadata/namespace
+        value: downloads
+      - op: replace
+        path: /spec/sourcePVC
         value: radarr
       - op: replace
-        path: /spec/sources/0/pvc/name
-        value: radarr
-      - op: replace
-        path: /spec/mover/resources/requests/memory
-        value: 256Mi
-      - op: replace
-        path: /spec/mover/resources/limits/memory
-        value: 512Mi
-  - target:
-      kind: SnapshotSchedule
-      name: kopiur-app
-    patch: |
-      - op: replace
-        path: /metadata/name
-        value: radarr
-      - op: replace
-        path: /spec/policyRef/name
-        value: radarr
-      - op: replace
-        path: /spec/schedule/cron
+        path: /spec/trigger/schedule
         value: "0 4 * * *"
+      - op: replace
+        path: /spec/restic/repository
+        value: radarr-config-restic-secret
+      - op: replace
+        path: /spec/restic/moverResources/limits/memory
+        value: 512Mi
+      - op: replace
+        path: /spec/restic/moverResources/requests/memory
+        value: 256Mi
+  - target:
+      kind: ReplicationSource
+      name: volsync-r2
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: radarr-config-backup-r2
+      - op: replace
+        path: /metadata/namespace
+        value: downloads
+      - op: replace
+        path: /spec/sourcePVC
+        value: radarr
+      - op: replace
+        path: /spec/restic/repository
+        value: radarr-config-r2-restic-secret
+resources:
+  - ./externalsecret.yaml
+  - ./externalsecret-r2.yaml

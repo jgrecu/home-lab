@@ -1,0 +1,41 @@
+---
+# Base ReplicationSource for local SeaweedFS backups.
+# Apps override only what differs from these defaults via Strategic Merge Patch.
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: volsync-local
+  namespace: default
+spec:
+  sourcePVC: placeholder
+  trigger:
+    schedule: "0 0 * * *"
+  restic:
+    repository: placeholder-restic-secret
+    retain:
+      daily: 7
+      weekly: 8
+      monthly: 6
+    copyMethod: Snapshot
+    storageClassName: longhorn-volsync
+    volumeSnapshotClassName: longhorn
+    capacity: 2Gi
+    accessModes:
+      - ReadWriteOnce
+    pruneIntervalDays: 7
+    cacheCapacity: 512Mi
+    cacheStorageClassName: longhorn-single
+    cacheAccessModes:
+      - ReadWriteOnce
+    moverResources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+    moverSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      fsGroup: 65534
+      seccompProfile:
+        type: RuntimeDefault

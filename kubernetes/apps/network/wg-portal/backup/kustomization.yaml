@@ -1,36 +1,56 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: network
 components:
-  - ../../../../components/kopiur/app
+  - ../../../../components/volsync
 patches:
   - target:
-      kind: SnapshotPolicy
-      name: kopiur-app
+      kind: ReplicationSource
+      name: volsync-local
     patch: |
       - op: replace
         path: /metadata/name
+        value: wg-portal-data-backup
+      - op: replace
+        path: /metadata/namespace
+        value: network
+      - op: replace
+        path: /spec/sourcePVC
         value: wg-portal
       - op: replace
-        path: /spec/sources/0/pvc/name
-        value: wg-portal
-      - op: replace
-        path: /spec/mover/resources/requests/memory
-        value: 256Mi
-      - op: replace
-        path: /spec/mover/resources/limits/memory
-        value: 512Mi
-  - target:
-      kind: SnapshotSchedule
-      name: kopiur-app
-    patch: |
-      - op: replace
-        path: /metadata/name
-        value: wg-portal
-      - op: replace
-        path: /spec/policyRef/name
-        value: wg-portal
-      - op: replace
-        path: /spec/schedule/cron
+        path: /spec/trigger/schedule
         value: "0 1 * * *"
+      - op: replace
+        path: /spec/restic/repository
+        value: wg-portal-data-restic-secret
+      - op: replace
+        path: /spec/restic/capacity
+        value: 1Gi
+      - op: replace
+        path: /spec/restic/moverResources/limits/memory
+        value: 512Mi
+      - op: replace
+        path: /spec/restic/moverResources/requests/memory
+        value: 256Mi
+  - target:
+      kind: ReplicationSource
+      name: volsync-r2
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: wg-portal-data-backup-r2
+      - op: replace
+        path: /metadata/namespace
+        value: network
+      - op: replace
+        path: /spec/sourcePVC
+        value: wg-portal
+      - op: replace
+        path: /spec/restic/repository
+        value: wg-portal-data-r2-restic-secret
+      - op: replace
+        path: /spec/restic/capacity
+        value: 1Gi
+resources:
+  - ./externalsecret.yaml
+  - ./externalsecret-r2.yaml

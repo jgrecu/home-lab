@@ -1,30 +1,44 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: entertainment
 components:
-  - ../../../../components/kopiur/app
+  - ../../../../components/volsync
 patches:
   - target:
-      kind: SnapshotPolicy
-      name: kopiur-app
+      kind: ReplicationSource
+      name: volsync-local
     patch: |
       - op: replace
         path: /metadata/name
+        value: seerr-config-backup
+      - op: replace
+        path: /metadata/namespace
+        value: entertainment
+      - op: replace
+        path: /spec/sourcePVC
         value: seerr
       - op: replace
-        path: /spec/sources/0/pvc/name
-        value: seerr
-  - target:
-      kind: SnapshotSchedule
-      name: kopiur-app
-    patch: |
-      - op: replace
-        path: /metadata/name
-        value: seerr
-      - op: replace
-        path: /spec/policyRef/name
-        value: seerr
-      - op: replace
-        path: /spec/schedule/cron
+        path: /spec/trigger/schedule
         value: "0 6 * * *"
+      - op: replace
+        path: /spec/restic/repository
+        value: seerr-config-restic-secret
+  - target:
+      kind: ReplicationSource
+      name: volsync-r2
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: seerr-config-backup-r2
+      - op: replace
+        path: /metadata/namespace
+        value: entertainment
+      - op: replace
+        path: /spec/sourcePVC
+        value: seerr
+      - op: replace
+        path: /spec/restic/repository
+        value: seerr-config-r2-restic-secret
+resources:
+  - ./externalsecret.yaml
+  - ./externalsecret-r2.yaml
