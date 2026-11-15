@@ -90,7 +90,6 @@ persistence:
   size: 1Gi
   mountPath: /data
 config:
-  log_level: debug
   database:
     # PVC is mounted at /app/data; without this wg-portal writes to /data (overlay, lost on restart)
     dsn: /app/data/sqlite.db
@@ -110,7 +109,6 @@ config:
           - email
           - groups
         field_map:
-          user_identifier: email
           email: email
           firstname: given_name
           lastname: family_name
@@ -118,7 +116,6 @@ config:
         admin_mapping:
           admin_group_regex: "^admins$"
         registration_enabled: true
-        log_user_info: true
 # backend.local_resolvconf_prefix is not exposed by the chart; set via env var instead
 # (resolvconf fails in the container and blocks interface saves when DNS is configured)
 env:
@@ -129,7 +126,7 @@ env:
     value: /data/sqlite.db
     # Core settings
   - name: WG_PORTAL_CORE_ADMIN_USER
-    value: jgrecu@proton.me
+    value: admin@wgportal.local
   - name: WG_PORTAL_CORE_ADMIN_PASSWORD
     valueFrom:
       secretKeyRef:
