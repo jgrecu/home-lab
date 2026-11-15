@@ -109,6 +109,7 @@ config:
           - email
           - groups
         field_map:
+          user_identifier: email
           email: email
           firstname: given_name
           lastname: family_name
@@ -126,7 +127,7 @@ env:
     value: /data/sqlite.db
     # Core settings
   - name: WG_PORTAL_CORE_ADMIN_USER
-    value: admin@wgportal.local
+    value: jgrecu@proton.me
   - name: WG_PORTAL_CORE_ADMIN_PASSWORD
     valueFrom:
       secretKeyRef:
