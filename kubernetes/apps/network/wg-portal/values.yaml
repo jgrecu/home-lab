@@ -129,7 +129,7 @@ env:
     # Core settings
   - name: WG_PORTAL_CORE_ADMIN_USER
     value: jgrecu@proton.me
-  - name: WG_PORTAL_CORE_LOG_LEVEL
+  - name: WG_PORTAL_LOG_LEVEL
     value: debug
   - name: WG_PORTAL_CORE_ADMIN_PASSWORD
     valueFrom:
