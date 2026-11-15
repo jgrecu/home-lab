@@ -62,6 +62,11 @@ kube-state-metrics:
   prometheus:
     monitor:
       honorTimestamps: false
+  # Disable customResourceState — no custom CRD metrics configured.
+  # Without this, the chart renders a volume mount for a ConfigMap that
+  # does not exist, keeping the pod stuck in ContainerCreating.
+  customResourceState:
+    enabled: false
   resources:
     requests:
       cpu: 15m
