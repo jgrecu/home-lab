@@ -90,6 +90,7 @@ persistence:
   size: 1Gi
   mountPath: /data
 config:
+  log_level: debug
   database:
     # PVC is mounted at /app/data; without this wg-portal writes to /data (overlay, lost on restart)
     dsn: /app/data/sqlite.db
@@ -129,8 +130,6 @@ env:
     # Core settings
   - name: WG_PORTAL_CORE_ADMIN_USER
     value: jgrecu@proton.me
-  - name: WG_PORTAL_LOG_LEVEL
-    value: debug
   - name: WG_PORTAL_CORE_ADMIN_PASSWORD
     valueFrom:
       secretKeyRef:
