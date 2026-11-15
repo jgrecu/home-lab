@@ -117,6 +117,7 @@ config:
         admin_mapping:
           admin_group_regex: "^admins$"
         registration_enabled: true
+        log_user_info: true
 # backend.local_resolvconf_prefix is not exposed by the chart; set via env var instead
 # (resolvconf fails in the container and blocks interface saves when DNS is configured)
 env:
@@ -128,6 +129,8 @@ env:
     # Core settings
   - name: WG_PORTAL_CORE_ADMIN_USER
     value: jgrecu@proton.me
+  - name: WG_PORTAL_CORE_LOG_LEVEL
+    value: debug
   - name: WG_PORTAL_CORE_ADMIN_PASSWORD
     valueFrom:
       secretKeyRef:
