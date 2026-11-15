@@ -179,6 +179,24 @@ configMaps:
               - "[STATUS] == 200"
               - "[RESPONSE_TIME] < 3000"
 
+          # Auth
+          - name: Pocket ID (via CloudFlare)
+            group: Auth
+            url: "https://id.jgrecu.dev/.well-known/openid-configuration"
+            interval: 5m
+            conditions:
+              - "[STATUS] == 200"
+              - "[BODY].issuer == https://id.jgrecu.dev"
+              - "[RESPONSE_TIME] < 3000"
+
+          - name: Pocket ID
+            group: Auth
+            url: "http://pocket-id.auth.svc.cluster.local/.well-known/openid-configuration"
+            interval: 5m
+            conditions:
+              - "[STATUS] == 200"
+              - "[BODY].issuer == https://id.jgrecu.dev"
+
           # Observability
           - name: Grafana
             group: Observability
