@@ -155,7 +155,7 @@ spec:
         - 10.42.0.0/16
   headers:
     enableEnvoyHeaders: false
-    response:
+    lateResponseHeaders:
       add:
         - name: Strict-Transport-Security
           value: "max-age=31536000; includeSubDomains"
