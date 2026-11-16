@@ -126,9 +126,9 @@ restore_snapshot() {
   log "Initialising throwaway Vault"
   local root
   root=$(vexec vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq -r .root_token)
-  sleep 5
+  wait_api
   log "Restoring snapshot (-force: snapshot comes from another cluster)"
-  vexec sh -c "VAULT_TOKEN=$root vault operator raft snapshot restore -force /snap/latest.snap"
+  kubectl -n "$NS" exec -i "$POD" -c vault -- sh -c 'read -r VAULT_TOKEN; export VAULT_TOKEN; vault operator raft snapshot restore -force /snap/latest.snap' <<<"$root"
 }
 
 verify_unsealed() {

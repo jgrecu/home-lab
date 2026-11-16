@@ -175,6 +175,7 @@ function update_cluster_config() {
         sed -i "s|^volsync_s3_secret_key:.*|volsync_s3_secret_key: \"${secret_access_key}\"|" "${cluster_yaml}"
     fi
 
+    rm -f "${cluster_yaml}.bak"
     log info "cluster.yaml updated successfully"
 }
 

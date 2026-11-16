@@ -54,7 +54,8 @@ spec:
             runAsGroup: 65534
           containers:
             - name: cleanup
-              image: bitnami/kubectl:latest
+              # renovate: datasource=docker depName=registry.k8s.io/kubectl
+              image: registry.k8s.io/kubectl:v1.37.2
               securityContext:
                 allowPrivilegeEscalation: false
                 capabilities:

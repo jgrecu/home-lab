@@ -11,6 +11,7 @@
 /cluster.toml
 # Legacy names kept for safety (these files are no longer used)
 /cluster.yaml
+/cluster.yaml.bak
 /nodes.yaml
 # Kubernetes
 kubeconfig*
