@@ -1,0 +1,77 @@
+---
+# Runs mysqldump before the VolSync backup window (04:00 < 05:00) so the
+# dump file is included in the next restic snapshot automatically.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: grimmory-db-backup
+  namespace: entertainment
+spec:
+  schedule: "0 4 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            fsGroup: 999
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: dump
+              # renovate: datasource=docker depName=docker.io/library/mariadb
+              image: mariadb:12.2.2
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+                readOnlyRootFilesystem: true
+              env:
+                - name: MARIADB_ROOT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: grimmory-mariadb-secret
+                      key: mariadb-root-password
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  DUMP_DIR="/data/db-backups"
+                  DUMP_FILE="${DUMP_DIR}/grimmory-$(date +%Y%m%d).sql.gz"
+                  mkdir -p "$DUMP_DIR"
+                  mysqldump \
+                    --host=grimmory-mariadb \
+                    --user=root \
+                    --password="$MARIADB_ROOT_PASSWORD" \
+                    --single-transaction \
+                    --routines \
+                    --triggers \
+                    grimmory | gzip > "$DUMP_FILE"
+                  echo "Dump written to $DUMP_FILE ($(du -sh "$DUMP_FILE" | cut -f1))"
+                  # Retain last 7 dumps
+                  ls -t "${DUMP_DIR}"/grimmory-*.sql.gz | tail -n +8 | xargs -r rm --
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 128Mi
+              volumeMounts:
+                - name: data
+                  mountPath: /data
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: grimmory-data
+            - name: tmp
+              emptyDir: {}
