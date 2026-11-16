@@ -7,8 +7,10 @@
     ':dependencyDashboard',
     ':semanticCommits',
   ],
-  dependencyDashboard: true,
-  dependencyDashboardTitle: 'Renovate Dashboard :robot:',
+  dependencyDashboard: {
+    enabled: true,
+    title: 'Renovate Dashboard :robot:',
+  },
   schedule: [
     'after 11pm',
     'before 1am',
@@ -25,7 +27,6 @@
     managerFilePatterns: [
       '/(^|/)kubernetes/argo/.+\\.ya?ml(?:\\.j2)?$/',
       '/(^|/)kubernetes/components/[^/]+\\.ya?ml(?:\\.j2)?$/',
-      // template sources (the ones Renovate should update)
     ],
   },
   helmfile: {
@@ -36,9 +37,7 @@
   },
   kubernetes: {
     managerFilePatterns: [
-      // generated output
       '/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/',
-      // template sources (the ones Renovate should update)
     ],
   },
   kustomize: {
@@ -49,17 +48,23 @@
   packageRules: [
     {
       description: 'Wait 3 days before creating PRs for major updates',
-      matchUpdateTypes: ['major'],
+      matchUpdateTypes: [
+        'major',
+      ],
       minimumReleaseAge: '3 days',
     },
     {
       description: 'Wait 2 days before creating PRs for minor updates',
-      matchUpdateTypes: ['minor'],
+      matchUpdateTypes: [
+        'minor',
+      ],
       minimumReleaseAge: '2 days',
     },
     {
       description: 'Wait 1 day before creating PRs for patch updates',
-      matchUpdateTypes: ['patch'],
+      matchUpdateTypes: [
+        'patch',
+      ],
       minimumReleaseAge: '1 day',
     },
     {
