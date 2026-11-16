@@ -16,19 +16,21 @@ spec:
       daily: 7
       weekly: 8
       monthly: 6
+      yearly: 1
     copyMethod: Snapshot
     storageClassName: longhorn-volsync
     volumeSnapshotClassName: longhorn
     capacity: 2Gi
     accessModes:
       - ReadWriteOnce
-    pruneIntervalDays: 7
+    pruneIntervalDays: 14
     cacheCapacity: 512Mi
     cacheStorageClassName: longhorn-single
     cacheAccessModes:
       - ReadWriteOnce
     moverResources:
       limits:
+        cpu: 500m
         memory: 256Mi
       requests:
         cpu: 50m

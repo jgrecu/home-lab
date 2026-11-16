@@ -84,6 +84,7 @@ spec:
       - ReadWriteOnce
     capacity: ${CAPACITY}
     copyMethod: Direct
+    enableSparseRestore: true
 EOF
 
 # Wait for restore to complete
