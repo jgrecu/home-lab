@@ -33,7 +33,7 @@ spec:
           containers:
             - name: dump
               # renovate: datasource=docker depName=docker.io/library/mariadb
-              image: mariadb:12.2.2
+              image: mariadb:12.3.3
               securityContext:
                 allowPrivilegeEscalation: false
                 capabilities:
