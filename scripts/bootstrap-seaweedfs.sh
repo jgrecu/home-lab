@@ -224,7 +224,7 @@ function main() {
     log info "  2. Commit changes: git add -A && git commit -m 'feat(seaweedfs): bootstrap S3 credentials'"
     log info "  3. Push: git push"
     log info ""
-    log info "Flux will reconcile and deploy the backup secrets automatically."
+    log info "Argo CD will reconcile and deploy the backup secrets automatically."
 }
 
 # Run main function

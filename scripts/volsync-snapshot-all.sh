@@ -2,11 +2,8 @@
 # volsync-snapshot-all.sh - Trigger a one-off backup on every Volsync ReplicationSource
 # Usage: ./volsync-snapshot-all.sh [--dry-run] [--only local|r2] [label]
 #   TIMEOUT_MIN=60 (env) - max minutes to wait for all sources
-# The GitOps controller owning the ReplicationSources is paused during the run so it
-# does not revert the one-off trigger, and always resumed on exit (restoring the
-# regular schedule triggers from git):
-#   - Argo CD: auto-sync of the owning Applications (tracking-id annotation)
-#   - Flux:    all Kustomizations (before the Argo CD cut-over)
+# Argo CD auto-sync is paused during the run so it does not revert the one-off trigger,
+# and always resumed on exit (restoring the regular schedule triggers from git).
 
 set -Eeuo pipefail
 
@@ -15,7 +12,6 @@ ONLY=""
 LABEL=""
 TIMEOUT_MIN=${TIMEOUT_MIN:-60}
 POLL_SECONDS=15
-FLUX_SUSPENDED=false
 ARGO_PAUSED=()          # Applications whose auto-sync we disabled
 ARGO_POLICY_DIR=$(mktemp -d)
 
@@ -39,7 +35,7 @@ parse_args() {
 
 require_tools() {
   local tool
-  for tool in kubectl flux jq; do
+  for tool in kubectl jq; do
     command -v "$tool" &>/dev/null || { echo "Error: $tool not found"; exit 1; }
   done
   kubectl version --request-timeout=10s &>/dev/null || { echo "Error: cluster unreachable"; exit 1; }
@@ -53,48 +49,11 @@ list_sources() {
       | "\(.metadata.namespace)/\(.metadata.name)"'
 }
 
-# Prints "namespace name" for every Flux Kustomization in the cluster
-list_kustomizations() {
-  kubectl get kustomizations.kustomize.toolkit.fluxcd.io -A -o json |
-    jq -r '.items[] | "\(.metadata.namespace) \(.metadata.name)"'
-}
-
-warn_not_ready() {
-  local not_ready
-  not_ready=$(kubectl get kustomizations.kustomize.toolkit.fluxcd.io -A -o json |
-    jq -r '.items[] | select(([.status.conditions[]? | select(.type == "Ready")][0].status) != "True")
-      | "\(.metadata.namespace)/\(.metadata.name)"')
-  [[ -z "$not_ready" ]] || { echo "WARNING: Kustomizations not Ready:"; echo "$not_ready"; }
-}
-
-suspend_flux() {
-  echo "==> Suspending all Flux Kustomizations"
-  FLUX_SUSPENDED=true
-  local ns name
-  while read -r ns name; do
-    flux suspend kustomization "$name" -n "$ns" >/dev/null
-  done < <(list_kustomizations)
-}
-
-# Resume and force-reconcile so Flux re-applies the Git schedule triggers
-resume_flux() {
-  [[ "$FLUX_SUSPENDED" == "true" ]] || return 0
-  echo "==> Resuming and reconciling all Flux Kustomizations"
-  local ns name
-  while read -r ns name; do
-    flux resume kustomization "$name" -n "$ns" --timeout=3m >/dev/null 2>&1 ||
-      echo "WARNING: resume/reconcile failed for $ns/$name"
-  done < <(list_kustomizations)
-  verify_schedules_restored
-}
-
 # Argo CD Application owning a ReplicationSource ("ns/name"), from the tracking annotation
 argo_owner() {
   kubectl get replicationsources.volsync.backube "${1#*/}" -n "${1%%/*}" \
     -o jsonpath='{.metadata.annotations.argocd\.argoproj\.io/tracking-id}' | cut -d: -f1
 }
-
-is_argo_managed() { [[ -n "$(argo_owner "$1")" ]]; }
 
 pause_argo() {
   local app
@@ -152,7 +111,6 @@ resume_gitops() {
   [[ "$DRY_RUN" == "true" ]] && return 0
   clear_manual_triggers
   resume_argo
-  resume_flux
   rm -rf "$ARGO_POLICY_DIR"
 }
 
@@ -228,12 +186,7 @@ main() {
   fi
 
   trap resume_gitops EXIT
-  if is_argo_managed "${sources[0]}"; then
-    pause_argo "${sources[@]}"
-  else
-    warn_not_ready
-    suspend_flux
-  fi
+  pause_argo "${sources[@]}"
 
   echo "==> Triggering backups"
   local src

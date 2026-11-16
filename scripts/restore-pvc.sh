@@ -45,7 +45,12 @@ if [[ -n "$DEPLOY_DATA" ]]; then
 
   # Wait for pods to terminate
   echo "Waiting for pods to terminate..."
-  sleep 5
+  for DEPLOY in "${!DEPLOY_REPLICAS[@]}"; do
+    kubectl rollout status deployment/"$DEPLOY" -n "$NAMESPACE" --timeout=120s 2>/dev/null || true
+    kubectl wait --for=delete pods -n "$NAMESPACE" \
+      --selector="$(kubectl get deployment -n "$NAMESPACE" "$DEPLOY" -o jsonpath='{.spec.selector.matchLabels}' | jq -r 'to_entries | map("\(.key)=\(.value)") | join(",")')" \
+      --timeout=120s 2>/dev/null || true
+  done
 else
   echo "No deployments found using this PVC"
 fi

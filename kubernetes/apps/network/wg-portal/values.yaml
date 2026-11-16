@@ -91,7 +91,7 @@ persistence:
   mountPath: /data
 config:
   advanced:
-    log_level: debug
+    log_level: info
   database:
     # PVC is mounted at /app/data; without this wg-portal writes to /data (overlay, lost on restart)
     dsn: /app/data/sqlite.db
