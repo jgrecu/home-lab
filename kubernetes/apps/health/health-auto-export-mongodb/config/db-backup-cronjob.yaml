@@ -1,0 +1,94 @@
+---
+# Runs mongodump before the VolSync backup window (02:00) so the dump
+# is included in the next restic snapshot automatically.
+# Raw MongoDB data files are not safe to restore from a filesystem
+# snapshot — this dump is the reliable restore path.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: health-auto-export-mongodb-backup
+  namespace: health
+spec:
+  schedule: "0 1 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: health-auto-export-mongodb
+                  topologyKey: kubernetes.io/hostname
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            fsGroup: 999
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: dump
+              # renovate: datasource=docker depName=docker.io/mongo
+              image: mongo:9.0.8
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+                readOnlyRootFilesystem: true
+              env:
+                - name: MONGO_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: health-auto-export-mongodb-secret
+                      key: username
+                - name: MONGO_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: health-auto-export-mongodb-secret
+                      key: password
+              command:
+                - /bin/bash
+                - -eo
+                - pipefail
+                - -c
+                - |
+                  DUMP_DIR="/data/db/dumps"
+                  DUMP_PATH="${DUMP_DIR}/health-auto-export-$(date +%Y%m%d)"
+                  mkdir -p "$DUMP_DIR"
+                  mongodump \
+                    --host=health-auto-export-mongodb.health.svc.cluster.local \
+                    --port=27017 \
+                    --username="$MONGO_USERNAME" \
+                    --password="$MONGO_PASSWORD" \
+                    --authenticationDatabase=admin \
+                    --db=health-auto-export \
+                    --gzip \
+                    --out="$DUMP_PATH"
+                  SIZE=$(du -sh "$DUMP_PATH" | cut -f1)
+                  echo "Dump written to $DUMP_PATH ($SIZE)"
+                  # Retain last 7 dumps
+                  ls -dt "${DUMP_DIR}"/health-auto-export-* | tail -n +8 | xargs -r rm -rf --
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 256Mi
+              volumeMounts:
+                - name: data
+                  mountPath: /data/db
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: health-auto-export-mongodb
+            - name: tmp
+              emptyDir: {}
