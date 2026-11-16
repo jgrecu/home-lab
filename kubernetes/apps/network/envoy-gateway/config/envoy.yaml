@@ -153,6 +153,12 @@ spec:
     xForwardedFor:
       trustedCIDRs:
         - 10.42.0.0/16
+  headers:
+    enableEnvoyHeaders: false
+    response:
+      add:
+        - name: Strict-Transport-Security
+          value: "max-age=31536000; includeSubDomains"
   http2:
     onInvalidMessage: TerminateStream
   # http3: {}
