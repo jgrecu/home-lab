@@ -16,6 +16,13 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: grimmory
+                  topologyKey: kubernetes.io/hostname
           securityContext:
             runAsNonRoot: true
             runAsUser: 999
@@ -39,14 +46,15 @@ spec:
                       name: grimmory-mariadb-secret
                       key: mariadb-root-password
               command:
-                - /bin/sh
+                - /bin/bash
+                - -eo
+                - pipefail
                 - -c
                 - |
-                  set -e
                   DUMP_DIR="/data/db-backups"
                   DUMP_FILE="${DUMP_DIR}/grimmory-$(date +%Y%m%d).sql.gz"
                   mkdir -p "$DUMP_DIR"
-                  mysqldump \
+                  mariadb-dump \
                     --host=grimmory-mariadb \
                     --user=root \
                     --password="$MARIADB_ROOT_PASSWORD" \
