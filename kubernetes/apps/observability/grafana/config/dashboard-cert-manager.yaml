@@ -102,7 +102,7 @@ data:
               "disableTextWrap": false,
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(certmanager_certificate_ready_status{condition=\"True\", cluster=~\"$cluster\", exported_namespace=~\"$namespace\"})",
+              "expr": "count(certmanager_certificate_ready_status{condition=\"True\", exported_namespace=~\"$namespace\"})",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "instant": true,
@@ -179,7 +179,7 @@ data:
               "disableTextWrap": false,
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(certmanager_certificate_expiration_timestamp_seconds{cluster=~\"$cluster\", exported_namespace=~\"$namespace\"} < (time()+(14*24*3600)))",
+              "expr": "count(certmanager_certificate_expiration_timestamp_seconds{exported_namespace=~\"$namespace\"} < (time()+(14*24*3600)))",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "instant": true,
@@ -609,7 +609,7 @@ data:
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "changes(certmanager_certificate_renewal_timestamp_seconds{cluster=~\"$cluster\", exported_namespace=~\"$namespace\"}[15m]) > 0",
+              "expr": "changes(certmanager_certificate_renewal_timestamp_seconds{exported_namespace=~\"$namespace\"}[15m]) > 0",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -748,32 +748,6 @@ data:
             "type": "datasource"
           },
           {
-            "current": {
-              "selected": false,
-              "text": "All",
-              "value": "$__all"
-            },
-            "datasource": {
-              "type": "prometheus",
-              "uid": "${datasource}"
-            },
-            "definition": "label_values(certmanager_clock_time_seconds, cluster)",
-            "hide": 0,
-            "includeAll": true,
-            "multi": false,
-            "name": "cluster",
-            "options": [],
-            "query": {
-              "query": "label_values(certmanager_clock_time_seconds, cluster)",
-              "refId": "StandardVariableQuery"
-            },
-            "refresh": 1,
-            "regex": "",
-            "skipUrlSync": false,
-            "sort": 0,
-            "type": "query"
-          },
-          {
             "allValue": ".*",
             "current": {
               "selected": false,
@@ -791,7 +765,7 @@ data:
             "name": "namespace",
             "options": [],
             "query": {
-              "query": "label_values(certmanager_certificate_ready_status{cluster=~\"$cluster\"}, exported_namespace)",
+              "query": "label_values(certmanager_certificate_ready_status, exported_namespace)",
               "refId": "StandardVariableQuery"
             },
             "refresh": 1,
