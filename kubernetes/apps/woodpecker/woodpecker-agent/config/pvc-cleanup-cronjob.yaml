@@ -44,6 +44,7 @@ spec:
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      ttlSecondsAfterFinished: 86400
       template:
         spec:
           serviceAccountName: woodpecker-pvc-cleanup
@@ -54,8 +55,8 @@ spec:
             runAsGroup: 65534
           containers:
             - name: cleanup
-              # renovate: datasource=docker depName=registry.k8s.io/kubectl
-              image: registry.k8s.io/kubectl:v1.37.2
+              # renovate: datasource=docker depName=docker.io/bitnami/kubectl
+              image: docker.io/bitnami/kubectl:1.33.2
               securityContext:
                 allowPrivilegeEscalation: false
                 capabilities:
