@@ -4,8 +4,6 @@ kind: Kustomization
 resources:
   - ./servicemonitor.yaml
   - ./dashboard-cert-manager.yaml
-  - ./dashboard-cilium-agent.yaml
-  - ./dashboard-cilium-operator.yaml
   - ./dashboard-argocd.yaml
   - ./dashboard-kubernetes-api-server.yaml
   - ./dashboard-kubernetes-cluster.yaml
