@@ -55,8 +55,8 @@ spec:
             runAsGroup: 65534
           containers:
             - name: cleanup
-              # renovate: datasource=docker depName=docker.io/bitnami/kubectl
-              image: docker.io/bitnami/kubectl:1.33.2
+              # renovate: datasource=docker depName=docker.io/alpine/k8s
+              image: docker.io/alpine/k8s:1.37.2
               securityContext:
                 allowPrivilegeEscalation: false
                 capabilities:
