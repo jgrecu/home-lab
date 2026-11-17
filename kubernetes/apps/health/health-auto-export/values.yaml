@@ -9,7 +9,7 @@ controllers:
     containers:
       app:
         image:
-          tag: "v0.2.1"
+          tag: "v0.2.2"
           repository: forgejo.jgrecu.dev/jeremy/health-auto-export
         env:
           NODE_ENV: production
