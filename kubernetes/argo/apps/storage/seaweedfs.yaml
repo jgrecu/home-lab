@@ -14,7 +14,7 @@ spec:
       ref: repo
     - repoURL: https://seaweedfs.github.io/seaweedfs/helm
       chart: seaweedfs
-      targetRevision: 4.53.0
+      targetRevision: 4.54.0
       helm:
         releaseName: seaweedfs
         valueFiles:
