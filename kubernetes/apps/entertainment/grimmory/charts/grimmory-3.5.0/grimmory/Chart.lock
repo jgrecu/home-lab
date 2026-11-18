@@ -1,6 +1,6 @@
 dependencies:
 - name: mariadb
   repository: oci://registry-1.docker.io/cloudpirates
-  version: 0.16.18
-digest: sha256:d325e1a9d3165d90bd131fe75f87ffcadbd397a6a886558d225b3eb6bd7da63d
-generated: "2026-11-17T08:03:14.798357766Z"
+  version: 0.16.19
+digest: sha256:3b9f71ab1110eb9b2cbd303e59f5661273be943ad20c4b68b7fe0451b4c81856
+generated: "2026-11-18T09:13:08.535591833Z"
