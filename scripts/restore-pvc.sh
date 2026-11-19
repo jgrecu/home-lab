@@ -4,47 +4,47 @@
 
 set -Eeuo pipefail
 
+source "$(dirname "${0}")/lib/common.sh"
+
 NAMESPACE=${1:-}
 PVC_NAME=${2:-}
 CAPACITY=${3:-}
 
-if [[ -z "$NAMESPACE" || -z "$PVC_NAME" || -z "$CAPACITY" ]]; then
-  echo "Usage: $0 <namespace> <pvc-name> <capacity>"
-  echo "Example: $0 forgejo forgejo-data 20Gi"
+usage() {
+  printf 'Usage:   %s <namespace> <pvc-name> <capacity>\n' "$0" >&2
+  printf 'Example: %s forgejo forgejo-data 20Gi\n' "$0" >&2
   exit 1
-fi
+}
 
-echo "==> Restoring PVC: $PVC_NAME in namespace $NAMESPACE"
+[[ -z "$NAMESPACE" || -z "$PVC_NAME" || -z "$CAPACITY" ]] && usage
+
+log info "Restoring PVC" "pvc=$PVC_NAME" "namespace=$NAMESPACE"
 
 # Check if Volsync secret exists
 SECRET_NAME="${PVC_NAME}-restic-secret"
 if ! kubectl get secret -n "$NAMESPACE" "$SECRET_NAME" &>/dev/null; then
-  echo "Error: Volsync secret not found: $SECRET_NAME"
-  echo "This PVC may not have Volsync backups configured."
-  exit 1
+  log error "Volsync secret not found — PVC may not have backups configured" "secret=$SECRET_NAME"
 fi
 
 # Scale down any deployments using this PVC
-echo "==> Finding deployments using PVC $PVC_NAME..."
+log info "Finding deployments using PVC" "pvc=$PVC_NAME"
 DEPLOY_DATA=$(kubectl get deployment -n "$NAMESPACE" -o json | \
   jq -r --arg pvc "$PVC_NAME" '.items[] | select(.spec.template.spec.volumes[]?.persistentVolumeClaim.claimName == $pvc) | "\(.metadata.name)=\(.spec.replicas)"')
 
 declare -A DEPLOY_REPLICAS
 
 if [[ -n "$DEPLOY_DATA" ]]; then
-  echo "Found deployments using this PVC:"
   while IFS='=' read -r name replicas; do
     DEPLOY_REPLICAS["$name"]=$replicas
-    echo "  - $name (currently $replicas replicas)"
+    log debug "Found deployment" "name=$name" "replicas=$replicas"
   done <<< "$DEPLOY_DATA"
 
   for DEPLOY in "${!DEPLOY_REPLICAS[@]}"; do
-    echo "Scaling down deployment: $DEPLOY"
+    log info "Scaling down" "deployment=$DEPLOY"
     kubectl scale deployment -n "$NAMESPACE" "$DEPLOY" --replicas=0
   done
 
-  # Wait for pods to terminate
-  echo "Waiting for pods to terminate..."
+  log info "Waiting for pods to terminate"
   for DEPLOY in "${!DEPLOY_REPLICAS[@]}"; do
     kubectl rollout status deployment/"$DEPLOY" -n "$NAMESPACE" --timeout=120s 2>/dev/null || true
     kubectl wait --for=delete pods -n "$NAMESPACE" \
@@ -52,21 +52,18 @@ if [[ -n "$DEPLOY_DATA" ]]; then
       --timeout=120s 2>/dev/null || true
   done
 else
-  echo "No deployments found using this PVC"
+  log info "No deployments found using this PVC"
 fi
 
-# Check if PVC exists
+# Check if PVC exists and delete it before restore
 if kubectl get pvc -n "$NAMESPACE" "$PVC_NAME" &>/dev/null; then
-  echo "==> PVC exists. Deleting it to restore from backup..."
+  log info "Deleting existing PVC before restore" "pvc=$PVC_NAME"
   kubectl delete pvc -n "$NAMESPACE" "$PVC_NAME"
-
-  # Wait for deletion
-  echo "Waiting for PVC deletion..."
   kubectl wait --for=delete pvc/"$PVC_NAME" -n "$NAMESPACE" --timeout=120s || true
 fi
 
 # Create ReplicationDestination
-echo "==> Creating ReplicationDestination for restore..."
+log info "Creating ReplicationDestination"
 cat <<EOF | kubectl apply -f -
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationDestination
@@ -88,34 +85,26 @@ spec:
 EOF
 
 # Wait for restore to complete
-echo "==> Waiting for restore to complete (this may take several minutes)..."
+log info "Waiting for restore to complete (this may take several minutes)"
 if kubectl wait --for=condition=complete replicationdestination/"${PVC_NAME}-restore" -n "$NAMESPACE" --timeout=600s; then
-  echo "✅ Restore completed successfully!"
+  log info "Restore completed successfully"
 else
-  echo "❌ Restore failed or timed out"
   kubectl describe replicationdestination/"${PVC_NAME}-restore" -n "$NAMESPACE"
-  exit 1
+  log error "Restore failed or timed out" "pvc=$PVC_NAME" "namespace=$NAMESPACE"
 fi
 
 # Clean up ReplicationDestination
-echo "==> Cleaning up ReplicationDestination..."
+log info "Cleaning up ReplicationDestination"
 kubectl delete replicationdestination/"${PVC_NAME}-restore" -n "$NAMESPACE"
 
 # Scale deployments back up
 if [[ ${#DEPLOY_REPLICAS[@]} -gt 0 ]]; then
-  echo "==> Scaling deployments back up..."
   for DEPLOY in "${!DEPLOY_REPLICAS[@]}"; do
     REPS=${DEPLOY_REPLICAS["$DEPLOY"]}
-    echo "Scaling up deployment $DEPLOY back to $REPS replicas..."
+    log info "Scaling up" "deployment=$DEPLOY" "replicas=$REPS"
     kubectl scale deployment -n "$NAMESPACE" "$DEPLOY" --replicas="$REPS"
   done
 fi
 
-echo ""
-echo "✅ PVC restore complete!"
-echo "   Namespace: $NAMESPACE"
-echo "   PVC: $PVC_NAME"
-echo "   Capacity: $CAPACITY"
-echo ""
-echo "Verify the restored data:"
-echo "  kubectl exec -n $NAMESPACE <pod-name> -- ls -la /path/to/mount"
+log info "PVC restore complete" "pvc=$PVC_NAME" "namespace=$NAMESPACE" "capacity=$CAPACITY"
+log info "Verify restored data with: kubectl exec -n $NAMESPACE <pod-name> -- ls -la /path/to/mount"

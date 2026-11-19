@@ -1,0 +1,25 @@
+---
+# Reusable component: applies the standard Pod Security Standards labels
+# and Goldilocks label to any Namespace resource in the consuming kustomization.
+#
+# Usage — add to any kustomization.yaml that manages a standard app namespace:
+#   components:
+#     - ../../components/namespace-pss-baseline
+#
+# Namespaces that deviate (privileged, restricted, or mixed) must keep their
+# labels inline and must NOT reference this component.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+patches:
+  - target:
+      kind: Namespace
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: placeholder
+        labels:
+          pod-security.kubernetes.io/enforce: baseline
+          pod-security.kubernetes.io/audit: baseline
+          pod-security.kubernetes.io/warn: baseline
+          goldilocks.fairwinds.com/enabled: "true"

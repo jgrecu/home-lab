@@ -9,23 +9,23 @@
 
 set -Eeuo pipefail
 
+source "$(dirname "${0}")/lib/common.sh"
+
 NS=vault
 POD=vault-restore-test
 VAULT_IMAGE=$(kubectl -n "$NS" get sts vault -o jsonpath='{.spec.template.spec.containers[0].image}')
 RCLONE_IMAGE=$(kubectl -n "$NS" get cronjob vault-raft-snapshot \
   -o jsonpath='{.spec.jobTemplate.spec.template.spec.containers[0].image}')
 
-log() { echo "==> $*"; }
-die() { echo "❌ $*" >&2; exit 1; }
 vexec() { kubectl -n "$NS" exec "$POD" -c vault -- "$@"; }
 
 cleanup() {
-  log "Deleting $POD"
+  log info "Deleting $POD"
   kubectl -n "$NS" delete pod "$POD" --ignore-not-found --wait=false >/dev/null
 }
 
 create_pod() {
-  log "Creating $POD ($VAULT_IMAGE)"
+  log info "Creating restore pod" "pod=$POD" "image=$VAULT_IMAGE"
   kubectl -n "$NS" apply -f - >/dev/null <<YAML
 apiVersion: v1
 kind: Pod
@@ -107,8 +107,8 @@ spec:
     - { name: data, emptyDir: { sizeLimit: 1Gi } }
 YAML
   kubectl -n "$NS" wait pod/"$POD" --for=condition=Ready --timeout=180s >/dev/null ||
-    { kubectl -n "$NS" logs "$POD" -c fetch || true; die "Pod did not start"; }
-  log "Snapshot: $(vexec cat /snap/name)"
+    { kubectl -n "$NS" logs "$POD" -c fetch || true; log error "Pod did not become ready"; }
+  log info "Snapshot" "name=$(vexec cat /snap/name)"
 }
 
 wait_api() {
@@ -118,16 +118,16 @@ wait_api() {
     [[ $? -eq 2 ]] && return 0   # 2 = sealed/uninitialised but reachable
     sleep 2
   done
-  die "Vault API not reachable in $POD"
+  log error "Vault API not reachable" "pod=$POD"
 }
 
 restore_snapshot() {
   wait_api
-  log "Initialising throwaway Vault"
+  log info "Initialising throwaway Vault"
   local root
   root=$(vexec vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq -r .root_token)
   wait_api
-  log "Restoring snapshot (-force: snapshot comes from another cluster)"
+  log info "Restoring snapshot" "method=force"
   kubectl -n "$NS" exec -i "$POD" -c vault -- sh -c 'read -r VAULT_TOKEN; export VAULT_TOKEN; vault operator raft snapshot restore -force /snap/latest.snap' <<<"$root"
 }
 
@@ -141,7 +141,7 @@ verify_unsealed() {
     fi
     sleep 2
   done
-  die "Restored Vault did not auto-unseal"
+  log error "Restored Vault did not auto-unseal"
 }
 
 list_secrets() {
@@ -158,14 +158,14 @@ list_secrets() {
 }
 
 main() {
-  for tool in kubectl jq; do command -v "$tool" &>/dev/null || die "$tool not found"; done
+  check_cli kubectl jq
   trap cleanup EXIT
   kubectl -n "$NS" delete pod "$POD" --ignore-not-found --wait=true >/dev/null
   create_pod
   restore_snapshot
   verify_unsealed
   list_secrets
-  echo "✅ Snapshot restore test passed"
+  log info "Snapshot restore test passed"
 }
 
 main "$@"
