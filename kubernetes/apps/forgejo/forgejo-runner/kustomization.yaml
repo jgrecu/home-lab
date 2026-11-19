@@ -21,6 +21,11 @@ patches:
       kind: Deployment
       name: forgejo-runner
     patch: |
+      # Stop the old runner before moving its ReadWriteOnce PVC to another node.
+      - op: add
+        path: /spec/strategy
+        value:
+          type: Recreate
       - op: test
         path: /spec/template/spec/volumes/3/name
         value: data
