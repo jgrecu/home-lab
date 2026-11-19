@@ -9,10 +9,11 @@ source "$(dirname "${0}")/lib/common.sh"
 NAMESPACE=${1:-}
 PVC_NAME=${2:-}
 CAPACITY=${3:-}
+STORAGE_CLASS=${4:-longhorn}
 
 usage() {
-  printf 'Usage:   %s <namespace> <pvc-name> <capacity>\n' "$0" >&2
-  printf 'Example: %s forgejo forgejo-data 20Gi\n' "$0" >&2
+  printf 'Usage:   %s <namespace> <pvc-name> <capacity> [storage-class]\n' "$0" >&2
+  printf 'Example: %s forgejo forgejo-data 20Gi longhorn\n' "$0" >&2
   exit 1
 }
 
@@ -32,6 +33,17 @@ DEPLOY_DATA=$(kubectl get deployment -n "$NAMESPACE" -o json | \
   jq -r --arg pvc "$PVC_NAME" '.items[] | select(.spec.template.spec.volumes[]?.persistentVolumeClaim.claimName == $pvc) | "\(.metadata.name)=\(.spec.replicas)"')
 
 declare -A DEPLOY_REPLICAS
+
+cleanup() {
+  if [[ ${#DEPLOY_REPLICAS[@]} -gt 0 ]]; then
+    log warn "Cleanup: scaling deployments back up"
+    for DEPLOY in "${!DEPLOY_REPLICAS[@]}"; do
+      kubectl scale deployment -n "$NAMESPACE" "$DEPLOY" --replicas="${DEPLOY_REPLICAS[$DEPLOY]}" || true
+    done
+  fi
+  kubectl delete replicationdestination/"${PVC_NAME}-restore" -n "$NAMESPACE" --ignore-not-found || true
+}
+trap cleanup EXIT
 
 if [[ -n "$DEPLOY_DATA" ]]; then
   while IFS='=' read -r name replicas; do
@@ -76,7 +88,7 @@ spec:
   restic:
     repository: ${SECRET_NAME}
     destinationPVC: ${PVC_NAME}
-    storageClassName: longhorn
+    storageClassName: ${STORAGE_CLASS}
     accessModes:
       - ReadWriteOnce
     capacity: ${CAPACITY}
@@ -91,19 +103,6 @@ if kubectl wait --for=condition=complete replicationdestination/"${PVC_NAME}-res
 else
   kubectl describe replicationdestination/"${PVC_NAME}-restore" -n "$NAMESPACE"
   log error "Restore failed or timed out" "pvc=$PVC_NAME" "namespace=$NAMESPACE"
-fi
-
-# Clean up ReplicationDestination
-log info "Cleaning up ReplicationDestination"
-kubectl delete replicationdestination/"${PVC_NAME}-restore" -n "$NAMESPACE"
-
-# Scale deployments back up
-if [[ ${#DEPLOY_REPLICAS[@]} -gt 0 ]]; then
-  for DEPLOY in "${!DEPLOY_REPLICAS[@]}"; do
-    REPS=${DEPLOY_REPLICAS["$DEPLOY"]}
-    log info "Scaling up" "deployment=$DEPLOY" "replicas=$REPS"
-    kubectl scale deployment -n "$NAMESPACE" "$DEPLOY" --replicas="$REPS"
-  done
 fi
 
 log info "PVC restore complete" "pvc=$PVC_NAME" "namespace=$NAMESPACE" "capacity=$CAPACITY"

@@ -5,3 +5,5 @@ metadata:
   name: default
   annotations:
     argocd.argoproj.io/sync-options: Prune=false
+  # PSS labels intentionally omitted — Kubernetes reserves this namespace;
+  # admission is controlled at the cluster level, not managed here.

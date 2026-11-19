@@ -17,7 +17,7 @@ patches:
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: placeholder
+        name: placeholder  # replaced by kustomize at build time — this is not a real namespace name
         labels:
           pod-security.kubernetes.io/enforce: baseline
           pod-security.kubernetes.io/audit: baseline

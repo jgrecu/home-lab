@@ -5,3 +5,5 @@ metadata:
   name: kube-system
   annotations:
     argocd.argoproj.io/sync-options: Prune=false
+  # PSS labels intentionally omitted — Talos manages this namespace;
+  # admission is controlled at the cluster level, not managed here.
