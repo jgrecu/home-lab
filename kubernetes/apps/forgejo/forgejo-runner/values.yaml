@@ -4,7 +4,7 @@ replicaCount: 1
 
 image:
   repository: data.forgejo.org/forgejo/runner
-  tag: "13.2.1"
+  tag: "13.2.2"
   pullPolicy: IfNotPresent
 
     # Plugin image — pre-built binary, no golang build step at pod start.
