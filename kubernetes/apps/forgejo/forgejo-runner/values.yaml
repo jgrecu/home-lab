@@ -12,7 +12,7 @@ image:
 plugin:
   image:
     repository: git.erwanleboucher.dev/eleboucher/runner-k8s-plugin
-    tag: "13.2.1"
+    tag: "13.2.2"
     pullPolicy: IfNotPresent
   resources:
     requests:
