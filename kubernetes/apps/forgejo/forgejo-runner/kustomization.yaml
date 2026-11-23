@@ -7,7 +7,7 @@ namespace: forgejo
 helmCharts:
   - name: forgejo-runner
     repo: oci://git.erwanleboucher.dev/eleboucher/charts
-    version: 13.2.2
+    version: 13.2.3
     releaseName: forgejo-runner
     namespace: forgejo
     valuesFile: values.yaml
