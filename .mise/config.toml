@@ -43,7 +43,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 "aqua:siderolabs/talos" = "1.14.6"
 
 # Infrastructure tools
-"aqua:cloudflare/cloudflared" = "2026.11.1"
+"aqua:cloudflare/cloudflared" = "2026.11.2"
 "aqua:FiloSottile/age" = "1.3.2"
 "aqua:getsops/sops" = "3.13.3"
 
