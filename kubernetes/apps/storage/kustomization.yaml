@@ -6,4 +6,3 @@ namespace: storage
 resources:
   - ./namespace.yaml
   - ./nfs-media-pv.yaml
-  - ./nfs-nextcloud-pv.yaml
