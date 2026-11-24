@@ -1,0 +1,69 @@
+---
+# Memos declarative configuration.
+# Memos reads every *.json file from /etc/memos/config at startup and applies
+# the declared state to the database before serving requests.
+# Secret values use ${env:...} references — never committed to git.
+# See: https://usememos.com/docs/configuration/declarative-configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: memos-config
+data:
+  config.json: |
+    {
+      "identityProviders": [
+        {
+          "name": "identity-providers/pocket-id",
+          "type": "OAUTH2",
+          "title": "Pocket ID",
+          "config": {
+            "oauth2Config": {
+              "clientId": "e4b90023-d05d-4342-99d1-95a599a83ef2",
+              "clientSecret": "${env:MEMOS_OIDC_CLIENT_SECRET}",
+              "authUrl": "https://id.jgrecu.dev/authorize",
+              "tokenUrl": "https://id.jgrecu.dev/api/oidc/token",
+              "userInfoUrl": "https://id.jgrecu.dev/api/oidc/userinfo",
+              "scopes": ["openid", "profile", "email"],
+              "fieldMapping": {
+                "identifier": "sub",
+                "displayName": "name",
+                "email": "email",
+                "avatarUrl": "picture"
+              }
+            }
+          }
+        }
+      ],
+      "instanceSettings": [
+        {
+          "name": "instance/settings/ACCESS",
+          "accessSetting": { "accessMode": "INSTANCE_ACCESS_MODE_PRIVATE" }
+        },
+        {
+          "name": "instance/settings/GENERAL",
+          "generalSetting": {
+            "disallowUserRegistration": true,
+            "disallowPasswordAuth": false,
+            "customProfile": {
+              "title": "Memos",
+              "description": "Personal notes"
+            }
+          }
+        }
+      ],
+      "users": [
+        {
+          "name": "users/admin",
+          "username": "admin",
+          "role": "ADMIN",
+          "password": "${env:MEMOS_ADMIN_PASSWORD}"
+        }
+      ],
+      "lifecycle": [
+        {
+          "resource": "users/admin",
+          "preventDestroy": true,
+          "writeOnlyVersion": 1
+        }
+      ]
+    }

@@ -1,0 +1,104 @@
+---
+# Helm values for app-template (memos).
+defaultPodOptions:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+controllers:
+  memos:
+    pod:
+      annotations:
+        secret.reloader.stakater.com/reload: memos-secret
+        configmap.reloader.stakater.com/reload: memos-config
+    containers:
+      app:
+        image:
+          repository: neosmemo/memos
+          tag: "26.11.2"
+        env:
+          MEMOS_DRIVER: sqlite
+          MEMOS_DATA: /var/opt/memos
+          MEMOS_INSTANCE_URL: https://memos.jgrecu.dev
+          # Admin bootstrap password — read by declarative config at startup.
+          MEMOS_ADMIN_PASSWORD:
+            valueFrom:
+              secretKeyRef:
+                name: memos-secret
+                key: admin-password
+          # Pocket ID OIDC client secret — referenced as ${env:MEMOS_OIDC_CLIENT_SECRET}
+          # inside the declarative config ConfigMap.
+          MEMOS_OIDC_CLIENT_SECRET:
+            valueFrom:
+              secretKeyRef:
+                name: memos-secret
+                key: oidc-client-secret
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: &port 5230
+              initialDelaySeconds: 10
+              periodSeconds: 30
+              timeoutSeconds: 5
+              failureThreshold: 5
+          readiness: *probes
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          requests:
+            cpu: 15m
+            memory: 128Mi
+          limits:
+            memory: 256Mi
+persistence:
+  # SQLite database + uploaded attachments stored on Longhorn.
+  data:
+    type: persistentVolumeClaim
+    storageClass: longhorn
+    size: 2Gi
+    accessMode: ReadWriteOnce
+    globalMounts:
+      - path: /var/opt/memos
+  # Declarative config (OIDC provider, instance settings, bootstrap admin).
+  # Each .json key in the ConfigMap becomes a file under /etc/memos/config.
+  memos-config:
+    type: configMap
+    name: memos-config
+    globalMounts:
+      - path: /etc/memos/config
+        readOnly: true
+service:
+  app:
+    controller: memos
+    ports:
+      http:
+        port: *port
+route:
+  app:
+    parentRefs:
+      - name: envoy-external
+        namespace: network
+        sectionName: https
+    rules:
+      - backendRefs:
+          - identifier: app
+            port: *port
+    annotations:
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/group: Cloud
+      gethomepage.dev/name: Memos
+      gethomepage.dev/icon: memos.png
+      gethomepage.dev/description: Self-hosted personal notes
+      gethomepage.dev/href: https://memos.jgrecu.dev
+    hostnames:
+      - memos.jgrecu.dev
