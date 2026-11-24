@@ -90,7 +90,7 @@ route:
       gethomepage.dev/enabled: "true"
       gethomepage.dev/group: Downloads
       gethomepage.dev/name: Lingarr
-      gethomepage.dev/icon: https://raw.githubusercontent.com/lingarr-translate/lingarr/main/Lingarr/Client/public/android-chrome-512x512.png
+      gethomepage.dev/icon: https://raw.githubusercontent.com/lingarr-translate/lingarr/main/Lingarr.Client/public/android-chrome-512x512.png
       gethomepage.dev/description: Automated subtitle translation
       gethomepage.dev/href: https://lingarr.jgrecu.dev
     parentRefs:
