@@ -114,7 +114,6 @@ just ops restore-pvc <namespace> <pvc-name> <capacity>
 # Examples
 just ops restore-pvc forgejo forgejo-data 20Gi
 just ops restore-pvc entertainment immich-db 10Gi
-just ops restore-pvc cloud nextcloud-html 10Gi
 just ops restore-pvc default homepage 1Gi
 ```
 
@@ -330,7 +329,8 @@ This is the **full disaster recovery** scenario.
 
    # Applications
    just ops restore-pvc forgejo forgejo-data 20Gi
-   just ops restore-pvc cloud nextcloud-html 10Gi
+   just ops restore-pvc cloud linkding 2Gi
+   just ops restore-pvc cloud memos 2Gi
    just ops restore-pvc entertainment immich-db 10Gi
    just ops restore-pvc entertainment kavita-config 2Gi
    just ops restore-pvc home-automation home-assistant-config 5Gi
@@ -349,7 +349,7 @@ This is the **full disaster recovery** scenario.
 
 ### Scenario 5: Accidental File Deletion Inside a PVC
 
-**Example**: Deleted critical files from Nextcloud data directory
+**Example**: Deleted critical files from Linkding data directory
 
 **Recovery**:
 
@@ -357,7 +357,7 @@ You can restore to a **temporary PVC** and copy specific files:
 
 1. **Restore to temporary PVC**:
    ```bash
-   # Modify script to create nextcloud-html-temp instead
+   # Modify script to create linkding-temp instead
    # Or manually create ReplicationDestination with different PVC name
    ```
 
@@ -377,8 +377,8 @@ You can restore to a **temporary PVC** and copy specific files:
            ]
          }],
          "volumes": [
-           {"name": "original", "persistentVolumeClaim": {"claimName": "nextcloud-html"}},
-           {"name": "restored", "persistentVolumeClaim": {"claimName": "nextcloud-html-temp"}}
+           {"name": "original", "persistentVolumeClaim": {"claimName": "linkding"}},
+           {"name": "restored", "persistentVolumeClaim": {"claimName": "linkding-temp"}}
          ]
        }
      }' \
@@ -390,7 +390,7 @@ You can restore to a **temporary PVC** and copy specific files:
 
 3. **Clean up temporary PVC**:
    ```bash
-   kubectl delete pvc -n cloud nextcloud-html-temp
+   kubectl delete pvc -n cloud linkding-temp
    ```
 
 **Total Time**: 15-30 minutes  
@@ -594,8 +594,11 @@ just ops restore-pvc observability grafana 1Gi
 # Home Assistant
 just ops restore-pvc home-automation home-assistant-config 5Gi
 
-# Nextcloud (config only, not user data)
-just ops restore-pvc cloud nextcloud-html 10Gi
+# Linkding
+just ops restore-pvc cloud linkding 2Gi
+
+# Memos
+just ops restore-pvc cloud memos 2Gi
 
 # Forgejo
 just ops restore-pvc forgejo forgejo-data 20Gi

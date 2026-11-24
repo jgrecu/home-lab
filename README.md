@@ -16,7 +16,7 @@ A home lab project demonstrating production-grade self-hosting: GitOps continuou
 | **Observability** | Kube-Prometheus-Stack, Grafana, Loki, Fluent Bit, Gatus, Goldilocks, Smartctl Exporter |
 | **Media & Entertainment** | Jellyfin, Immich, Kavita |
 | **Networking** | Cloudflare Tunnel, ExternalDNS, Cilium, cert-manager, Pi-hole, WireGuard, Envoy Gateway |
-| **Productivity** | Nextcloud, Forgejo |
+| **Productivity** | Memos, Forgejo |
 | **Home Automation** | Home Assistant |
 | **System & GitOps** | Argo CD, Woodpecker CI, Tuppr, Renovate, Reloader, Spegel, VPA |
 

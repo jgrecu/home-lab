@@ -63,7 +63,7 @@ All app secrets — written once with `vault kv put`, never in git:
 | Vault path | Kubernetes Secret | App |
 |---|---|---|
 | `secret-kv2/linkding` | `linkding-secret` | linkding |
-| `secret-kv2/nextcloud` | `nextcloud-secret` | nextcloud |
+| `secret-kv2/memos` | `memos-secret` | memos |
 | `secret-kv2/bazarr` | `bazarr-secret` | bazarr |
 | `secret-kv2/lingarr` | `lingarr-secret` | lingarr |
 | `secret-kv2/prowlarr` | `prowlarr-secret` | prowlarr |

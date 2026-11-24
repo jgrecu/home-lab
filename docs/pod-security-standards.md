@@ -31,7 +31,7 @@ These namespaces allow workloads with relaxed security requirements:
 
 | Namespace | Reason | Notes |
 |-----------|--------|-------|
-| `cloud` | Nextcloud cron jobs run as root | CronJobs cannot set `runAsNonRoot=true` |
+| `cloud` | Memos runs as UID 10001 (non-root) | No exceptions required |
 | `downloads` | Exportarr sidecars lack security contexts | Bazarr, Radarr, Sonarr, Prowlarr all use exportarr |
 | `forgejo` | CI runner pods (future: may need DinD) | Currently using kube:// executor |
 | `home-automation` | Home Assistant container requirements | Requires host network access, device privileges |
