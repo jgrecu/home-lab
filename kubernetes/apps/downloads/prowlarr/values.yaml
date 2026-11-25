@@ -10,7 +10,7 @@ controllers:
         image:
           repository: lscr.io/linuxserver/prowlarr
           # renovate: datasource=docker depName=lscr.io/linuxserver/prowlarr
-          tag: 3.0.2
+          tag: 3.1.0
         env:
           TZ: "Europe/Madrid"
           # LinuxServer: drop to this UID/GID after s6-overlay init
