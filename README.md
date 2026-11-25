@@ -4,9 +4,9 @@
 
 A home lab project demonstrating production-grade self-hosting: GitOps continuous delivery, automated secret management, PVC backups, and infrastructure-as-code — running on commodity hardware.
 
-![Talos](https://img.shields.io/endpoint?url=https://kromgo.jgrecu.dev/talos_version&logo=talos&logoColor=white)
-![Kubernetes](https://img.shields.io/endpoint?url=https://kromgo.jgrecu.dev/kubernetes_version&logo=kubernetes&logoColor=white)
-![Argo CD](https://img.shields.io/endpoint?url=https://kromgo.jgrecu.dev/argocd_version&logo=argo&logoColor=white)
+![Talos](https://img.shields.io/badge/Talos-v1.14.6-blue?logo=talos&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.37.2-blue?logo=kubernetes&logoColor=white)
+![Argo CD](https://img.shields.io/badge/Argo%20CD-v3.6.3-orange?logo=argo&logoColor=white)
 
 ## 🚀 What's Running
 

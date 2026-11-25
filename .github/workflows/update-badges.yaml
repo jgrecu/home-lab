@@ -1,0 +1,91 @@
+---
+name: "Update README Badges"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "kubernetes/apps/system-upgrade/tuppr/policies/talosupgrade.yaml"
+      - "kubernetes/apps/system-upgrade/tuppr/policies/kubernetesupgrade.yaml"
+      - "kubernetes/argo/apps/argo-system/argo-cd.yaml"
+      - ".github/workflows/update-badges.yaml"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  update-badges:
+    name: Update README badges
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Extract versions
+        id: versions
+        run: |
+          TALOS=$(python3 - <<'EOF'
+          import yaml
+          with open("kubernetes/apps/system-upgrade/tuppr/policies/talosupgrade.yaml") as f:
+            for doc in yaml.safe_load_all(f):
+              if doc and doc.get("kind") == "TalosUpgrade":
+                print(doc["spec"]["talos"]["version"]); break
+          EOF
+          )
+
+          K8S=$(python3 - <<'EOF'
+          import yaml
+          with open("kubernetes/apps/system-upgrade/tuppr/policies/kubernetesupgrade.yaml") as f:
+            for doc in yaml.safe_load_all(f):
+              if doc and doc.get("kind") == "KubernetesUpgrade":
+                print(doc["spec"]["kubernetes"]["version"]); break
+          EOF
+          )
+
+          ARGOCD_CHART=$(python3 - <<'EOF'
+          import yaml
+          with open("kubernetes/argo/apps/argo-system/argo-cd.yaml") as f:
+            for doc in yaml.safe_load_all(f):
+              if doc and doc.get("kind") == "Application":
+                for source in doc["spec"]["sources"]:
+                  if source.get("chart") == "argo-cd":
+                    print(source["targetRevision"]); break
+          EOF
+          )
+
+          ARGOCD=$(helm show chart "oci://ghcr.io/argoproj/argo-helm/argo-cd" \
+            --version "${ARGOCD_CHART}" 2>/dev/null \
+            | grep '^appVersion:' | awk '{print $2}')
+
+          echo "talos=${TALOS}" >> "$GITHUB_OUTPUT"
+          echo "kubernetes=${K8S}" >> "$GITHUB_OUTPUT"
+          echo "argocd=${ARGOCD}" >> "$GITHUB_OUTPUT"
+
+      - name: Update README badges
+        env:
+          TALOS_VERSION: ${{ steps.versions.outputs.talos }}
+          K8S_VERSION: ${{ steps.versions.outputs.kubernetes }}
+          ARGOCD_VERSION: ${{ steps.versions.outputs.argocd }}
+        run: |
+          sed -i \
+            -e "s|Talos-v[0-9][0-9.]*-blue|Talos-${TALOS_VERSION}-blue|" \
+            -e "s|Kubernetes-v[0-9][0-9.]*-blue|Kubernetes-${K8S_VERSION}-blue|" \
+            -e "s|Argo%20CD-v[0-9][0-9.]*-orange|Argo%20CD-${ARGOCD_VERSION}-orange|" \
+            README.md
+
+      - name: Commit and push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}"
+          git add README.md
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(readme): update badge versions"
+            git push
+          fi

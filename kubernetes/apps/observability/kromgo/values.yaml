@@ -122,8 +122,11 @@ service:
         port: *healthPort
 route:
   app:
+    # Internal only — badges are updated by the GitHub Actions update-badges
+    # workflow which reads versions from the repo. No public exposure needed.
+    # No homepage entry — Kromgo has no UI, just API endpoints for badges.
     parentRefs:
-      - name: envoy-external
+      - name: envoy-internal
         namespace: network
         sectionName: https
     rules:
