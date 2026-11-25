@@ -48,10 +48,31 @@ configMaps:
         # Kromgo exposes individual Prometheus metrics as plain-text HTTP
         # endpoints — designed for embedding badges in a GitHub README.
         #
-        # Example badge URL: https://img.shields.io/endpoint?url=http://kromgo.yourdomain.com/cluster_node_count
+        # Example badge URL: https://img.shields.io/endpoint?url=https://kromgo.jgrecu.dev/cluster_node_count
         # Full docs: https://github.com/kashalls/kromgo
 
         metrics:
+          - name: talos_version
+            query: node_os_info{id="talos"}
+            label: "Talos"
+            label_name: version_id
+            colors:
+              - { color: "blue", min: 0, max: 1 }
+
+          - name: kubernetes_version
+            query: kubernetes_build_info{job="apiserver"}
+            label: "Kubernetes"
+            label_name: git_version
+            colors:
+              - { color: "blue", min: 0, max: 1 }
+
+          - name: argocd_version
+            query: argocd_info{container="server"}
+            label: "Argo CD"
+            label_name: version
+            colors:
+              - { color: "orange", min: 0, max: 1 }
+
           - name: cluster_node_count
             query: count(kube_node_info)
             label: "Nodes"
@@ -101,11 +122,8 @@ service:
         port: *healthPort
 route:
   app:
-    # Internal only — badges are generated from the internal URL and
-    # embedded in READMEs or dashboards. No public exposure needed.
-    # No homepage entry — Kromgo has no UI, just API endpoints for badges.
     parentRefs:
-      - name: envoy-internal
+      - name: envoy-external
         namespace: network
         sectionName: https
     rules:
