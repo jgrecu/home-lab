@@ -318,8 +318,8 @@ Apply for each critical PVC:
 # Immich database
 kubectl apply -f restore-immich-db.yaml
 
-# Kavita config
-kubectl apply -f restore-kavita-config.yaml
+# Grimmory config
+kubectl apply -f restore-grimmory-data.yaml
 
 # etc...
 ```
@@ -408,32 +408,32 @@ kubectl scale deployment immich-ml -n entertainment --replicas=1
 kubectl logs -n entertainment deployment/immich-server --tail=50
 ```
 
-### Kavita Config
+### Grimmory Config
 
 ```bash
-# Kavita stores library DB in config PVC
-kubectl scale deployment kavita -n entertainment --replicas=0
+# Grimmory stores library DB in config PVC
+kubectl scale deployment grimmory -n entertainment --replicas=0
 
 kubectl apply -f - <<EOF
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationDestination
 metadata:
-  name: kavita-config-restore
+  name: grimmory-data-restore
   namespace: entertainment
 spec:
   trigger:
     manual: restore-$(date +%Y%m%d-%H%M%S)
   restic:
-    repository: kavita-config-restic-secret
-    destinationPVC: kavita-config
+    repository: grimmory-data-restic-secret
+    destinationPVC: grimmory-data
     storageClassName: longhorn
     accessModes: [ReadWriteOnce]
     capacity: 2Gi
     copyMethod: Direct
 EOF
 
-kubectl wait --for=condition=Ready replicationdestination/kavita-config-restore -n entertainment --timeout=600s
-kubectl scale deployment kavita -n entertainment --replicas=1
+kubectl wait --for=condition=Ready replicationdestination/grimmory-data-restore -n entertainment --timeout=600s
+kubectl scale deployment grimmory -n entertainment --replicas=1
 ```
 
 ### Homepage Config

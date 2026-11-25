@@ -14,7 +14,7 @@ A home lab project demonstrating production-grade self-hosting: GitOps continuou
 |----------|-------------|
 | **Storage & Backup** | SeaweedFS, Longhorn, VolSync, CSI Driver NFS, S3Manager |
 | **Observability** | Kube-Prometheus-Stack, Grafana, Loki, Fluent Bit, Gatus, Goldilocks, Smartctl Exporter |
-| **Media & Entertainment** | Jellyfin, Immich, Kavita |
+| **Media & Entertainment** | Jellyfin, Immich, Grimmory |
 | **Networking** | Cloudflare Tunnel, ExternalDNS, Cilium, cert-manager, Pi-hole, WireGuard, Envoy Gateway |
 | **Productivity** | Memos, Forgejo |
 | **Home Automation** | Home Assistant |

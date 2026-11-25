@@ -332,7 +332,7 @@ This is the **full disaster recovery** scenario.
    just ops restore-pvc cloud linkding 2Gi
    just ops restore-pvc cloud memos 2Gi
    just ops restore-pvc entertainment immich-db 10Gi
-   just ops restore-pvc entertainment kavita-config 2Gi
+   just ops restore-pvc entertainment grimmory-data 500Mi
    just ops restore-pvc home-automation home-assistant-config 5Gi
    
    # Databases will auto-recover from CNPG backups in SeaweedFS
@@ -606,8 +606,8 @@ just ops restore-pvc forgejo forgejo-data 20Gi
 # Immich (PostgreSQL DB PVC)
 just ops restore-pvc entertainment immich-db 10Gi
 
-# Kavita
-just ops restore-pvc entertainment kavita-config 2Gi
+# Grimmory
+just ops restore-pvc entertainment grimmory-data 500Mi
 ```
 
 ### Verification Commands

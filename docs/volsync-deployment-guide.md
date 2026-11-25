@@ -67,8 +67,8 @@ resources:
   - ./namespace.yaml
   - ./immich/ks.yaml
   - ./immich/backup-ks.yaml   # <-- Add this line
-  - ./kavita/ks.yaml
-  - ./kavita/backup-ks.yaml   # <-- Add this line
+  - ./grimmory/ks.yaml
+  - ./grimmory/backup-ks.yaml   # <-- Add this line
   - ./seerr/ks.yaml
   - ./jellyfin/ks.yaml
 ```
@@ -121,7 +121,7 @@ git commit -m "feat(volsync): add automated PVC backups to SeaweedFS S3
 - Deploy Volsync for backup automation
 - Configure ReplicationSources for critical PVCs:
   - immich-db (daily at 2:30 AM)
-  - kavita-config (daily at 3:00 AM)
+  - grimmory-data (daily at 3:00 AM)
   - homepage config (daily at 3:15 AM)
   - grafana (daily at 3:30 AM)
 - Retention: 7 daily, 4 weekly, 3 monthly backups
@@ -159,7 +159,7 @@ kubectl get replicationsource -A
 NAMESPACE        NAME                    SOURCE        LAST SYNC
 default          homepage-config-backup  homepage      <none>  (will sync at scheduled time)
 entertainment    immich-db-backup        immich-db     <none>
-entertainment    kavita-config-backup    kavita-config <none>
+entertainment    grimmory-data-backup    grimmory-data <none>
 observability    grafana-backup          grafana       <none>
 ```
 
@@ -216,7 +216,7 @@ aws s3 ls s3://volsync-backups/ \
 
 # Expected output shows subdirectories for each PVC:
 PRE immich-db/
-PRE kavita-config/
+PRE grimmory-data/
 PRE homepage-config/
 PRE grafana/
 ```
@@ -269,7 +269,7 @@ spec:
 | Application | PVC | Schedule | Retention |
 |-------------|-----|----------|-----------|
 | Immich DB | `immich-db` | Daily 2:30 AM | 7d/4w/3m |
-| Kavita | `kavita-config` | Daily 3:00 AM | 7d/4w/3m |
+| Grimmory | `grimmory-data` | Daily 3:00 AM | 7d/4w/3m |
 | Homepage | `homepage` | Daily 3:15 AM | 7d/4w/3m |
 | Grafana | `grafana` | Daily 3:30 AM | 7d/4w/3m |
 
