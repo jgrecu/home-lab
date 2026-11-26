@@ -35,7 +35,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 "aqua:helmfile/helmfile" = "1.8.5"
 "aqua:kubernetes-sigs/kustomize" = "5.8.1"
 "aqua:viaduct-ai/kustomize-sops" = "4.5.1"
-"aqua:kubernetes/kubernetes/kubectl" = "1.37.2"
+"aqua:kubernetes/kubernetes/kubectl" = "1.37.3"
 "aqua:yannh/kubeconform" = "0.8.0"
 
 # Talos tools — topf replaces talhelper (archived Aug 2026)
@@ -48,7 +48,7 @@ TALOSCONFIG = "{{config_root}}/talos/talosconfig"
 "aqua:getsops/sops" = "3.13.3"
 
 # CLI utilities
-"aqua:cli/cli" = "2.105.0"
+"aqua:cli/cli" = "2.106.0"
 "aqua:jqlang/jq" = "1.8.1"
 "aqua:mikefarah/yq" = "4.54.3"
 
