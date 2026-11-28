@@ -19,7 +19,7 @@ controllers:
       app:
         image:
           repository: neosmemo/memos
-          tag: "26.11.2"
+          tag: "26.11.3"
         env:
           MEMOS_DRIVER: sqlite
           MEMOS_DATA: /var/opt/memos
